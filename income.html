@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Toby Budget – Income</title>
+  <link rel="stylesheet" href="budget.css">
+</head>
+<body>
+  <header class="navbar">
+    <h1>Toby Budget – Income</h1>
+    <div class="nav-links">
+      <a href="ledger.html">Ledger</a>
+      <a href="budget.html">Budget</a>
+      <a href="income.html" class="active">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html">Investments</a>
+      <a href="budget-graphs.html" class="active">Graphs</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Monthly Income</h2>
+      <p class="small">
+        This page shows income entries detected from the main Ledger.
+        To add or change income, edit transactions on the <strong>Ledger</strong> page
+        and assign them the category <strong>"Income"</strong>.
+      </p>
+
+      <div class="table-wrapper" style="margin-top: 0.75rem;">
+        <table id="incomeTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Income Source</th>
+              <th class="amount">Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody id="incomeTableBody">
+            <!-- populated by income.js -->
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total</strong></td>
+              <td class="amount">
+                <strong id="incomeTotal">$0.00</strong>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="state.js"></script>
+  <script src="income.js"></script>
+</body>
+</html>

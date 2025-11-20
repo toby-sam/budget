@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Toby Budget – Budget Graphs</title>
+  <link rel="stylesheet" href="budget.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1>Toby Budget</h1>
+    <div class="nav-links">
+      <a href="ledger.html">Ledger</a>
+      <a href="budget.html">Budget</a>
+      <a href="income.html">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html">Investments</a>
+      <a href="budget-graphs.html" class="active">Graphs</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="card">
+      <h2>Over Budget Categories</h2>
+      <p class="small">
+        Showing only categories where actual spend is higher than the monthly budget.
+      </p>
+
+      <div class="table-wrapper">
+        <table id="overBudgetTable">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th class="amount">Budget / Month ($)</th>
+              <th class="amount">Actual Spend ($)</th>
+              <th class="amount">Over By ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- rows injected by graphs.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <p id="noOverBudgetMsg" class="small" style="margin-top:0.75rem; display:none;">
+        👍 Nice job – nothing is over budget based on the current data.
+      </p>
+    </section>
+
+    <section class="card" style="margin-top:1.5rem;">
+      <h2>Over Budget – Visual Bars</h2>
+      <p class="small">
+        Bars compare actual spend vs budget for each over-budget category.
+      </p>
+      <div id="barContainer">
+        <!-- simple bars injected by graphs.js -->
+      </div>
+    </section>
+  </main>
+
+  <script src="state.js"></script>
+  <script src="graphs.js"></script>
+</body>
+</html>
