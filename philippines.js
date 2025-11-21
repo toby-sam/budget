@@ -94,6 +94,7 @@ function addNewPhCategory() {
 
   elsP.newCat.value = '';
 }
+
 function computeTotalPHP() {
   return (stateP.philippines || [])
     .reduce((sum, r) => sum + (r.amountPhp ?? 0), 0);
@@ -118,21 +119,16 @@ function renderRows() {
     const da = new Date(a.date);
     const db = new Date(b.date);
     if (isNaN(da) || isNaN(db)) return 0;
-    return db - da; // db > da => b before a (newest first)
+    return db - da;
   });
 
   sorted.forEach((row, idx) => {
     const tr = document.createElement('tr');
-    // ... keep the rest of the function the same, but use `row` from sorted
-
-
 
     // Date
     const tdDate = document.createElement('td');
     tdDate.textContent = row.date || '';
     tr.appendChild(tdDate);
-
-
 
     // Description (editable)
     const tdDesc = document.createElement('td');
@@ -141,14 +137,13 @@ function renderRows() {
     inputDesc.value = row.reason || '';
     inputDesc.style.width = '95%';
 
-inputDesc.addEventListener('input', () => {
-  row.reason = inputDesc.value;
-  State.save(stateP);
-});
+    inputDesc.addEventListener('input', () => {
+      row.reason = inputDesc.value;
+      State.save(stateP);
+    });
 
-tdDesc.appendChild(inputDesc);
-tr.appendChild(tdDesc);
-
+    tdDesc.appendChild(inputDesc);
+    tr.appendChild(tdDesc);
 
     // Category
     const tdCat = document.createElement('td');
@@ -167,15 +162,14 @@ tr.appendChild(tdDesc);
     tdCat.appendChild(sel);
     tr.appendChild(tdCat);
 
-        // Amount PHP (editable, with commas)
+    // Amount PHP (editable, commas)
     const tdPhp = document.createElement('td');
     tdPhp.className = 'amount';
 
     const inputPhp = document.createElement('input');
-    inputPhp.type = 'text';           // text so we can show commas
+    inputPhp.type = 'text';
     inputPhp.style.width = '100px';
 
-    // Format number with commas (no currency symbol)
     const phpVal = row.amountPhp ?? 0;
     inputPhp.value = phpVal.toLocaleString('en-PH', {
       minimumFractionDigits: 0,
@@ -183,7 +177,6 @@ tr.appendChild(tdDesc);
     });
 
     inputPhp.addEventListener('input', () => {
-      // Remove commas before parsing
       const raw = inputPhp.value.replace(/,/g, '');
       const val = parseFloat(raw) || 0;
 
@@ -191,14 +184,13 @@ tr.appendChild(tdDesc);
       row.amountAud = val * stateP.phpAudRate;
 
       State.save(stateP);
-      renderRows();   // re-render so AUD + totals update
+      renderRows();
     });
 
     tdPhp.appendChild(inputPhp);
     tr.appendChild(tdPhp);
 
-
-    // Amount AUD (read-only; falls back to .amount for manual AUD entries)
+    // Amount AUD
     const tdAud = document.createElement('td');
     tdAud.className = 'amount';
     const audVal = row.amountAud ?? row.amount ?? 0;
@@ -251,7 +243,6 @@ function renderSummary() {
   elsP.detailTotal.textContent = '$' + detail.toFixed(2);
   elsP.difference.textContent = '$' + diff.toFixed(2);
 
-  // New totals
   const totalPHP = computeTotalPHP();
   const totalAUD = computeTotalAUD();
 
@@ -261,7 +252,6 @@ function renderSummary() {
   document.getElementById('phTotalAUD').textContent =
     totalAUD.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
 }
-
 
 /* ------------------------------
    CSV Import
@@ -351,7 +341,6 @@ function init() {
   renderRows();
   renderSummary();
 
-  // Manual add (AUD adjustments at top card)
   elsP.addBtn.onclick = () => {
     const date = elsP.date.value;
     const desc = elsP.desc.value.trim();
@@ -363,7 +352,6 @@ function init() {
       return;
     }
 
-    // Manual adjustments stored as AUD-only
     stateP.philippines.push({
       date,
       reason: desc,
