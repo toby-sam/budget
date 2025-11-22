@@ -110,19 +110,30 @@ function renderLedger() {
     tdCat.appendChild(selCat);
     tr.appendChild(tdCat);
 
-    // Amount
-    const tdAmt = document.createElement('td');
-    const inputAmt = document.createElement('input');
-    inputAmt.type = 'number';
-    inputAmt.step = '0.01';
-    inputAmt.value = row.amount ?? 0;
-    inputAmt.style.width = '100px';
-    inputAmt.addEventListener('input', () => {
-      row.amount = parseFloat(inputAmt.value) || 0;
-      State.save(state);
-    });
-    tdAmt.appendChild(inputAmt);
-    tr.appendChild(tdAmt);
+// Amount
+const tdAmt = document.createElement('td');
+const inputAmt = document.createElement('input');
+inputAmt.type = 'number';
+inputAmt.step = '0.01';
+inputAmt.value = row.amount ?? 0;
+inputAmt.style.width = '100px';
+
+inputAmt.addEventListener('input', () => {
+  let amt = parseFloat(inputAmt.value) || 0;
+
+  // Auto-negative for all non-income categories
+  const catName = (row.category || "").toLowerCase();
+  if (catName !== "income") {
+    if (amt > 0) amt = -amt;
+  }
+
+  row.amount = amt;
+  inputAmt.value = amt;   // reflect corrected negative amount
+  State.save(state);
+});
+
+tdAmt.appendChild(inputAmt);
+tr.appendChild(tdAmt);
 
     // Delete
     const tdDel = document.createElement('td');

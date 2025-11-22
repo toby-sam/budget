@@ -65,7 +65,13 @@ function renderSummary() {
     `${stateB.housePct}% (${formatCurrency(houseAmt)})`;
   elsB.summarySamal.textContent =
     `${stateB.samalPct}% (${formatCurrency(samalAmt)})`;
+// 🔥 NEW: Compute total budget (sum of all category budgets)
+  const totalBudget = (stateB.categories || [])
+    .reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
 
+  // 🔥 NEW: Show it on screen
+  const el = document.getElementById("summaryTotalBudget");
+  if (el) el.textContent = formatCurrency(totalBudget);
   computeTotals();
 }
 
