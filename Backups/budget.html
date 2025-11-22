@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Budget – Debts</title>
+  <link rel="stylesheet" href="budget.css">
+</head>
+
+<body>
+
+  <header class="navbar">
+    <h1>Toby Budget – Debts</h1>
+    <div class="nav-links">
+      <a href="ledger.html">Ledger</a>
+      <a href="budget.html" class="active">Budget</a>
+      <a href="income.html">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html">Investments</a>
+      <a href="budget-graphs.html">Graphs</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="card">
+      <h2>Income &amp; Summary</h2>
+      <div class="row summary-row">
+
+        <div>
+          <div class="small">Monthly Income</div>
+          <div id="summaryIncome">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">House Allocation</div>
+          <div id="summaryHouse" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Samal Allocation</div>
+          <div id="summarySamal" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Total Spend</div>
+          <div id="summaryTotalSpend" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Profit / Loss</div>
+          <div id="summaryProfitLoss" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Ledger Spend</div>
+          <div id="summaryLedgerSpend" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Philippines Spend</div>
+          <div id="summaryPhSpend" class="badge"></div>
+        </div>
+
+        <div>
+          <div class="small">Developer Spend</div>
+          <div id="summaryDevSpend" class="badge"></div>
+        </div>
+
+      </div>
+
+      <button id="saveBackupBtn">Save Backup</button>
+      <button id="loadBackupBtn">Load Backup</button>
+      <input type="file" id="loadBackupInput" style="display:none" />
+    </section>
+
+    <section class="card">
+      <h2>Categories</h2>
+
+      <div class="row">
+        <input id="newCategoryName" placeholder="e.g. Rent, Gym, Developers" />
+        <input id="newCategoryMonthly" type="number" placeholder="Monthly Budget ($)" />
+        <button id="addCategoryBtn">Add Category</button>
+      </div>
+
+      <p class="small">These categories are shared with the Ledger page (for assigning transactions).</p>
+
+      <table id="categoriesTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Budget ($)</th>
+            <th>Actual ($)</th>
+            <th>Difference ($)</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <script src="state.js"></script>
+  <script src="budget.js"></script>
+
+</body>
+</html>

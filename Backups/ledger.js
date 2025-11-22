@@ -1,18 +1,47 @@
 // ===============================
-// ledger.js (FIXED VERSION)
-// Fully compatible with state.js
-// Standard Ledger: Date, Description, Category, Amount, Delete
+// ledger.js (STABLE WORKING VERSION)
+// Includes:
+//  • Safe normalisation
+//  • Income rule
+//  • Negative rule for expenses
+//  • Safe rendering (no crashes)
+//  • Date sorting
 // ===============================
 
-// Load shared global state
+// Load shared state
 let state = State.load();
-State.save(state); // ensures any missing fields are added
+State.save(state);
 
-// Make sure required arrays exist
+// Ensure required arrays exist
 if (!Array.isArray(state.ledger)) state.ledger = [];
 if (!Array.isArray(state.categories)) state.categories = [];
 
-// Element references
+// Safe normalisation for the entire ledger
+function normaliseLedgerAmounts() {
+  state.ledger = state.ledger.map(row => {
+    if (!row || typeof row !== "object") return row;
+
+    let category = row.category || "";
+    let amount = parseFloat(row.amount);
+
+    if (isNaN(amount)) amount = 0;
+
+    // INCOME should always be positive
+    if (category.toLowerCase() === "income") {
+      amount = Math.abs(amount);
+    }
+    // EXPENSE should always be negative
+    else {
+      amount = -Math.abs(amount);
+    }
+
+    return { ...row, amount };
+  });
+
+  State.save(state);
+}
+
+// Elements
 const el = {
   income: document.getElementById('income'),
   housePct: document.getElementById('housePct'),
@@ -35,9 +64,7 @@ const el = {
   ledgerSearch: document.getElementById('ledgerSearch')
 };
 
-// ------------------------------
-// Summary Updates (house/samal)
-// ------------------------------
+// Summary update
 function updateSummary() {
   if (!el.income || !el.housePct || !el.samalPct) return;
 
@@ -45,27 +72,26 @@ function updateSummary() {
   el.samalPctLabel.textContent = `${el.samalPct.value}% of ${el.income.value}`;
 }
 
-// ------------------------------
-// Render Ledger Table
-// ------------------------------
+// ===============================
+// Render Ledger
+// ===============================
 function renderLedger() {
+  normaliseLedgerAmounts(); // <-- IMPORTANT
+
   const search = el.ledgerSearch.value.trim().toLowerCase();
 
-  // use a sorted copy (newest → oldest)
-  const rows = [...state.ledger].sort((a, b) => {
-    return new Date(b.date) - new Date(a.date);
-  });
+  // Sort by date DESC
+  state.ledger.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   el.ledgerBody.innerHTML = '';
 
-  rows.forEach((row) => {
-    const descLC = (row.description || '').toLowerCase();
-    const catLC = (row.category || '').toLowerCase();
+  state.ledger.forEach((row, idx) => {
+    if (!row) return;
 
     if (
       search &&
-      !descLC.includes(search) &&
-      !catLC.includes(search)
+      !row.description?.toLowerCase().includes(search) &&
+      !row.category?.toLowerCase().includes(search)
     ) {
       return;
     }
@@ -74,7 +100,7 @@ function renderLedger() {
 
     // Date
     const tdDate = document.createElement('td');
-    tdDate.textContent = row.date;
+    tdDate.textContent = row.date || '';
     tr.appendChild(tdDate);
 
     // Description (editable)
@@ -90,7 +116,7 @@ function renderLedger() {
     tdDesc.appendChild(inputDesc);
     tr.appendChild(tdDesc);
 
-    // Category (dropdown)
+    // Category dropdown
     const tdCat = document.createElement('td');
     const selCat = document.createElement('select');
 
@@ -104,7 +130,8 @@ function renderLedger() {
 
     selCat.addEventListener('change', () => {
       row.category = selCat.value;
-      State.save(state);
+      normaliseLedgerAmounts();
+      renderLedger();
     });
 
     tdCat.appendChild(selCat);
@@ -115,26 +142,24 @@ function renderLedger() {
     const inputAmt = document.createElement('input');
     inputAmt.type = 'number';
     inputAmt.step = '0.01';
-    inputAmt.value = row.amount ?? 0;
+    inputAmt.value = row.amount || 0;
     inputAmt.style.width = '100px';
     inputAmt.addEventListener('input', () => {
       row.amount = parseFloat(inputAmt.value) || 0;
-      State.save(state);
+      normaliseLedgerAmounts();
+      renderLedger();
     });
     tdAmt.appendChild(inputAmt);
     tr.appendChild(tdAmt);
 
-    // Delete
+    // Delete button
     const tdDel = document.createElement('td');
     const delBtn = document.createElement('button');
     delBtn.textContent = '✕';
     delBtn.className = 'secondary';
     delBtn.onclick = () => {
-      if (!confirm('Delete this entry?')) return;
-
-      const realIndex = state.ledger.indexOf(row);
-      if (realIndex !== -1) {
-        state.ledger.splice(realIndex, 1);
+      if (confirm('Delete this entry?')) {
+        state.ledger.splice(idx, 1);
         State.save(state);
         renderLedger();
       }
@@ -146,27 +171,24 @@ function renderLedger() {
   });
 }
 
-// ------------------------------
-// Add manual ledger entry
-// ------------------------------
+// ===============================
+// Manual Entry
+// ===============================
 function addManualEntry() {
   const date = el.manualDate.value;
   const desc = el.manualDescription.value.trim();
-  const amount = parseFloat(el.manualAmount.value);
   const category = el.manualCategory.value;
+  let amount = parseFloat(el.manualAmount.value);
 
   if (!date || !desc || isNaN(amount)) {
     alert('Please enter date, description and amount.');
     return;
   }
 
-  state.ledger.push({
-    date,
-    description: desc,
-    category,
-    amount
-  });
+  const row = { date, description: desc, category, amount };
+  state.ledger.push(row);
 
+  normaliseLedgerAmounts();
   State.save(state);
   renderLedger();
 
@@ -174,9 +196,9 @@ function addManualEntry() {
   el.manualAmount.value = '';
 }
 
-// ------------------------------
+// ===============================
 // CSV Import
-// ------------------------------
+// ===============================
 function parseCsv(text) {
   const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
   const rows = [];
@@ -188,7 +210,7 @@ function parseCsv(text) {
     const date = cols[0];
     const desc = cols[1];
     const category = cols[2];
-    const amount = parseFloat(cols[3]) || 0;
+    let amount = parseFloat(cols[3]) || 0;
 
     rows.push({ date, description: desc, category, amount });
   }
@@ -209,6 +231,7 @@ function importCsv() {
   reader.onload = e => {
     const newRows = parseCsv(e.target.result);
     state.ledger.push(...newRows);
+    normaliseLedgerAmounts();
     State.save(state);
     renderLedger();
     el.loader.classList.add('hidden');
@@ -216,9 +239,9 @@ function importCsv() {
   reader.readAsText(file);
 }
 
-// ------------------------------
-// Clear ledger
-// ------------------------------
+// ===============================
+// Clear Ledger
+// ===============================
 function clearLedger() {
   if (!confirm('Clear the entire ledger?')) return;
   state.ledger = [];
@@ -226,9 +249,9 @@ function clearLedger() {
   renderLedger();
 }
 
-// ------------------------------
-// Event Wiring
-// ------------------------------
+// ===============================
+// Event Listeners
+// ===============================
 el.addManualBtn.addEventListener('click', addManualEntry);
 el.importBtn.addEventListener('click', importCsv);
 el.clearLedgerBtn.addEventListener('click', clearLedger);
@@ -238,8 +261,8 @@ el.income?.addEventListener('input', updateSummary);
 el.housePct?.addEventListener('input', updateSummary);
 el.samalPct?.addEventListener('input', updateSummary);
 
-// ------------------------------
-// Initial render
-// ------------------------------
+// Init
 updateSummary();
 renderLedger();
+
+

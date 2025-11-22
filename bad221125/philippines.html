@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Philippines Spend</title>
+  <link rel="stylesheet" href="budget.css">
+</head>
+
+<body>
+  <nav class="top-nav">
+    <a href="ledger.html">Ledger</a>
+    <a href="budget.html">Budget</a>
+    <a href="philippines.html" class="active">Philippines</a>
+    <a href="debts.html">Debts</a>
+  </nav>
+
+  <main class="container">
+
+    <!-- ============================= -->
+    <!-- Summary Card -->
+    <!-- ============================= -->
+    <section class="card">
+      <h2>Philippines Summary</h2>
+
+      <div class="row">
+        <div>From Ledger (category “Philippines”): 
+          <strong id="phLedgerTotal">$0.00</strong>
+        </div>
+
+        <div>From this page (detail rows): 
+          <strong id="phDetailTotal">$0.00</strong>
+        </div>
+
+        <div>Difference: 
+          <strong id="phDifference">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:1rem;">
+        <div>Total PHP: <strong id="phTotalPHP">₱0.00</strong></div>
+        <div>Total AUD: <strong id="phTotalAUD">$0.00</strong></div>
+      </div>
+
+      <div style="margin-top:1rem;">
+        <label>PHP → AUD rate</label>
+        <input id="phRateInput" type="number" step="0.0001" style="width:120px;">
+        <div id="phRateDisplay" class="small"></div>
+        <div id="phRateNote" class="small"></div>
+      </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- Add Manual PH Transaction -->
+    <!-- ============================= -->
+    <section class="card">
+      <h2>Add Philippines Transaction</h2>
+      <div class="row">
+        <div>
+          <label>Date</label>
+          <input id="phDate" type="date">
+        </div>
+
+        <div style="flex:1;">
+          <label>Description</label>
+          <input id="phDesc" type="text" placeholder="e.g. Grocery, Materials">
+        </div>
+
+        <div>
+          <label>Amount (PHP)</label>
+          <input id="phAmount" type="number" step="0.01">
+        </div>
+
+        <div>
+          <label>Category</label>
+          <select id="phCategory"></select>
+        </div>
+
+        <div>
+          <button id="addPhBtn">Add</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:1rem;">
+        <input id="newPhCategory" type="text" placeholder="New PH category">
+        <button id="addPhCategoryBtn">Add Category</button>
+      </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- Import CSV -->
+    <!-- ============================= -->
+    <section class="card">
+      <h2>Import CSV</h2>
+      <input type="file" id="phCsvFile">
+      <button id="importPhCsvBtn">Import</button>
+    </section>
+
+    <!-- ============================= -->
+    <!-- Table -->
+    <!-- ============================= -->
+    <section class="card">
+      <h2>Philippines Transactions</h2>
+
+      <div class="table-wrapper">
+        <table id="phTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Amount (PHP)</th>
+              <th>Amount (AUD)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="phTableBody">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="state.js"></script>
+  <script src="philippines.js"></script>
+
+</body>
+</html>

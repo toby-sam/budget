@@ -52,6 +52,19 @@ function syncIncomesFromLedger() {
   state.incomes = incomes;
   State.save(state);
 }
+function calculateSummary() {
+  const income = Number(state.income || 0);
+
+  const totalSpend = state.ledger.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+  const profit = income + totalSpend;
+
+  document.getElementById("totalSpend").textContent = 
+    `$${Math.abs(totalSpend).toLocaleString()}`;
+
+  document.getElementById("profitLoss").textContent =
+    `$${profit.toLocaleString()}`;
+}
 
 /* -------------------------------------------
    Compute total income
