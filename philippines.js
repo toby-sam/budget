@@ -6,7 +6,7 @@ let stateP = State.load();   // unified global state
 if (!Array.isArray(stateP.philippines)) stateP.philippines = [];
 if (!Array.isArray(stateP.phCategories)) stateP.phCategories = [];
 if (typeof stateP.phpAudRate !== 'number' || stateP.phpAudRate <= 0) {
-  stateP.phpAudRate = 0.0259; // default rate
+  stateP.phpAudRate = 0.0259; // default fallback rate
   State.save(stateP);
 }
 
@@ -29,7 +29,8 @@ const elsP = {
   rateNote: document.getElementById('phRateNote'),
 
   csvFile: document.getElementById('phCsvFile'),
-  importBtn: document.getElementById('importPhCsvBtn')
+  importBtn: document.getElementById('importPhCsvBtn'),
+  exportBtn: document.getElementById('exportPhCsvBtn')
 };
 
 /* ------------------------------
@@ -63,8 +64,49 @@ function normalisePhDate(str) {
   return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+function formatPHP(n) {
+  return n.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+}
+
+function formatAUD(n) {
+  return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
+}
+
 /* ------------------------------
-   Category Dropdown
+   Export CSV
+------------------------------ */
+
+function exportPhilippinesCsv() {
+  if (!stateP.philippines.length) {
+    alert("No Philippines transactions to export.");
+    return;
+  }
+
+  let csv = "Date,Description,Category,AmountPHP,AmountAUD\n";
+
+  stateP.philippines.forEach(r => {
+    const date = r.date || "";
+    const desc = (r.reason || "").replace(/"/g, '""'); // escape quotes
+    const cat = r.category || "";
+    const php = r.amountPhp ?? "";
+    const aud = r.amountAud ?? r.amount ?? "";
+
+    csv += `"${date}","${desc}","${cat}",${php},${aud}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "philippines_export.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/* ------------------------------
+   Categories
 ------------------------------ */
 
 function populateCategoryDropdown() {
@@ -94,6 +136,11 @@ function addNewPhCategory() {
 
   elsP.newCat.value = '';
 }
+
+/* ------------------------------
+   Totals
+------------------------------ */
+
 function computeTotalPHP() {
   return (stateP.philippines || [])
     .reduce((sum, r) => sum + (r.amountPhp ?? 0), 0);
@@ -113,46 +160,41 @@ function renderRows() {
 
   const rows = stateP.philippines || [];
 
-  // 🔽 Sort by date – newest first
+  // Newest first
   const sorted = [...rows].sort((a, b) => {
     const da = new Date(a.date);
     const db = new Date(b.date);
     if (isNaN(da) || isNaN(db)) return 0;
-    return db - da; // db > da => b before a (newest first)
+    return db - da;
   });
 
   sorted.forEach((row, idx) => {
     const tr = document.createElement('tr');
-    // ... keep the rest of the function the same, but use `row` from sorted
-
-
 
     // Date
     const tdDate = document.createElement('td');
     tdDate.textContent = row.date || '';
     tr.appendChild(tdDate);
 
-
-
-    // Description (editable)
+    // Description
     const tdDesc = document.createElement('td');
     const inputDesc = document.createElement('input');
     inputDesc.type = 'text';
     inputDesc.value = row.reason || '';
     inputDesc.style.width = '95%';
 
-inputDesc.addEventListener('input', () => {
-  row.reason = inputDesc.value;
-  State.save(stateP);
-});
+    inputDesc.addEventListener('input', () => {
+      row.reason = inputDesc.value;
+      State.save(stateP);
+    });
 
-tdDesc.appendChild(inputDesc);
-tr.appendChild(tdDesc);
+    tdDesc.appendChild(inputDesc);
+    tr.appendChild(tdDesc);
 
-
-    // Category
+    // Category dropdown
     const tdCat = document.createElement('td');
     const sel = document.createElement('select');
+
     stateP.phCategories.forEach(cat => {
       const opt = document.createElement('option');
       opt.value = cat;
@@ -160,30 +202,25 @@ tr.appendChild(tdDesc);
       if (row.category === cat) opt.selected = true;
       sel.appendChild(opt);
     });
+
     sel.addEventListener('change', () => {
       row.category = sel.value;
       State.save(stateP);
     });
+
     tdCat.appendChild(sel);
     tr.appendChild(tdCat);
 
-        // Amount PHP (editable, with commas)
+    // PHP input (editable)
     const tdPhp = document.createElement('td');
     tdPhp.className = 'amount';
-
     const inputPhp = document.createElement('input');
-    inputPhp.type = 'text';           // text so we can show commas
+    inputPhp.type = 'text';
     inputPhp.style.width = '100px';
-
-    // Format number with commas (no currency symbol)
     const phpVal = row.amountPhp ?? 0;
-    inputPhp.value = phpVal.toLocaleString('en-PH', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    });
+    inputPhp.value = phpVal.toLocaleString('en-PH');
 
     inputPhp.addEventListener('input', () => {
-      // Remove commas before parsing
       const raw = inputPhp.value.replace(/,/g, '');
       const val = parseFloat(raw) || 0;
 
@@ -191,21 +228,17 @@ tr.appendChild(tdDesc);
       row.amountAud = val * stateP.phpAudRate;
 
       State.save(stateP);
-      renderRows();   // re-render so AUD + totals update
+      renderRows();
     });
 
     tdPhp.appendChild(inputPhp);
     tr.appendChild(tdPhp);
 
-
-    // Amount AUD (read-only; falls back to .amount for manual AUD entries)
+    // AUD (computed)
     const tdAud = document.createElement('td');
     tdAud.className = 'amount';
     const audVal = row.amountAud ?? row.amount ?? 0;
-    tdAud.textContent = audVal.toLocaleString('en-AU', {
-      style: 'currency',
-      currency: 'AUD'
-    });
+    tdAud.textContent = formatAUD(audVal);
     tr.appendChild(tdAud);
 
     // Delete
@@ -213,11 +246,13 @@ tr.appendChild(tdDesc);
     const btn = document.createElement('button');
     btn.textContent = '✕';
     btn.className = 'secondary';
+
     btn.onclick = () => {
       stateP.philippines.splice(idx, 1);
       State.save(stateP);
       renderRows();
     };
+
     tdDel.appendChild(btn);
     tr.appendChild(tdDel);
 
@@ -247,21 +282,16 @@ function renderSummary() {
   const detail = computePhilippinesDetailTotal();
   const diff = ledger - detail;
 
-  elsP.ledgerTotal.textContent = '$' + ledger.toFixed(2);
-  elsP.detailTotal.textContent = '$' + detail.toFixed(2);
-  elsP.difference.textContent = '$' + diff.toFixed(2);
+  elsP.ledgerTotal.textContent = formatAUD(Math.abs(ledger));
+  elsP.detailTotal.textContent = formatAUD(Math.abs(detail));
+  elsP.difference.textContent = formatAUD(Math.abs(diff));
 
-  // New totals
   const totalPHP = computeTotalPHP();
   const totalAUD = computeTotalAUD();
 
-  document.getElementById('phTotalPHP').textContent =
-    totalPHP.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
-
-  document.getElementById('phTotalAUD').textContent =
-    totalAUD.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
+  document.getElementById('phTotalPHP').textContent = formatPHP(Math.abs(totalPHP));
+  document.getElementById('phTotalAUD').textContent = formatAUD(Math.abs(totalAUD));
 }
-
 
 /* ------------------------------
    CSV Import
@@ -282,8 +312,7 @@ function parsePhilippinesCsv(text, rate) {
     const desc = cols[12] || 'PH transaction';
 
     let phpAmount = parseMoney(amountStr);
-    if (cd === 'debit') phpAmount = -Math.abs(phpAmount);
-    else phpAmount = Math.abs(phpAmount);
+    phpAmount = cd === 'debit' ? -Math.abs(phpAmount) : Math.abs(phpAmount);
 
     const aud = phpAmount * rate;
 
@@ -351,7 +380,6 @@ function init() {
   renderRows();
   renderSummary();
 
-  // Manual add (AUD adjustments at top card)
   elsP.addBtn.onclick = () => {
     const date = elsP.date.value;
     const desc = elsP.desc.value.trim();
@@ -363,7 +391,6 @@ function init() {
       return;
     }
 
-    // Manual adjustments stored as AUD-only
     stateP.philippines.push({
       date,
       reason: desc,
@@ -380,6 +407,7 @@ function init() {
 
   elsP.addCatBtn.onclick = addNewPhCategory;
   elsP.importBtn.onclick = importPhilippinesCsv;
+  elsP.exportBtn.onclick = exportPhilippinesCsv;
 }
 
 document.addEventListener('DOMContentLoaded', init);

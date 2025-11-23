@@ -110,30 +110,30 @@ function renderLedger() {
     tdCat.appendChild(selCat);
     tr.appendChild(tdCat);
 
-// Amount
-const tdAmt = document.createElement('td');
-const inputAmt = document.createElement('input');
-inputAmt.type = 'number';
-inputAmt.step = '0.01';
-inputAmt.value = row.amount ?? 0;
-inputAmt.style.width = '100px';
+    // Amount
+    const tdAmt = document.createElement('td');
+    const inputAmt = document.createElement('input');
+    inputAmt.type = 'number';
+    inputAmt.step = '0.01';
+    inputAmt.value = row.amount ?? 0;
+    inputAmt.style.width = '100px';
 
-inputAmt.addEventListener('input', () => {
-  let amt = parseFloat(inputAmt.value) || 0;
+    inputAmt.addEventListener('input', () => {
+      let amt = parseFloat(inputAmt.value) || 0;
 
-  // Auto-negative for all non-income categories
-  const catName = (row.category || "").toLowerCase();
-  if (catName !== "income") {
-    if (amt > 0) amt = -amt;
-  }
+      // Auto-negative for all non-income categories
+      const catName = (row.category || "").toLowerCase();
+      if (catName !== "income") {
+        if (amt > 0) amt = -amt;
+      }
 
-  row.amount = amt;
-  inputAmt.value = amt;   // reflect corrected negative amount
-  State.save(state);
-});
+      row.amount = amt;
+      inputAmt.value = amt;   // reflect corrected negative amount
+      State.save(state);
+    });
 
-tdAmt.appendChild(inputAmt);
-tr.appendChild(tdAmt);
+    tdAmt.appendChild(inputAmt);
+    tr.appendChild(tdAmt);
 
     // Delete
     const tdDel = document.createElement('td');
@@ -228,6 +228,41 @@ function importCsv() {
 }
 
 // ------------------------------
+// CSV Export
+// ------------------------------
+function exportCsv() {
+  if (!state.ledger.length) {
+    alert("Ledger is empty — nothing to export.");
+    return;
+  }
+
+  // CSV header
+  let csv = "Date,Description,Category,Amount\n";
+
+  // Add rows
+  state.ledger.forEach(row => {
+    const date = row.date || "";
+    const desc = (row.description || "").replace(/"/g, '""'); // escape quotes
+    const cat = row.category || "";
+    const amt = row.amount ?? "";
+
+    csv += `"${date}","${desc}","${cat}",${amt}\n`;
+  });
+
+  // Create blob
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  // Download link
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ledger_export.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// ------------------------------
 // Clear ledger
 // ------------------------------
 function clearLedger() {
@@ -244,6 +279,9 @@ el.addManualBtn.addEventListener('click', addManualEntry);
 el.importBtn.addEventListener('click', importCsv);
 el.clearLedgerBtn.addEventListener('click', clearLedger);
 el.ledgerSearch.addEventListener('input', renderLedger);
+
+// FIXED: export button wired in correct place
+document.getElementById("exportBtn").addEventListener("click", exportCsv);
 
 el.income?.addEventListener('input', updateSummary);
 el.housePct?.addEventListener('input', updateSummary);
