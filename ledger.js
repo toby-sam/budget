@@ -1,18 +1,16 @@
 // ===============================
-// ledger.js (FIXED VERSION)
-// Fully compatible with state.js
-// Standard Ledger: Date, Description, Category, Amount, Delete
+// ledger.js (FINAL UPDATED VERSION WITH NORMALIZED DATES)
 // ===============================
 
 // Load shared global state
 let state = State.load();
-State.save(state); // ensures any missing fields are added
+State.save(state);
 
-// Make sure required arrays exist
+// Ensure arrays exist
 if (!Array.isArray(state.ledger)) state.ledger = [];
 if (!Array.isArray(state.categories)) state.categories = [];
 
-// Element references
+// Elements
 const el = {
   income: document.getElementById('income'),
   housePct: document.getElementById('housePct'),
@@ -36,13 +34,25 @@ const el = {
 };
 
 // ------------------------------
-// Summary Updates (house/samal)
+// Date Normalization
 // ------------------------------
-function updateSummary() {
-  if (!el.income || !el.housePct || !el.samalPct) return;
+function normalizeDate(input) {
+  // Try direct parse
+  const parsed = Date.parse(input);
+  if (!isNaN(parsed)) {
+    return new Date(parsed).toISOString().slice(0, 10);
+  }
 
-  el.housePctLabel.textContent = `${el.housePct.value}% of ${el.income.value}`;
-  el.samalPctLabel.textContent = `${el.samalPct.value}% of ${el.income.value}`;
+  // Try dd-mm-yyyy or dd/mm/yyyy
+  const parts = input.split(/[-/]/);
+  if (parts.length === 3) {
+    const [d, m, y] = parts;
+    const yyyy = y.length === 2 ? "20" + y : y;
+    return `${yyyy}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  }
+
+  console.warn("Unrecognized date format:", input);
+  return input;
 }
 
 // ------------------------------
@@ -51,58 +61,53 @@ function updateSummary() {
 function renderLedger() {
   const search = el.ledgerSearch.value.trim().toLowerCase();
 
-  // use a sorted copy (newest → oldest)
   const rows = [...state.ledger].sort((a, b) => {
     return new Date(b.date) - new Date(a.date);
   });
 
-  el.ledgerBody.innerHTML = '';
+  el.ledgerBody.innerHTML = "";
 
   rows.forEach((row) => {
-    const descLC = (row.description || '').toLowerCase();
-    const catLC = (row.category || '').toLowerCase();
+    const descLC = (row.description || "").toLowerCase();
+    const catLC = (row.category || "").toLowerCase();
 
-    if (
-      search &&
-      !descLC.includes(search) &&
-      !catLC.includes(search)
-    ) {
+    if (search && !descLC.includes(search) && !catLC.includes(search)) {
       return;
     }
 
-    const tr = document.createElement('tr');
+    const tr = document.createElement("tr");
 
     // Date
-    const tdDate = document.createElement('td');
+    const tdDate = document.createElement("td");
     tdDate.textContent = row.date;
     tr.appendChild(tdDate);
 
-    // Description (editable)
-    const tdDesc = document.createElement('td');
-    const inputDesc = document.createElement('input');
-    inputDesc.type = 'text';
-    inputDesc.value = row.description || '';
-    inputDesc.style.width = '95%';
-    inputDesc.addEventListener('input', () => {
+    // Description
+    const tdDesc = document.createElement("td");
+    const inputDesc = document.createElement("input");
+    inputDesc.type = "text";
+    inputDesc.value = row.description || "";
+    inputDesc.style.width = "95%";
+    inputDesc.addEventListener("input", () => {
       row.description = inputDesc.value;
       State.save(state);
     });
     tdDesc.appendChild(inputDesc);
     tr.appendChild(tdDesc);
 
-    // Category (dropdown)
-    const tdCat = document.createElement('td');
-    const selCat = document.createElement('select');
+    // Category
+    const tdCat = document.createElement("td");
+    const selCat = document.createElement("select");
 
-    state.categories.forEach(cat => {
-      const opt = document.createElement('option');
+    state.categories.forEach((cat) => {
+      const opt = document.createElement("option");
       opt.value = cat.name;
       opt.textContent = cat.name;
       if (row.category === cat.name) opt.selected = true;
       selCat.appendChild(opt);
     });
 
-    selCat.addEventListener('change', () => {
+    selCat.addEventListener("change", () => {
       row.category = selCat.value;
       State.save(state);
     });
@@ -111,24 +116,23 @@ function renderLedger() {
     tr.appendChild(tdCat);
 
     // Amount
-    const tdAmt = document.createElement('td');
-    const inputAmt = document.createElement('input');
-    inputAmt.type = 'number';
-    inputAmt.step = '0.01';
+    const tdAmt = document.createElement("td");
+    const inputAmt = document.createElement("input");
+    inputAmt.type = "number";
+    inputAmt.step = "0.01";
     inputAmt.value = row.amount ?? 0;
-    inputAmt.style.width = '100px';
+    inputAmt.style.width = "100px";
 
-    inputAmt.addEventListener('input', () => {
+    inputAmt.addEventListener("input", () => {
       let amt = parseFloat(inputAmt.value) || 0;
 
-      // Auto-negative for all non-income categories
-      const catName = (row.category || "").toLowerCase();
-      if (catName !== "income") {
-        if (amt > 0) amt = -amt;
+      // Auto-negative for non-income categories
+      if ((row.category || "").toLowerCase() !== "income" && amt > 0) {
+        amt = -amt;
       }
 
       row.amount = amt;
-      inputAmt.value = amt;   // reflect corrected negative amount
+      inputAmt.value = amt;
       State.save(state);
     });
 
@@ -136,16 +140,16 @@ function renderLedger() {
     tr.appendChild(tdAmt);
 
     // Delete
-    const tdDel = document.createElement('td');
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '✕';
-    delBtn.className = 'secondary';
+    const tdDel = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "✕";
+    delBtn.className = "secondary";
     delBtn.onclick = () => {
-      if (!confirm('Delete this entry?')) return;
+    //  if (!confirm("Delete this entry?")) return;
 
-      const realIndex = state.ledger.indexOf(row);
-      if (realIndex !== -1) {
-        state.ledger.splice(realIndex, 1);
+      const idx = state.ledger.indexOf(row);
+      if (idx !== -1) {
+        state.ledger.splice(idx, 1);
         State.save(state);
         renderLedger();
       }
@@ -153,21 +157,22 @@ function renderLedger() {
     tdDel.appendChild(delBtn);
     tr.appendChild(tdDel);
 
+    // Add row
     el.ledgerBody.appendChild(tr);
   });
 }
 
 // ------------------------------
-// Add manual ledger entry
+// Add Manual Entry
 // ------------------------------
 function addManualEntry() {
-  const date = el.manualDate.value;
+  const date = normalizeDate(el.manualDate.value);
   const desc = el.manualDescription.value.trim();
   const amount = parseFloat(el.manualAmount.value);
   const category = el.manualCategory.value;
 
   if (!date || !desc || isNaN(amount)) {
-    alert('Please enter date, description and amount.');
+    alert("Please enter date, description and amount.");
     return;
   }
 
@@ -175,28 +180,28 @@ function addManualEntry() {
     date,
     description: desc,
     category,
-    amount
+    amount,
   });
 
   State.save(state);
   renderLedger();
 
-  el.manualDescription.value = '';
-  el.manualAmount.value = '';
+  el.manualDescription.value = "";
+  el.manualAmount.value = "";
 }
 
 // ------------------------------
 // CSV Import
 // ------------------------------
 function parseCsv(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+  const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
   const rows = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const cols = lines[i].split(',');
+    const cols = lines[i].split(",");
     if (cols.length < 4) continue;
 
-    const date = cols[0];
+    const date = normalizeDate(cols[0]);
     const desc = cols[1];
     const category = cols[2];
     const amount = parseFloat(cols[3]) || 0;
@@ -210,19 +215,19 @@ function parseCsv(text) {
 function importCsv() {
   const file = el.csvFile.files[0];
   if (!file) {
-    alert('Select a CSV file first.');
+    alert("Select a CSV file first.");
     return;
   }
 
-  el.loader.classList.remove('hidden');
+  el.loader.classList.remove("hidden");
 
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = (e) => {
     const newRows = parseCsv(e.target.result);
     state.ledger.push(...newRows);
     State.save(state);
     renderLedger();
-    el.loader.classList.add('hidden');
+    el.loader.classList.add("hidden");
   };
   reader.readAsText(file);
 }
@@ -236,24 +241,19 @@ function exportCsv() {
     return;
   }
 
-  // CSV header
   let csv = "Date,Description,Category,Amount\n";
 
-  // Add rows
-  state.ledger.forEach(row => {
+  state.ledger.forEach((row) => {
     const date = row.date || "";
-    const desc = (row.description || "").replace(/"/g, '""'); // escape quotes
+    const desc = (row.description || "").replace(/"/g, '""');
     const cat = row.category || "";
     const amt = row.amount ?? "";
 
     csv += `"${date}","${desc}","${cat}",${amt}\n`;
   });
 
-  // Create blob
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
-
-  // Download link
   const a = document.createElement("a");
   a.href = url;
   a.download = "ledger_export.csv";
@@ -263,32 +263,26 @@ function exportCsv() {
 }
 
 // ------------------------------
-// Clear ledger
+// Clear Ledger
 // ------------------------------
 function clearLedger() {
-  if (!confirm('Clear the entire ledger?')) return;
+  if (!confirm("Clear the entire ledger?")) return;
   state.ledger = [];
   State.save(state);
   renderLedger();
 }
 
 // ------------------------------
-// Event Wiring
+// Event Listeners
 // ------------------------------
-el.addManualBtn.addEventListener('click', addManualEntry);
-el.importBtn.addEventListener('click', importCsv);
-el.clearLedgerBtn.addEventListener('click', clearLedger);
-el.ledgerSearch.addEventListener('input', renderLedger);
+el.addManualBtn.addEventListener("click", addManualEntry);
+el.importBtn.addEventListener("click", importCsv);
+el.clearLedgerBtn.addEventListener("click", clearLedger);
+el.ledgerSearch.addEventListener("input", renderLedger);
 
-// FIXED: export button wired in correct place
 document.getElementById("exportBtn").addEventListener("click", exportCsv);
 
-el.income?.addEventListener('input', updateSummary);
-el.housePct?.addEventListener('input', updateSummary);
-el.samalPct?.addEventListener('input', updateSummary);
-
 // ------------------------------
-// Initial render
+// Initial Render
 // ------------------------------
-updateSummary();
 renderLedger();

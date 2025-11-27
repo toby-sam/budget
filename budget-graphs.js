@@ -116,6 +116,54 @@ function renderOverBudget() {
     container.appendChild(rowEl);
   });
 }
+let pieChartInstance = null;
+
+function renderPieChart() {
+  const ctx = document.getElementById("pieChart");
+  if (!ctx) return;
+
+  const actuals = computeActualsByCategory();
+  const labels = Object.keys(actuals);
+  const values = Object.values(actuals);
+
+  if (pieChartInstance) {
+    pieChartInstance.destroy();
+  }
+
+  pieChartInstance = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          "#2563eb", "#10b981", "#f59e0b", "#ef4444",
+          "#6366f1", "#14b8a6", "#f43f5e", "#84cc16",
+          "#a855f7", "#0ea5e9"
+        ]
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: "bottom"
+        },
+        datalabels: {
+          color: "#ffffff",
+          font: {
+            weight: "bold",
+            size: 12
+          },
+          formatter: function(value, ctx) {
+            const label = ctx.chart.data.labels[ctx.dataIndex];
+            return `${label} ($${value.toFixed(0)})`;
+          }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+}
 
 // ---------- Month close & clear actions ----------
 
@@ -188,6 +236,7 @@ function initBudgetGraphs() {
   if (clearBtn) clearBtn.addEventListener('click', clearAllTransactionsNoSave);
 
   renderOverBudget();
+  renderPieChart();
 }
 
 document.addEventListener('DOMContentLoaded', initBudgetGraphs);

@@ -175,10 +175,23 @@
       <div id="overBudgetContainer" class="graph-list">
         <!-- rows injected by JS -->
       </div>
+      <hr style="margin: 2rem 0;" />
+
+<h2>Spending breakdown by category</h2>
+<p class="small">
+  All expenses for the current month (positive amounts only).
+</p>
+
+<canvas id="pieChart" width="400" height="400"></canvas>
+
     </section>
   </main>
 
   <script src="state.js"></script>
   <script src="budget-graphs.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+
 </body>
 </html>

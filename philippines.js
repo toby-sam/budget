@@ -1,4 +1,4 @@
-// philippines.js – using shared state.js only
+// philippines.js – complete corrected version using shared state.js only
 
 let stateP = State.load();   // unified global state
 
@@ -86,7 +86,7 @@ function exportPhilippinesCsv() {
 
   stateP.philippines.forEach(r => {
     const date = r.date || "";
-    const desc = (r.reason || "").replace(/"/g, '""'); // escape quotes
+    const desc = (r.reason || "").replace(/"/g, '""');
     const cat = r.category || "";
     const php = r.amountPhp ?? "";
     const aud = r.amountAud ?? r.amount ?? "";
@@ -96,8 +96,8 @@ function exportPhilippinesCsv() {
 
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
+
   a.href = url;
   a.download = "philippines_export.csv";
   a.click();
@@ -160,7 +160,6 @@ function renderRows() {
 
   const rows = stateP.philippines || [];
 
-  // Newest first
   const sorted = [...rows].sort((a, b) => {
     const da = new Date(a.date);
     const db = new Date(b.date);
@@ -176,7 +175,7 @@ function renderRows() {
     tdDate.textContent = row.date || '';
     tr.appendChild(tdDate);
 
-    // Description
+    // Description input
     const tdDesc = document.createElement('td');
     const inputDesc = document.createElement('input');
     inputDesc.type = 'text';
@@ -211,7 +210,7 @@ function renderRows() {
     tdCat.appendChild(sel);
     tr.appendChild(tdCat);
 
-    // PHP input (editable)
+    // PHP editable
     const tdPhp = document.createElement('td');
     tdPhp.className = 'amount';
     const inputPhp = document.createElement('input');
@@ -234,14 +233,13 @@ function renderRows() {
     tdPhp.appendChild(inputPhp);
     tr.appendChild(tdPhp);
 
-    // AUD (computed)
+    // AUD computed
     const tdAud = document.createElement('td');
+    tdAud.textContent = formatAUD(row.amountAud ?? 0);
     tdAud.className = 'amount';
-    const audVal = row.amountAud ?? row.amount ?? 0;
-    tdAud.textContent = formatAUD(audVal);
     tr.appendChild(tdAud);
 
-    // Delete
+    // Delete button
     const tdDel = document.createElement('td');
     const btn = document.createElement('button');
     btn.textContent = '✕';
@@ -294,7 +292,7 @@ function renderSummary() {
 }
 
 /* ------------------------------
-   CSV Import
+   CSV Import – FIXED FOR BDO FORMAT
 ------------------------------ */
 
 function parsePhilippinesCsv(text, rate) {
@@ -304,15 +302,19 @@ function parsePhilippinesCsv(text, rate) {
   lines.forEach((line, idx) => {
     const cols = splitCsvLine(line);
     if (!cols.length) return;
-    if (idx === 0) return; // header
+    if (idx === 0) return;
 
-    const amountStr = cols[4] || '';
-    const cd = (cols[5] || '').toLowerCase();
-    const bookDate = cols[6] || '';
-    const desc = cols[12] || 'PH transaction';
+    // BDO correct column mapping:
+    const amountStr = cols[2] || '';         // Amount (PHP)
+    const cd = (cols[3] || '').toLowerCase(); // Debit/Credit
+    const bookDate = cols[4] || '';          // Book date
+    const desc = cols[11] || 'PH transaction';
 
     let phpAmount = parseMoney(amountStr);
-    phpAmount = cd === 'debit' ? -Math.abs(phpAmount) : Math.abs(phpAmount);
+
+    // Debit = money OUT → negative
+    if (cd === 'debit') phpAmount = -Math.abs(phpAmount);
+    else phpAmount = Math.abs(phpAmount);
 
     const aud = phpAmount * rate;
 
@@ -342,7 +344,7 @@ function importPhilippinesCsv() {
   reader.onload = e => {
     const newRows = parsePhilippinesCsv(e.target.result, rate);
     if (!newRows.length) {
-      alert('No transactions detected.');
+      alert('No transactions detected — check column positions.');
       return;
     }
 
@@ -350,6 +352,7 @@ function importPhilippinesCsv() {
     State.save(stateP);
     renderRows();
   };
+
   reader.readAsText(file);
 }
 
@@ -394,7 +397,8 @@ function init() {
     stateP.philippines.push({
       date,
       reason: desc,
-      amount: amt,
+      amountPhp: amt,
+      amountAud: amt * stateP.phpAudRate,
       category: cat
     });
 
