@@ -27,17 +27,15 @@ function formatCurrency(v) {
 }
 
 // =========================
-/*  Actuals by Category (AU only)
-    Income category is excluded from spend
-*/
+// Actuals by Category
 // =========================
 function computeActualsByCategory() {
   const map = {};
   (stateB.ledger || []).forEach(row => {
     if (!row || typeof row.amount !== 'number') return;
 
-    const catLower = (row.category || '').toLowerCase();
-    if (catLower === 'income') return;
+    const cat = (row.category || '').toLowerCase();
+    if (cat === 'income') return;
 
     const key = row.category || "Uncategorised";
     if (!map[key]) map[key] = 0;
@@ -47,10 +45,7 @@ function computeActualsByCategory() {
 }
 
 // =========================
-/*  Ledger Total (AUD only, AU spend)
-    Only counts negative amounts (expenses),
-    and ignores category "income".
-*/
+// Ledger Total (AUD only)
 // =========================
 function computeLedgerTotals() {
   let ledgerTotal = 0;
@@ -75,78 +70,31 @@ function computeLedgerTotals() {
 }
 
 // =========================
-/*  Philippines Metrics (from global state)
-    - Reads PH transactions for income/expenses
-    - Reads AU ledger for transfers (category "Philippines")
-    - Writes PH Net Spend to summaryPhilippines
-*/
+// Philippines Total (AUD)
 // =========================
-function computePhilippinesMetrics() {
-  const phRows = stateB.philippines || [];
-
-  let phIncome = 0;   // positive AUD from PH ledger
-  let phExpenses = 0; // positive total of all negative AUD (spend)
-
-  phRows.forEach(tx => {
-    if (!tx) return;
-
-    let amt = 0;
-    if (typeof tx.amountAud === 'number') {
-      amt = tx.amountAud;
-    } else if (typeof tx.amount === 'number') {
-      amt = tx.amount;
-    } else {
-      amt = parseFloat(tx.amountAud ?? tx.amount ?? 0) || 0;
-    }
-
-    if (amt > 0) phIncome += amt;
-    else if (amt < 0) phExpenses += Math.abs(amt);
-  });
-
-  // Transfers from AU (ledger entries with category "Philippines")
-  let phTransfers = 0;
-  (stateB.ledger || []).forEach(tx => {
-    if (!tx) return;
-    const cat = (tx.category || '').toLowerCase();
-    if (cat === 'philippines') {
-      const amt = typeof tx.amount === "number"
-        ? tx.amount
-        : parseFloat(tx.amount) || 0;
-      phTransfers += Math.abs(amt);
-    }
-  });
-
-  const phNetResult = phIncome - phExpenses;              // PH profit/loss
-  const phRemaining = phTransfers + phNetResult;          // Money left in PH
-  const phNetSpend = phTransfers - phIncome;              // Cost to AU (can be negative)
+function computePhilippinesTotals() {
+  const phTotal = Math.abs(
+    (stateB.philippines || []).reduce(
+      (sum, tx) => sum + (tx.amountAud || tx.amount || 0),
+      0
+    )
+  );
 
   const el = document.getElementById("summaryPhilippines");
-  if (el) el.textContent = formatCurrency(phNetSpend);
+  if (el) el.textContent = formatCurrency(phTotal);
 
-  return {
-    transfers: phTransfers,
-    income: phIncome,
-    expenses: phExpenses,
-    netResult: phNetResult,
-    remaining: phRemaining,
-    netSpend: phNetSpend
-  };
+  return phTotal;
 }
 
 // =========================
 // Overall Totals
 // =========================
 function computeTotals() {
-  const ledgerAUD = computeLedgerTotals();          // AU-only spend
-  const ph = computePhilippinesMetrics();           // PH transfers + income/expenses
+  const ledgerAUD = computeLedgerTotals();
+  const philAUD = computePhilippinesTotals();
 
+  const totalSpend = ledgerAUD + philAUD;
   const income = stateB.income || 0;
-
-  // For "Total Spend" we treat PH Net Spend as a cost.
-  // If PH is net positive (more income than transfers), spend contribution is 0.
-  const phCost = ph.netSpend > 0 ? ph.netSpend : 0;
-
-  const totalSpend = ledgerAUD + phCost;
   const profitLoss = income - totalSpend;
 
   elsB.summaryTotalSpend.textContent = formatCurrency(totalSpend);

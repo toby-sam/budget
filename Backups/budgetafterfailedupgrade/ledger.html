@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Budget – Ledger</title>
+  <link rel="stylesheet" href="budget.css" />
+</head>
+<body>
+  <header class="navbar">
+    <h1>Toby Budget – Ledger</h1>
+    <div class="nav-links">
+      <a href="ledger.html" class="active">Ledger</a>
+      <a href="budget.html">Budget</a>
+      <a href="income.html">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html">Investments</a> 
+      <a href="budget-graphs.html" class="active">Graphs</a>
+      
+
+    </div>
+  </header>
+
+  <!-- Loader overlay for CSV import -->
+  <div id="loader" class="loader hidden">
+    <div class="loader-inner">
+      <div class="spinner" aria-hidden="true"></div>
+      <div>Importing…</div>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Monthly Income / Allocations -->
+    <section class="card">
+      <h2>Monthly Income &amp; Allocations</h2>
+      <div class="row">
+        <div>
+          <label for="income">Monthly Income ($)</label>
+          <input id="income" type="number" step="0.01" />
+          <div class="small">
+            This value is shared with the Budget page (from Income / “Income”
+            transactions).
+          </div>
+        </div>
+        <div>
+          <label for="housePct">House Fund %</label>
+          <input id="housePct" type="number" step="1" min="0" max="100" />
+          <div class="small" id="housePctLabel"></div>
+        </div>
+        <div>
+          <label for="samalPct">Samal Fund %</label>
+          <input id="samalPct" type="number" step="1" min="0" max="100" />
+          <div class="small" id="samalPctLabel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Import Transactions -->
+    <section class="card">
+      <h2>Import Transactions</h2>
+      <div class="small">
+        Choose a CSV export from your bank. Columns will be mapped to
+        Date / Description / Amount.
+      </div>
+      <div class="row" style="margin-top: 0.75rem; align-items: flex-end;">
+        <div style="flex: 1 1 260px;">
+          <label for="csvFile">Bank CSV File</label>
+          <input type="file" id="csvFile" accept=".csv" />
+        </div>
+        <div>
+          <button id="importBtn" class="primary">Import CSV</button>
+        </div>  
+        <div>
+          <button id="exportBtn" class="secondary">Output CSV</button>
+        </div>
+
+        <div>
+          <button id="clearLedgerBtn" class="secondary">Clear Ledger</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manual Transaction -->
+    <section class="card">
+      <h2>Add Manual Transaction</h2>
+      <div class="row" style="align-items: flex-end;">
+        <div>
+          <label for="manualDate">Date</label>
+          <input type="date" id="manualDate" />
+        </div>
+        <div style="flex: 1 1 260px;">
+          <label for="manualDescription">Description</label>
+          <input
+            type="text"
+            id="manualDescription"
+            placeholder="e.g. Cash payment, manual adjustment"
+          />
+        </div>
+        <div>
+          <label for="manualAmount">Amount ($)</label>
+          <input
+            type="number"
+            id="manualAmount"
+            step="0.01"
+            placeholder="-50 for expense, 100 for income"
+          />
+        </div>
+        <div>
+          <label for="manualCategory">Category</label>
+          <select id="manualCategory"></select>
+        </div>
+        <div>
+          <button id="addManualBtn" class="primary">Add Transaction</button>
+        </div>
+      </div>
+      <div class="small" style="margin-top: 0.4rem;">
+        Use negative amounts for expenses (money out) and positive for
+        income or refunds.
+      </div>
+    </section>
+
+    <!-- Ledger -->
+    <section class="card">
+      <h2>Ledger</h2>
+      <div class="small">
+        Scroll to see all rows. This ledger is shared with the Budget and
+        Income pages via local storage.
+      </div>
+
+      <div class="ledger-search-row" style="margin-top: 0.75rem;">
+        <input
+          type="text"
+          id="ledgerSearch"
+          placeholder="Search description or category…"
+        />
+      </div>
+
+      <div class="table-wrapper">
+        <table id="ledger">
+          <thead>
+            <tr>
+              <th style="width: 110px;">Date</th>
+              <th>Description</th>
+              <th style="width: 130px;">Category</th>
+              <th class="amount" style="width: 110px;">Amount ($)</th>
+              <th style="width: 40px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- rows via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="state.js"></script>
+  <script src="ledger.js"></script>
+</body>
+</html>

@@ -119,9 +119,6 @@ function renderOverBudget() {
 let pieChartInstance = null;
 
 function renderPieChart() {
-  // Always reload latest state so graphs match cleared month
-  state = State.load();
-
   const ctx = document.getElementById("pieChart");
   if (!ctx) return;
 
@@ -196,7 +193,6 @@ function closeMonthAndSave() {
     state.ledger = [];
     state.philippines = [];
     State.save(state);
-    state = State.load()
 
     // Re-render with cleared data.
     renderOverBudget();
@@ -219,8 +215,7 @@ function clearAllTransactionsNoSave() {
   state.ledger = [];
   state.philippines = [];
   State.save(state);
-  state = State.load()
-  renderPieChart()
+
   renderOverBudget();
   alert('All ledger and Philippines transactions have been cleared.');
 }

@@ -1,128 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
+  
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Budget – Philippines</title>
-  <link rel="stylesheet" href="budget.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philippines Ledger</title>
+
+    <!-- LOAD SHARED CSS HERE -->
+    <link rel="stylesheet" href="budget.css">
 </head>
+
 <body>
+
 <header class="navbar">
-  <h1>Toby Budget – Philippines</h1>
-  <div class="nav-links">
-    <a href="ledger.html">Ledger</a>
-    <a href="budget.html">Budget</a>
-    <a href="income.html">Income</a>
-    <a href="philippines.html" class="active">Philippines</a>
-    <a href="debts.html">Debts</a>
-    <a href="investments.html">Investments</a>
-      <a href="budget-graphs.html" class="active">Graphs</a>
-  </div>
+    <h1>Toby Budget – Philippines</h1>
+    <div class="nav-links">
+        <a href="ledger.html">Ledger</a>
+        <a href="budget.html">Budget</a>
+        <a href="income.html">Income</a>
+        <a href="philippines.html" class="active">Philippines</a>
+        <a href="debts.html">Debts</a>
+        <a href="investments.html">Investments</a>
+        <a href="budget-graphs.html">Graphs</a>
+    </div>
 </header>
 
-<main class="container">
+<div class="page">
 
-  <!-- Add Manual PH Entry -->
-  <section class="card">
-    <h2>Add Philippines Cost (manual)</h2>
-    <p class="small">
-      Use this for one-off adjustments already in AUD.<br>
-      CSV imports below will convert PHP → AUD automatically.
-    </p>
 
-    <div class="row">
-      <div>
-        <label>Date</label>
-        <input type="text" id="phDate" placeholder="dd/mm/yyyy">
-      </div>
 
-      <div style="flex:1;">
-        <label>Description</label>
-        <input type="text" id="phDesc" placeholder="e.g. Cash withdrawal, rent">
-      </div>
+<div class="page">
 
-      <div>
-        <label>Amount ($ AUD)</label>
-        <input type="number" id="phAmount" step="0.01">
-      </div>
+    <!-- ========================= -->
+    <!--  MANUAL PH COST ENTRY     -->
+    <!-- ========================= -->
+    <section class="card">
+        <h2>Add Philippines Cost (manual)</h2>
+        <p>Use this for one-off adjustments already in AUD. CSV imports below will convert PHP → AUD automatically.</p>
 
-      <div>
-        <label>Category</label>
-        <select id="phCategory"></select>
-      </div>
+        <div class="row" style="gap:10px;">
+            <input id="phDate" type="date">
+            <input id="phDesc" type="text" placeholder="e.g. Cash withdrawal, rent">
+            <input id="phAmount" type="number" step="0.01" placeholder="Amount ($ AUD)">
+            <select id="phCategory"></select>
+            <button id="addPhBtn" class="primary">Add</button>
+        </div>
 
-      <button id="addPhBtn" class="primary">Add</button>
-    </div>
+        <div class="row" style="margin-top:10px; gap:10px;">
+            <input id="newPhCategory" type="text" placeholder="Add new category…">
+            <button id="addPhCategoryBtn" class="secondary">Add Category</button>
+        </div>
+    </section>
 
-    <div style="margin-top:0.5rem;">
-      <label>New Category</label>
-      <input type="text" id="newPhCategory" placeholder="Add new category…">
-      <button id="addPhCategoryBtn" class="secondary">Add Category</button>
-    </div>
-  </section>
-
-  <!-- Summary -->
-  <section class="card">
+    <!-- ========================= -->
+    <!--  SUMMARY                  -->
+    <!-- ========================= -->
+ <!-- ===================== -->
+<!-- Philippines Summary -->
+<!-- ===================== -->
+<section class="card">
     <h2>Philippines Summary</h2>
 
-    <div class="row">
-      <div>From Ledger (category “Philippines”): <strong id="phLedgerTotal">$0.00</strong></div>
-      <div>From this page (detail rows): <strong id="phDetailTotal">$0.00</strong></div>
-      <div>Difference: <strong id="phDifference">$0.00</strong></div>
-      <div class="row" style="margin-top:1rem;">
-      <div>Total PHP: <strong id="phTotalPHP">₱0.00</strong></div>
-      <div>Total AUD: <strong id="phTotalAUD">$0.00</strong></div>
+    <div class="summary-grid">
+
+        <div class="summary-item">
+            <div class="summary-label">Money Sent from Australia:</div>
+            <div class="summary-value" id="phMoneySent">$0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">Money Earned in PH:</div>
+            <div class="summary-value" id="phMoneyEarned">$0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">Money Spent in PH:</div>
+            <div class="summary-value" id="phMoneySpent">$0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">PH Net (Profit / Loss):</div>
+            <div class="summary-value" id="phNet">$0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">Money Left in PH:</div>
+            <div class="summary-value" id="phLeft">$0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">Total PHP:</div>
+            <div class="summary-value" id="phTotalPHP">₱0.00</div>
+        </div>
+
+        <div class="summary-item">
+            <div class="summary-label">Total AUD:</div>
+            <div class="summary-value" id="phTotalAUD">$0.00</div>
+        </div>
+
     </div>
 
-
-    <div style="margin-top:0.75rem;">
-      <label>PHP → AUD rate</label>
-      <input id="phRateInput" type="number" step="0.0001">
-      <span id="phRateDisplay" style="margin-left:1rem;"></span>
-      <div id="phRateNote" class="small"></div>
+    <!-- Exchange Rate -->
+    <div style="margin-top: 1rem;">
+        <label>PHP → AUD rate</label>
+        <div class="row" style="align-items:center; gap:1rem;">
+            <input id="phRateInput" type="number" step="0.0001" style="width:100px;">
+            <span id="phRateDisplay"></span>
+        </div>
+        <div id="phRateNote" class="small"></div>
     </div>
-  </section>
-
-  <!-- CSV Import -->
-  <section class="card">
-    <h2>Import Philippines Bank CSV (PHP → AUD)</h2>
-
-    <div class="row">
-      <div>
-        <label>Philippines CSV file</label>
-        <input type="file" id="phCsvFile" accept=".csv">
-      </div>
-
-      <button id="importPhCsvBtn" class="primary">Import PH CSV</button>
-    </div>
-    <button id="exportPhCsvBtn" class="secondary" style="margin-left:10px;">
-  Output PH CSV
-</button>
-  </section>
+</section>
 
 
-  
-  <!-- Table -->
-  <section class="card">
-    <h2>Philippines Detailed Costs (AUD)</h2>
-    <div class="table-wrapper" style="max-height:70vh;">
-      <table id="philippinesTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th class="ph-amount-php amount">Amount (PHP)</th>
-            <th class="ph-amount-aud amount">Amount (AUD)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="phTableBody"></tbody>
-      </table>
-    </div>
-  </section>
+    <!-- ========================= -->
+    <!--  CSV IMPORT / EXPORT      -->
+    <!-- ========================= -->
+    <section class="card">
+        <h2>Import Philippines Bank CSV (PHP → AUD)</h2>
 
-</main>
+        <div class="row" style="margin-bottom:10px; gap:10px;">
+            <div>
+                <label>Philippines CSV file</label>
+                <input type="file" id="phCsvFile" accept=".csv">
+            </div>
+
+            <button id="importPhCsvBtn" class="primary">Import PH CSV</button>
+
+            <button id="undoPhImportBtn" class="secondary">Undo Last Import</button>
+
+            <button id="exportPhCsvBtn" class="secondary">Output PH CSV</button>
+            <button id="undoPhDeleteBtn" class="secondary">Undo Delete</button>
+
+        </div>
+    </section>
+
+    <!-- ========================= -->
+    <!--  TABLE                    -->
+    <!-- ========================= -->
+    <section class="card">
+        <h2>Philippines Detailed Costs (AUD)</h2>
+
+        <table class="full-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Amount (PHP)</th>
+                    <th>Amount (AUD)</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+
+            <tbody id="phTableBody"></tbody>
+        </table>
+    </section>
+
+</div>
+
 <script src="state.js"></script>
 <script src="philippines.js"></script>
+
 </body>
 </html>

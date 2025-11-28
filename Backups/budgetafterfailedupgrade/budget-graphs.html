@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Budget – Graphs</title>
+  <link rel="stylesheet" href="budget.css" />
+  <style>
+    /* Page-specific styles for the over-budget graph */
+
+    .graphs-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .graph-legend {
+      font-size: 0.8rem;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .legend-swatch {
+      width: 18px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .legend-budget {
+      background: #e5e7eb;
+    }
+
+    .legend-actual {
+      background: #2563eb;
+    }
+
+    .graphs-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .graphs-actions button {
+      font-size: 0.8rem;
+      padding-inline: 0.9rem;
+    }
+
+    .graph-list {
+      margin-top: 0.75rem;
+    }
+
+    .graph-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .graph-label {
+      width: 160px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .graph-amounts {
+      width: 200px;
+      font-size: 0.8rem;
+      color: #374151;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .graph-bars {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .graph-bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      overflow: hidden;
+    }
+
+    .graph-bar-budget,
+    .graph-bar-actual {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.2s ease-out;
+    }
+
+    .graph-bar-budget {
+      background: #e5e7eb;
+    }
+
+    .graph-bar-actual {
+      background: #2563eb;
+    }
+
+    .graph-diff {
+      width: 120px;
+      font-size: 0.8rem;
+      text-align: right;
+      color: #b91c1c;
+      white-space: nowrap;
+    }
+
+    .graph-empty {
+      font-size: 0.9rem;
+      color: #16a34a;
+      margin-top: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <h1>Toby Budget – Graphs</h1>
+    <div class="nav-links">
+      <a href="ledger.html">Ledger</a>
+      <a href="budget.html">Budget</a>
+      <a href="income.html">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html">Investments</a>
+      <a href="budget-graphs.html" class="active">Budget graphs</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="graphs-header-row">
+        <div>
+          <h2>Over-budget categories</h2>
+          <p class="small">
+            Shows only categories where actual spending this month is higher than the monthly budget.
+          </p>
+        </div>
+
+        <div class="graphs-actions">
+          <button class="secondary" id="clearAllTxBtn">
+            Clear all transactions (no save)
+          </button>
+          <button class="primary" id="closeMonthBtn">
+            Close month &amp; save JSON
+          </button>
+        </div>
+      </div>
+
+      <div class="graph-legend">
+        <span class="legend-pill">
+          <span class="legend-swatch legend-budget"></span>
+          Budget
+        </span>
+        <span class="legend-pill">
+          <span class="legend-swatch legend-actual"></span>
+          Actual spend
+        </span>
+      </div>
+
+      <div id="overBudgetContainer" class="graph-list">
+        <!-- rows injected by JS -->
+      </div>
+      <hr style="margin: 2rem 0;" />
+
+<h2>Spending breakdown by category</h2>
+<p class="small">
+  All expenses for the current month (positive amounts only).
+</p>
+
+<canvas id="pieChart" width="400" height="400"></canvas>
+
+    </section>
+  </main>
+
+  <script src="state.js"></script>
+  <script src="budget-graphs.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+
+</body>
+</html>

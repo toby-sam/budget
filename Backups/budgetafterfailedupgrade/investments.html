@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Budget – Investments</title>
+  <link rel="stylesheet" href="budget.css">
+</head>
+<body>
+  <header class="navbar">
+    <h1>Toby Budget – Investments</h1>
+    <div class="nav-links">
+      <a href="ledger.html">Ledger</a>
+      <a href="budget.html">Budget</a>
+      <a href="income.html">Income</a>
+      <a href="philippines.html">Philippines</a>
+      <a href="debts.html">Debts</a>
+      <a href="investments.html" class="active">Investments</a>
+      <a href="budget-graphs.html" class="active">Graphs</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Add investment -->
+    <section class="card">
+      <h2>Add Investment</h2>
+      <p class="small">
+        Track your positions and their current value here.
+      </p>
+      <div class="row" style="align-items:flex-end;">
+        <div>
+          <label for="invDate">Date</label>
+          <input type="date" id="invDate">
+        </div>
+        <div>
+          <label for="invName">Name of investment</label>
+          <input type="text" id="invName" placeholder="e.g. JiveScribe, RXPX, ETF">
+        </div>
+        <div>
+          <label for="invDesc">Description</label>
+          <input type="text" id="invDesc" placeholder="e.g. Shares, property, startup stake">
+        </div>
+        <div>
+          <label for="invValue">Current value ($)</label>
+          <input type="number" id="invValue" step="0.01">
+        </div>
+        <div>
+          <button class="primary" id="addInvBtn" style="margin-top:1.4rem;">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section class="card">
+      <h2>Investments</h2>
+      <div class="table-wrapper" style="max-height:70vh;">
+        <table id="investmentsTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th class="amount">Current value ($)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="investmentsTableBody">
+            <!-- rows from JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+  <script src="state.js"></script>
+  <script src="investments.js"></script>
+</body>
+</html>
