@@ -213,7 +213,7 @@ function renderCategories() {
       const val = parseFloat(budgetInput.value) || 0;
       stateB.categories[idx].budgetMonthly = val;
       State.save(stateB);
-      renderCategories();
+      //renderCategories();
       renderSummary();
     });
 
