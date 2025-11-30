@@ -38,6 +38,33 @@ function computeAuLedgerTotal() {
     return state.ledger.reduce((sum, entry) => sum + (entry.amount || 0), 0);
 }
 
+// AU Ledger Cost (IGNORE income)
+function computeAuCost() {
+    return state.ledger.reduce((sum, entry) => {
+        const amt = entry.amount || 0;
+
+        // If it's income → ignore
+        if (entry.category && entry.category.toLowerCase() === "income") {
+            return sum;
+        }
+
+        // Otherwise treat as cost (always positive)
+        return sum + Math.abs(amt);
+    }, 0);
+}
+
+
+// PH Ledger Cost in AUD
+function computePhCostAud() {
+    return state.philippines.reduce((sum, tx) => {
+        const aud = tx.amountAud || 0;
+
+        // Treat ALL PH rows as costs (Option A)
+        return sum + Math.abs(aud);
+    }, 0);
+}
+
+
 // ------------------------------
 // PH Spend (PHP + AUD)
 // ------------------------------
@@ -97,8 +124,16 @@ function computeSummary() {
 
     const income = state.income || 0;
 
-    // AU spend
+
+   // AU spend (full ledger)
     const auLedger = computeAuLedgerTotal();
+
+    // AU cost only (no income)
+    const auCost = computeAuCost();
+
+    // PH cost only (AUD)
+    const phCostAud = computePhCostAud();
+
 
     // PH Spend
     const phSpendPhp = computePhSpendPhp();
@@ -113,7 +148,8 @@ function computeSummary() {
     const combinedBudgetAud = auBudgetAud + phBudgetAud;
 
     // Overall Spend AUD
-    const totalSpendAud = auLedger + phSpendAud;
+    const totalSpendAud = auCost + phCostAud;
+
 
     // Profit/Loss
     const profitLossAud = computeProfitLoss(income, totalSpendAud);
@@ -124,6 +160,13 @@ function computeSummary() {
     if (els.summaryIncome) els.summaryIncome.textContent = formatAud(income);
     if (els.summaryHouse) els.summaryHouse.textContent = state.housePct + "%";
     if (els.summarySamal) els.summarySamal.textContent = state.samalPct + "%";
+    // AU Cost
+    const elAuCost = document.getElementById("summaryAuCost");
+    if (elAuCost) elAuCost.textContent = formatAud(auCost);
+
+    // PH Cost (AUD)
+    const elPhCost = document.getElementById("summaryPhCost");
+    if (elPhCost) elPhCost.textContent = formatAud(phCostAud);
 
     if (els.summaryTotalSpend) els.summaryTotalSpend.textContent = formatAud(totalSpendAud);
     if (els.summaryProfitLoss) els.summaryProfitLoss.textContent = formatAud(profitLossAud);
@@ -137,8 +180,8 @@ function computeSummary() {
     // Combined budget (AUD)
     if (els.summaryCombinedBudget) els.summaryCombinedBudget.textContent = formatAud(combinedBudgetAud);
 
-    // AU ledger only
-    if (els.summaryLedger) els.summaryLedger.textContent = formatAud(auLedger);
+    // summaryledger 
+    if (els.summaryLedger) els.summaryLedger.textContent = formatAud(totalSpendAud);
 
     // PH Net spend (AUD)
     if (els.summaryPhilippines) els.summaryPhilippines.textContent = formatAud(phSpendAud);
