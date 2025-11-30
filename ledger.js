@@ -30,7 +30,7 @@ function parseDate(str) {
 }
 
 // --------------------------------------------------------
-// 1. Load category dropdown (fixes empty dropdown bug)
+// 1. Load category dropdown (for manual entry section)
 // --------------------------------------------------------
 
 function loadCategoryDropdown() {
@@ -54,20 +54,53 @@ function loadCategoryDropdown() {
 }
 
 // --------------------------------------------------------
-// 2. Render Ledger Table
+// 2. Render Ledger Table (with editable category dropdowns)
 // --------------------------------------------------------
 
 function renderLedger() {
     const tbody = document.querySelector("#ledger tbody");
     tbody.innerHTML = "";
 
+    const hasCategories = state.categories && state.categories.length > 0;
+
     state.ledger.forEach((tx, index) => {
         const tr = document.createElement("tr");
+
+        // Build the <option> list for this row
+        let optionsHtml = "";
+
+        if (hasCategories) {
+        // ⭐ SORT categories alphabetically before mapping
+            const sortedCats = [...state.categories].sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
+            optionsHtml += sortedCats
+            
+                .map(cat => `
+                    <option value="${cat.name}" ${tx.category === cat.name ? "selected" : ""}>
+                        ${cat.name}
+                    </option>
+                `)
+                .join("");
+
+            // Extra "Unassigned" option
+            const unassigned = !tx.category;
+            optionsHtml += `
+                <option value="" ${unassigned ? "selected" : ""}>Unassigned</option>
+            `;
+        } else {
+            // No categories defined yet
+            optionsHtml += `<option value="">No categories yet</option>`;
+        }
 
         tr.innerHTML = `
             <td>${tx.date || ""}</td>
             <td>${tx.description || ""}</td>
-            <td>${tx.category || ""}</td>
+            <td>
+                <select class="ledger-category" data-index="${index}">
+                    ${optionsHtml}
+                </select>
+            </td>
             <td class="amount">${formatAud(tx.amount || 0)}</td>
             <td><button class="delete-btn" data-index="${index}">✕</button></td>
         `;
@@ -75,12 +108,23 @@ function renderLedger() {
         tbody.appendChild(tr);
     });
 
+    // Delete handlers
     document.querySelectorAll(".delete-btn").forEach(btn => {
         btn.onclick = (e) => {
             const idx = Number(e.target.dataset.index);
             state.ledger.splice(idx, 1);
             State.save(state);
             renderLedger();
+        };
+    });
+
+    // Category change handlers
+    document.querySelectorAll(".ledger-category").forEach(sel => {
+        sel.onchange = (e) => {
+            const idx = Number(e.target.dataset.index);
+            state.ledger[idx].category = e.target.value;
+            State.save(state);
+            // no need to re-render; the select already shows the new value
         };
     });
 }
@@ -169,7 +213,7 @@ function setupImport() {
                     date,
                     description: desc,
                     amount,
-                    category: ""
+                    category: "" // start as unassigned
                 });
             });
 
