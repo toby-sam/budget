@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewp
+    ort" content="width=device-width, initial-scale=1.0">
+    <title>Philippines Budget</title>
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="budget.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <h1>Toby Budget – Philippines Budget</h1>
+    <div class="nav-links">
+        <a href="ledger.html">Ledger</a>
+        <a href="budget.html">Budget</a>
+        <a href="income.html">Income</a>
+        <a href="philippines.html">Philippines</a>
+        <a href="ph-budget.html" class="active">PHBudget</a>
+        <a href="debts.html">Debts</a>
+        <a href="investments.html">Investments</a>
+        <a href="budget-graphs.html">Graphs</a>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- ========================= -->
+    <!-- Income & Summary          -->
+    <!-- ========================= -->
+    <section class="card">
+        <h2>Income & Summary</h2>
+
+        <div class="row summary-row">
+            <div>
+                <div class="small">Monthly Income (AUD)</div>
+                <div id="summaryIncome">$0.00</div>
+            </div>
+            <div>
+                <div class="small">House Allocation</div>
+                <div id="summaryHouse" class="badge"></div>
+            </div>
+            <div>
+                <div class="small">Samal Allocation</div>
+                <div id="summarySamal" class="badge"></div>
+            </div>
+            <div>
+                <div class="small">Total Spend</div>
+                <div id="summaryTotalSpend" class="badge"></div>
+            </div>
+            <div>
+                <div class="small">Profit / Loss</div>
+                <div id="summaryProfitLoss" class="badge"></div>
+            </div>
+            <div>
+                <div class="small">Total PH Budget</div>
+                <div id="summaryTotalBudget" class="badge">$0.00</div>
+            </div>
+            <div>
+                <div class="small">PH Ledger Total</div>
+                <div id="summaryLedger" class="badge">$0.00</div>
+            </div>
+            <div>
+                <div class="small">PH Net Spend</div>
+                <div id="summaryPhilippines" class="badge">$0.00</div>
+            </div>
+        </div>
+
+        <div class="backup-controls">
+            <button id="saveBackupBtn" class="secondary">Save Backup</button>
+            <input type="file" id="loadBackupInput" style="display:none;">
+            <button id="loadBackupBtn" class="secondary">Load Backup</button>
+            <button id="refreshBtn" class="secondary">Refresh</button>
+        </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- PH Categories             -->
+    <!-- ========================= -->
+    <section class="card">
+        <h2>Philippines Categories</h2>
+
+        <div class="row" style="align-items:flex-end; gap:15px;">
+            <div>
+                <label for="newCategoryName">New Category Name</label>
+                <input type="text" id="newCategoryName" placeholder="e.g. Nanay & Tatay">
+            </div>
+
+            <div>
+                <label for="newCategoryMonthly">Monthly Budget (PHP)</label>
+                <input type="number" id="newCategoryMonthly" step="0.01">
+            </div>
+
+            <button id="addCategoryBtn" class="primary">Add Category</button>
+        </div>
+
+        <div class="small" style="margin-top:0.5rem;">
+            These categories are used for PH transaction assignments.
+        </div>
+
+        <div class="table-wrapper" style="margin-top:0.75rem;">
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th class="amount">Budget (PHP)</th>
+                        <th class="amount">Actual (PHP)</th>
+                        <th class="amount">Difference</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- JS -->
+<script src="state.js"></script>
+<script src="ph-budget.js"></script>
+
+</body>
+</html>

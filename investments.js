@@ -16,14 +16,15 @@ const elsInv = {
 };
 
 function formatCurrency(v) {
-  if (isNaN(v)) return '$0.00';
-  return '$' + v.toFixed(2);
+  const n = Number(v);
+  if (isNaN(n)) return "$0.00";
+  return "$" + n.toFixed(2);
 }
 
 function parseMoney(str) {
-  if (typeof str === 'number') return str;
+  if (typeof str === "number") return str;
   if (!str) return 0;
-  const cleaned = String(str).replace(/[^0-9.-]/g, '');
+  const cleaned = String(str).replace(/[^0-9.-]/g, "");
   const n = parseFloat(cleaned);
   return isNaN(n) ? 0 : n;
 }
@@ -34,8 +35,9 @@ function parseMoney(str) {
 function renderInvestments() {
   const tbody = elsInv.tableBody;
   if (!tbody) return;
-  tbody.innerHTML = '';
+  tbody.innerHTML = "";
 
+  // Clone + sort newest → oldest
   const rows = [...state.investments];
   rows.sort((a, b) => {
     const da = a.date ? new Date(a.date).getTime() : 0;
@@ -44,32 +46,38 @@ function renderInvestments() {
   });
 
   rows.forEach(inv => {
-    const tr = document.createElement('tr');
+    const tr = document.createElement("tr");
 
-    const tdDate = document.createElement('td');
-    tdDate.textContent = inv.date || '';
+    // Date
+    const tdDate = document.createElement("td");
+    tdDate.textContent = inv.date || "";
     tr.appendChild(tdDate);
 
-    const tdName = document.createElement('td');
-    tdName.textContent = inv.name || '';
+    // Name
+    const tdName = document.createElement("td");
+    tdName.textContent = inv.name || "";
     tr.appendChild(tdName);
 
-    const tdDesc = document.createElement('td');
-    tdDesc.textContent = inv.description || '';
+    // Description
+    const tdDesc = document.createElement("td");
+    tdDesc.textContent = inv.description || "";
     tr.appendChild(tdDesc);
 
-    const tdVal = document.createElement('td');
-    tdVal.className = 'amount';
+    // Value (formatted)
+    const tdVal = document.createElement("td");
+    tdVal.className = "amount";
     tdVal.textContent = formatCurrency(parseMoney(inv.value));
     tr.appendChild(tdVal);
 
-    const tdActions = document.createElement('td');
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '✕';
-    delBtn.className = 'secondary';
-    delBtn.style.padding = '0.1rem 0.5rem';
+    // Delete button
+    const tdActions = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "✕";
+    delBtn.className = "secondary";
+    delBtn.style.padding = "0.1rem 0.5rem";
+
     delBtn.onclick = () => {
-      if (!confirm('Delete this investment?')) return;
+      if (!confirm("Delete this investment?")) return;
 
       const idx = state.investments.findIndex(x => x.id === inv.id);
       if (idx !== -1) {
@@ -78,6 +86,7 @@ function renderInvestments() {
         renderInvestments();
       }
     };
+
     tdActions.appendChild(delBtn);
     tr.appendChild(tdActions);
 
@@ -95,7 +104,7 @@ function addInvestment() {
   const value = parseMoney(elsInv.value.value);
 
   if (!name || !value) {
-    alert('Please enter a name and value.');
+    alert("Please enter a name and value.");
     return;
   }
 
@@ -109,8 +118,9 @@ function addInvestment() {
 
   State.save(state);
 
-  elsInv.desc.value = '';
-  elsInv.value.value = '';
+  // Reset input fields
+  elsInv.desc.value = "";
+  elsInv.value.value = "";
 
   renderInvestments();
 }
@@ -120,9 +130,10 @@ function addInvestment() {
 ----------------------------------------- */
 if (elsInv.addBtn) elsInv.addBtn.onclick = addInvestment;
 
+// Add with Enter key from value field
 if (elsInv.value) {
   elsInv.value.onkeydown = e => {
-    if (e.key === 'Enter') addInvestment();
+    if (e.key === "Enter") addInvestment();
   };
 }
 

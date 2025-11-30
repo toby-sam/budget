@@ -1,363 +1,290 @@
-// budget.js – clean version using state.js only
+// ====================================================================
+//  BUDGET.JS – FULL CLEAN REBUILD (AU + PH + Profit/Loss fixed)
+// ====================================================================
 
-let stateB = State.load();   // <-- single source of truth
+// ------------------------------
+// Load State
+// ------------------------------
+let state = State.load();
+if (!state.categories) state.categories = [];
+if (!state.ledger) state.ledger = [];
+if (!state.philippines) state.philippines = [];
+if (!state.phBudgetCategories) state.phBudgetCategories = [];
+if (!state.phpAudRate) state.phpAudRate = 0.0259;
 
-const elsB = {
-  summaryIncome: document.getElementById('summaryIncome'),
-  summaryHouse: document.getElementById('summaryHouse'),
-  summarySamal: document.getElementById('summarySamal'),
-  summaryTotalSpend: document.getElementById('summaryTotalSpend'),
-  summaryProfitLoss: document.getElementById('summaryProfitLoss'),
-  newCategoryName: document.getElementById('newCategoryName'),
-  newCategoryMonthly: document.getElementById('newCategoryMonthly'),
-  addCategoryBtn: document.getElementById('addCategoryBtn'),
-  catBody: document.querySelector('#categoriesTable tbody'),
-  saveBackupBtn: document.getElementById('saveBackupBtn'),
-  loadBackupBtn: document.getElementById('loadBackupBtn'),
-  loadBackupInput: document.getElementById('loadBackupInput')
-};
-
-// =========================
-// Currency Formatter (with commas)
-// =========================
-function formatCurrency(v) {
-  const n = Number(v);
-  if (isNaN(n)) return "$0.00";
-  return n.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
-}
-
-// =========================
-/*  Actuals by Category (AU only)
-    Income category is excluded from spend
-*/
-// =========================
-function computeActualsByCategory() {
-  const map = {};
-  (stateB.ledger || []).forEach(row => {
-    if (!row || typeof row.amount !== 'number') return;
-
-    const catLower = (row.category || '').toLowerCase();
-    if (catLower === 'income') return;
-
-    const key = row.category || "Uncategorised";
-    if (!map[key]) map[key] = 0;
-    map[key] += row.amount;
-  });
-  return map;
-}
-
-// =========================
-/*  Ledger Total (AUD only, AU spend)
-    Only counts negative amounts (expenses),
-    and ignores category "income".
-*/
-// =========================
-function computeLedgerTotals() {
-  let ledgerTotal = 0;
-
-  (stateB.ledger || []).forEach(tx => {
-    if (!tx) return;
-
-    const cat = (tx.category || '').toLowerCase();
-    if (cat === 'income') return;
-
-    const amt = typeof tx.amount === "number" ? tx.amount : parseFloat(tx.amount) || 0;
-
-    if (amt < 0) {
-      ledgerTotal += Math.abs(amt);   // -120 → +120
-    }
-  });
-
-  const el = document.getElementById("summaryLedger");
-  if (el) el.textContent = formatCurrency(ledgerTotal);
-
-  return ledgerTotal;
-}
-
-// =========================
-/*  Philippines Metrics (from global state)
-    - Reads PH transactions for income/expenses
-    - Reads AU ledger for transfers (category "Philippines")
-    - Writes PH Net Spend to summaryPhilippines
-*/
-// =========================
-function computePhilippinesMetrics() {
-  const phRows = stateB.philippines || [];
-
-  let phIncome = 0;   // positive AUD from PH ledger
-  let phExpenses = 0; // positive total of all negative AUD (spend)
-
-  phRows.forEach(tx => {
-    if (!tx) return;
-
-    let amt = 0;
-    if (typeof tx.amountAud === 'number') {
-      amt = tx.amountAud;
-    } else if (typeof tx.amount === 'number') {
-      amt = tx.amount;
-    } else {
-      amt = parseFloat(tx.amountAud ?? tx.amount ?? 0) || 0;
-    }
-
-    if (amt > 0) phIncome += amt;
-    else if (amt < 0) phExpenses += Math.abs(amt);
-  });
-
-  // Transfers from AU (ledger entries with category "Philippines")
-  let phTransfers = 0;
-  (stateB.ledger || []).forEach(tx => {
-    if (!tx) return;
-    const cat = (tx.category || '').toLowerCase();
-    if (cat === 'philippines') {
-      const amt = typeof tx.amount === "number"
-        ? tx.amount
-        : parseFloat(tx.amount) || 0;
-      phTransfers += Math.abs(amt);
-    }
-  });
-
-  const phNetResult = phIncome - phExpenses;              // PH profit/loss
-  const phRemaining = phTransfers + phNetResult;          // Money left in PH
-  const phNetSpend = phTransfers - phIncome;              // Cost to AU (can be negative)
-
-  const el = document.getElementById("summaryPhilippines");
-  if (el) el.textContent = formatCurrency(phNetSpend);
-
-  return {
-    transfers: phTransfers,
-    income: phIncome,
-    expenses: phExpenses,
-    netResult: phNetResult,
-    remaining: phRemaining,
-    netSpend: phNetSpend
-  };
-}
-
-// =========================
-// Overall Totals
-// =========================
-function computeTotals() {
-  const ledgerAUD = computeLedgerTotals();          // AU-only spend
-  const ph = computePhilippinesMetrics();           // PH transfers + income/expenses
-
-  const income = stateB.income || 0;
-
-  // For "Total Spend" we treat PH Net Spend as a cost.
-  // If PH is net positive (more income than transfers), spend contribution is 0.
-  const phCost = ph.netSpend > 0 ? ph.netSpend : 0;
-
-  const totalSpend = ledgerAUD + phCost;
-  const profitLoss = income - totalSpend;
-
-  elsB.summaryTotalSpend.textContent = formatCurrency(totalSpend);
-  elsB.summaryProfitLoss.textContent = formatCurrency(profitLoss);
-}
-
-// =========================
-// Summary Panel
-// =========================
-function renderSummary() {
-  const income = stateB.income || 0;
-  const houseAmt = income * (stateB.housePct / 100);
-  const samalAmt = income * (stateB.samalPct / 100);
-
-  elsB.summaryIncome.textContent = formatCurrency(income);
-  elsB.summaryHouse.textContent =
-    `${stateB.housePct}% (${formatCurrency(houseAmt)})`;
-  elsB.summarySamal.textContent =
-    `${stateB.samalPct}% (${formatCurrency(samalAmt)})`;
-
-  // Total Budget (sum of monthly budgets)
-  const totalBudget = (stateB.categories || [])
-    .reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
-
-  const el = document.getElementById("summaryTotalBudget");
-  if (el) el.textContent = formatCurrency(totalBudget);
-
-  computeTotals();
-}
-
-// =========================
-// Categories Rendering
-// =========================
-function renderCategories() {
-  const actuals = computeActualsByCategory();
-  elsB.catBody.innerHTML = '';
-
-  const sorted = [...stateB.categories].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-
-  sorted.forEach(cat => {
-    const idx = stateB.categories.findIndex(c => c.name === cat.name);
-    if (idx === -1) return;
-
-    const tr = document.createElement('tr');
-
-    // Name
-    const tdName = document.createElement('td');
-    tdName.textContent = cat.name;
-    tr.appendChild(tdName);
-
-    // Budget
-    const tdBudget = document.createElement('td');
-    tdBudget.className = 'amount';
-
-    const budgetInput = document.createElement('input');
-    budgetInput.type = 'number';
-    budgetInput.step = '0.01';
-    budgetInput.value = cat.budgetMonthly ?? 0;
-    budgetInput.style.width = '100px';
-
-    budgetInput.addEventListener('input', () => {
-      const val = parseFloat(budgetInput.value) || 0;
-      stateB.categories[idx].budgetMonthly = val;
-      State.save(stateB);
-      //renderCategories();
-      renderSummary();
+// ------------------------------
+// Format Helpers
+// ------------------------------
+function formatAud(n) {
+    return n.toLocaleString("en-AU", {
+        style: "currency",
+        currency: "AUD"
     });
+}
 
-    tdBudget.appendChild(budgetInput);
-    tr.appendChild(tdBudget);
+function formatPhp(n) {
+    return n.toLocaleString("en-PH", {
+        style: "currency",
+        currency: "PHP"
+    });
+}
 
-    // Actual
-    const rawActual = actuals[cat.name] || 0;
-    const actual = Math.abs(rawActual);
+// ------------------------------
+// AU Ledger Spend
+// ------------------------------
+function computeAuLedgerTotal() {
+    return state.ledger.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+}
 
-    const tdActual = document.createElement('td');
-    tdActual.className = 'amount';
-    tdActual.textContent = formatCurrency(actual);
-    tr.appendChild(tdActual);
+// ------------------------------
+// PH Spend in PHP and AUD
+// ------------------------------
+function computePhSpendPhp() {
+    return state.philippines.reduce((sum, tx) => {
+        return sum + (tx.amountPhp || 0);
+    }, 0);
+}
 
-    // Difference
-    const budgetVal = cat.budgetMonthly || 0;
-    const diff = budgetVal - actual;
+function computePhSpendAud() {
+    return computePhSpendPhp() * state.phpAudRate;
+}
 
-    const tdDiff = document.createElement('td');
-    tdDiff.className = 'amount';
-    tdDiff.textContent = formatCurrency(diff);
-    tr.appendChild(tdDiff);
+// ------------------------------
+// AU Budget Total
+// ------------------------------
+function computeAuBudgetTotal() {
+    return state.categories.reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
+}
 
-    // Status
-    const tdStatus = document.createElement('td');
-    if (cat.budgetMonthly == null) {
-      tdStatus.textContent = 'No budget';
-      tdStatus.className = 'status-neutral';
-    } else if (diff >= 0) {
-      tdStatus.textContent = 'Under budget';
-      tdStatus.className = 'status-positive';
-    } else {
-      tdStatus.textContent = 'Over budget';
-      tdStatus.className = 'status-negative';
-    }
-    tr.appendChild(tdStatus);
+// ------------------------------
+// PH Budget Total (PHP)
+// ------------------------------
+function computePhBudgetTotalPhp() {
+    return state.phBudgetCategories.reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
+}
 
-    // Delete
-    const tdActions = document.createElement('td');
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '✕';
-    delBtn.className = 'secondary';
+// ------------------------------
+// Profit / Loss Helper
+// ------------------------------
+function computeProfitLoss(incomeAud, spendAud) {
+    return incomeAud - spendAud;
+}
 
-    delBtn.onclick = () => {
-      if (!confirm(`Delete category "${cat.name}"?`)) return;
-
-      stateB.categories.splice(idx, 1);
-
-      (stateB.ledger || []).forEach(row => {
-        if (row.category === cat.name) row.category = null;
-      });
-
-      State.save(stateB);
-      renderCategories();
-      renderSummary();
+// ------------------------------
+// Render Summary (TOP BOXES)
+// ------------------------------
+function computeSummary() {
+    const els = {
+        summaryIncome: document.getElementById("summaryIncome"),
+        summaryHouse: document.getElementById("summaryHouse"),
+        summarySamal: document.getElementById("summarySamal"),
+        summaryTotalSpend: document.getElementById("summaryTotalSpend"),
+        summaryProfitLoss: document.getElementById("summaryProfitLoss"),
+        summaryTotalBudget: document.getElementById("summaryTotalBudget"),
+        summaryLedger: document.getElementById("summaryLedger"),
+        summaryPhilippines: document.getElementById("summaryPhilippines"),
     };
 
-    tdActions.appendChild(delBtn);
-    tr.appendChild(tdActions);
+    const income = state.income || 0;
 
-    elsB.catBody.appendChild(tr);
-  });
+    const auLedger = computeAuLedgerTotal();                   // AU spend
+    const phSpendAud = computePhSpendAud();                    // PH spend converted to AUD
+    const totalSpendAud = auLedger + phSpendAud;               // Combined spend
+    const profitLoss = computeProfitLoss(income, totalSpendAud);
+
+    // Render summary
+    els.summaryIncome.textContent = formatAud(income);
+    els.summaryHouse.textContent = state.housePct + "%";
+    els.summarySamal.textContent = state.samalPct + "%";
+
+    els.summaryTotalSpend.textContent = formatAud(totalSpendAud);
+    els.summaryProfitLoss.textContent = formatAud(profitLoss);
+
+    els.summaryTotalBudget.textContent = formatAud(computeAuBudgetTotal());
+
+    els.summaryLedger.textContent = formatAud(auLedger);
+
+    // PH Net Spend (AUD)
+    els.summaryPhilippines.textContent = formatAud(phSpendAud);
 }
 
-// =========================
-// Add Category
-// =========================
+// ====================================================================
+// CATEGORY TABLE (AU)
+// ====================================================================
+function computeActualsByCategory() {
+    const map = {};
+
+    state.ledger.forEach(entry => {
+        if (!entry.category) return;
+        if (!map[entry.category]) map[entry.category] = 0;
+        map[entry.category] += entry.amount || 0;
+    });
+
+    return map;
+}
+
+function renderCategories() {
+    const body = document.querySelector("#categoriesTable tbody");
+    body.innerHTML = "";
+
+    const actuals = computeActualsByCategory();
+
+    const sorted = [...state.categories].sort((a, b) =>
+        a.name.localeCompare(b.name)
+    );
+
+    sorted.forEach(cat => {
+        const idx = state.categories.findIndex(c => c.name === cat.name);
+        if (idx === -1) return;
+
+        const tr = document.createElement("tr");
+
+        // Name
+        const tdName = document.createElement("td");
+        tdName.textContent = cat.name;
+        tr.appendChild(tdName);
+
+        // Budget input
+        const tdBudget = document.createElement("td");
+        tdBudget.className = "amount";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.step = "0.01";
+        input.value = cat.budgetMonthly || 0;
+        input.style.width = "90px";
+
+        input.oninput = () => {
+            state.categories[idx].budgetMonthly = parseFloat(input.value) || 0;
+            State.save(state);
+        };
+
+        input.onblur = () => {
+            State.save(state);
+            renderCategories();
+            computeSummary();
+        };
+
+        tdBudget.appendChild(input);
+        tr.appendChild(tdBudget);
+
+        // Actual Spend
+        const actual = actuals[cat.name] || 0;
+        const tdActual = document.createElement("td");
+        tdActual.className = "amount";
+        tdActual.textContent = formatAud(actual);
+        tr.appendChild(tdActual);
+
+        // Difference
+        const diff = (cat.budgetMonthly || 0) - actual;
+        const tdDiff = document.createElement("td");
+        tdDiff.className = "amount";
+        tdDiff.textContent = formatAud(diff);
+        tr.appendChild(tdDiff);
+
+        // Status
+        const tdStatus = document.createElement("td");
+        tdStatus.textContent = diff >= 0 ? "Under Budget" : "Over Budget";
+        tdStatus.className = diff >= 0 ? "status-positive" : "status-negative";
+        tr.appendChild(tdStatus);
+
+        // Delete button
+        const tdDelete = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.textContent = "✕";
+        btn.className = "delete-btn";
+        btn.onclick = () => {
+            state.categories.splice(idx, 1);
+            State.save(state);
+            renderCategories();
+            computeSummary();
+        };
+        tdDelete.appendChild(btn);
+        tr.appendChild(tdDelete);
+
+        body.appendChild(tr);
+    });
+}
+
 function addCategory() {
-  const name = elsB.newCategoryName.value.trim();
-  const monthly = parseFloat(elsB.newCategoryMonthly.value) || 0;
+    const nameEl = document.getElementById("newCategoryName");
+    const budgetEl = document.getElementById("newCategoryMonthly");
 
-  if (!name) return alert('Please enter a category name.');
-  if (stateB.categories.some(c => c.name.toLowerCase() === name.toLowerCase()))
-    return alert('Category already exists.');
+    const name = nameEl.value.trim();
+    const budget = parseFloat(budgetEl.value) || 0;
 
-  stateB.categories.push({ name, budgetMonthly: monthly });
-  State.save(stateB);
+    if (!name) return alert("Enter a category name.");
 
-  elsB.newCategoryName.value = '';
-  elsB.newCategoryMonthly.value = '';
+    if (state.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        return alert("Category already exists.");
+    }
 
-  renderCategories();
-  renderSummary();
+    state.categories.push({
+        name,
+        budgetMonthly: budget
+    });
+
+    State.save(state);
+    nameEl.value = "";
+    budgetEl.value = "";
+
+    renderCategories();
+    computeSummary();
 }
 
-// =========================
-// Backup Save/Load
-// =========================
+// ====================================================================
+// BACKUP
+// ====================================================================
 function downloadBackup() {
-  const name = prompt("Enter a name for this backup file:");
-  if (!name) return;
+    const blob = new Blob([JSON.stringify(state, null, 2)], {
+        type: "application/json"
+    });
 
-  const safe = name.replace(/[^a-z0-9_\-]/gi, "_");
-  const blob = new Blob([JSON.stringify(stateB, null, 2)], {
-    type: "application/json"
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = safe + ".json";
-  a.click();
-  URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "budget-backup.json";
+    a.click();
 }
 
 function triggerLoadBackup() {
-  elsB.loadBackupInput.click();
+    document.getElementById("loadBackupInput").click();
 }
 
 function handleBackupFileChange(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const parsed = JSON.parse(ev.target.result);
-      stateB = parsed;
-      State.save(stateB);
-      renderSummary();
-      renderCategories();
-      alert("Backup loaded.");
-    } catch {
-      alert("Invalid backup file.");
-    }
-  };
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try {
+            state = JSON.parse(ev.target.result);
+            State.save(state);
+            renderCategories();
+            computeSummary();
+            alert("Backup restored.");
+        } catch {
+            alert("Invalid backup file.");
+        }
+    };
 
-  reader.readAsText(file);
+    reader.readAsText(file);
 }
 
-// =========================
-// Wiring
-// =========================
-elsB.addCategoryBtn.onclick = addCategory;
-elsB.saveBackupBtn.onclick = downloadBackup;
-elsB.loadBackupBtn.onclick = triggerLoadBackup;
-elsB.loadBackupInput.onchange = handleBackupFileChange;
+// ====================================================================
+// INIT
+// ====================================================================
+function init() {
+    computeSummary();
+    renderCategories();
 
-elsB.newCategoryName.onkeydown = e => (e.key === "Enter" ? addCategory() : null);
-elsB.newCategoryMonthly.onkeydown = e => (e.key === "Enter" ? addCategory() : null);
+    document.getElementById("addCategoryBtn").onclick = addCategory;
+    document.getElementById("saveBackupBtn").onclick = downloadBackup;
+    document.getElementById("loadBackupBtn").onclick = triggerLoadBackup;
+    document.getElementById("loadBackupInput").onchange = handleBackupFileChange;
+    document.getElementById("refreshBtn").onclick = () => {
+        computeSummary();
+        renderCategories();
+    };
+}
 
-// =========================
-// Initial Render
-// =========================
-renderSummary();
-renderCategories();
+document.addEventListener("DOMContentLoaded", init);

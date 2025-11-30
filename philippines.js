@@ -1,81 +1,61 @@
-// ===============================
-// philippines.js – FINAL VERSION
-// ===============================
+// =============================================
+// philippines.js – CLEAN, FINAL, NO-CATEGORY-CREATION
+// =============================================
 
-// Load shared global state
+// Load global state
 let stateP = State.load();
 let phDeleteHistory = [];
 
-// Ensure required structures exist
+// Ensure array exists
 if (!Array.isArray(stateP.philippines)) stateP.philippines = [];
-if (!Array.isArray(stateP.phCategories)) stateP.phCategories = [];
+
+// PH Budget Categories ONLY (read-only source for category dropdown)
+if (!Array.isArray(stateP.phBudgetCategories)) stateP.phBudgetCategories = [];
+
 if (typeof stateP.phpAudRate !== "number" || stateP.phpAudRate <= 0) {
     stateP.phpAudRate = 0.0259;
     State.save(stateP);
 }
 
+// ------------------------------
+// Elements
+// ------------------------------
 const elsP = {
     date: document.getElementById("phDate"),
     desc: document.getElementById("phDesc"),
     amount: document.getElementById("phAmount"),
     category: document.getElementById("phCategory"),
     addBtn: document.getElementById("addPhBtn"),
-    newCat: document.getElementById("newPhCategory"),
-    addCatBtn: document.getElementById("addPhCategoryBtn"),
 
     tableBody: document.getElementById("phTableBody"),
-
-    rateInput: document.getElementById("phRateInput"),
-    rateDisplay: document.getElementById("phRateDisplay"),
-    rateNote: document.getElementById("phRateNote"),
 
     csvFile: document.getElementById("phCsvFile"),
     importBtn: document.getElementById("importPhCsvBtn"),
     undoBtn: document.getElementById("undoPhImportBtn"),
     exportBtn: document.getElementById("exportPhCsvBtn"),
 
-    // Summary fields
+    rateInput: document.getElementById("phRateInput"),
+    rateDisplay: document.getElementById("phRateDisplay"),
+
     moneySent: document.getElementById("phMoneySent"),
     moneyEarned: document.getElementById("phMoneyEarned"),
     moneySpent: document.getElementById("phMoneySpent"),
     phNet: document.getElementById("phNet"),
     phLeft: document.getElementById("phLeft"),
-
     totalPHP: document.getElementById("phTotalPHP"),
     totalAUD: document.getElementById("phTotalAUD"),
+
+    undoDeleteBtn: document.getElementById("undoPhDeleteBtn")
 };
 
 // ------------------------------
 // Helpers
 // ------------------------------
-
 function parseMoney(str) {
     if (!str) return 0;
     const cleaned = String(str).replace(/[^0-9.-]/g, "");
     const n = parseFloat(cleaned);
     return isNaN(n) ? 0 : n;
-}
-
-function splitCsvLine(line) {
-    const match = line.match(/(".*?"|[^,]+)/g);
-    if (!match) return [];
-    return match.map((col) => {
-        col = col.trim();
-        if (col.startsWith('"') && col.endsWith('"')) {
-            col = col.slice(1, -1);
-        }
-        return col;
-    });
-}
-
-function normalisePhDate(str) {
-    if (!str) return "";
-    const d = new Date(str);
-    if (isNaN(d.getTime())) return str;
-    const day = String(d.getDate()).padStart(2, "0");
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function formatPHP(n) {
@@ -86,176 +66,142 @@ function formatAUD(n) {
     return n.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 }
 
+function normalisePhDate(str) {
+    if (!str) return "";
+    const d = new Date(str);
+    if (isNaN(d)) return str;
+    return d.toLocaleDateString("en-PH", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
 // ------------------------------
-// Category Dropdown
+// Category Dropdown – READ ONLY from PH Budget
 // ------------------------------
 function populateCategoryDropdown() {
     elsP.category.innerHTML = "";
-    stateP.phCategories.forEach((cat) => {
+
+    stateP.phBudgetCategories.forEach(cat => {
         const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
+        opt.value = cat.name;
+        opt.textContent = cat.name;
         elsP.category.appendChild(opt);
     });
 }
 
-function addNewPhCategory() {
-    const v = elsP.newCat.value.trim();
-    if (!v) return;
-
-    if (!stateP.phCategories.includes(v)) {
-        stateP.phCategories.push(v);
-    }
-
-    State.save(stateP);
-    populateCategoryDropdown();
-    renderRows();
-
-    elsP.newCat.value = "";
-}
-
 // ------------------------------
-// Summary Calculations
+// Summary Computation
 // ------------------------------
 function computeTotals() {
-    let sent = 0;
-    let earned = 0;
-    let spent = 0;
+    let earned = 0, spent = 0, totalPHP = 0, totalAUD = 0;
 
-    let totalPHP = 0;
-    let totalAUD = 0;
+    stateP.philippines.forEach(r => {
+        const php = r.amountPhp || 0;
+        const aud = r.amountAud || 0;
 
-    (stateP.philippines || []).forEach((r) => {
-        const php = r.amountPhp ?? 0;
-        const aud = r.amountAud ?? 0;
-
-        // Summaries
-        if (aud < 0) spent += Math.abs(aud);
         if (aud > 0) earned += aud;
+        if (aud < 0) spent += Math.abs(aud);
 
-        // Totals
         totalPHP += php;
         totalAUD += aud;
     });
 
-    elsP.moneySent.textContent = formatAUD(sent);
     elsP.moneyEarned.textContent = formatAUD(earned);
     elsP.moneySpent.textContent = formatAUD(spent);
-
-    const net = earned - spent;
-    elsP.phNet.textContent = formatAUD(net);
-    elsP.phLeft.textContent = formatAUD(net);
-
+    elsP.moneySent.textContent = formatAUD(0);
+    elsP.phNet.textContent = formatAUD(earned - spent);
+    elsP.phLeft.textContent = formatAUD(earned - spent);
     elsP.totalPHP.textContent = formatPHP(totalPHP);
     elsP.totalAUD.textContent = formatAUD(totalAUD);
 }
 
 // ------------------------------
-// Table Rendering
+// Render Ledger Table
 // ------------------------------
 function renderRows() {
     elsP.tableBody.innerHTML = "";
 
-    const rows = [...stateP.philippines];
+    const rows = [...stateP.philippines].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+    );
 
-    rows.sort((a, b) => {
-        const da = new Date(a.date);
-        const db = new Date(b.date);
-        return db - da;
-    });
-
-    rows.forEach((row, idx) => {
+    rows.forEach(row => {
         const tr = document.createElement("tr");
 
         // Date
         const tdDate = document.createElement("td");
-        tdDate.textContent = row.date || "";
+        tdDate.textContent = row.date;
         tr.appendChild(tdDate);
 
         // Description
         const tdDesc = document.createElement("td");
-        const inputDesc = document.createElement("input");
-        inputDesc.type = "text";
-        inputDesc.value = row.reason || "";
-        inputDesc.style.width = "95%";
-        inputDesc.addEventListener("input", () => {
-            row.reason = inputDesc.value;
+        const inpDesc = document.createElement("input");
+        inpDesc.type = "text";
+        inpDesc.style.width = "95%";
+        inpDesc.value = row.reason || "";
+        inpDesc.oninput = () => {
+            row.reason = inpDesc.value;
             State.save(stateP);
-        });
-        tdDesc.appendChild(inputDesc);
+        };
+        tdDesc.appendChild(inpDesc);
         tr.appendChild(tdDesc);
 
-        // Category
+        // Category (PH Budget only)
         const tdCat = document.createElement("td");
         const sel = document.createElement("select");
 
-        stateP.phCategories.forEach((cat) => {
+        stateP.phBudgetCategories.forEach(cat => {
             const opt = document.createElement("option");
-            opt.value = cat;
-            opt.textContent = cat;
-            if (row.category === cat) opt.selected = true;
+            opt.value = cat.name;
+            opt.textContent = cat.name;
+            if (row.category === cat.name) opt.selected = true;
             sel.appendChild(opt);
         });
 
-        sel.addEventListener("change", () => {
+        sel.onchange = () => {
             row.category = sel.value;
             State.save(stateP);
-        });
+        };
 
         tdCat.appendChild(sel);
         tr.appendChild(tdCat);
 
         // PHP amount
         const tdPhp = document.createElement("td");
-        const inputPhp = document.createElement("input");
-        inputPhp.type = "number";
-        inputPhp.step = "0.01";
-        inputPhp.value = row.amountPhp ?? 0;
-        inputPhp.style.width = "100px";
-
-inputPhp.addEventListener("input", () => {
-    const val = parseFloat(inputPhp.value) || 0;
-    row.amountPhp = val;
-    row.amountAud = val * stateP.phpAudRate;
-    State.save(stateP);
-
-    // do NOT re-render here (avoids losing focus)
-    tdAud.textContent = formatAUD(row.amountAud);
-});
-
-
-        tdPhp.appendChild(inputPhp);
+        const inpPhp = document.createElement("input");
+        inpPhp.type = "number";
+        inpPhp.step = "0.01";
+        inpPhp.value = row.amountPhp || 0;
+        inpPhp.oninput = () => {
+            row.amountPhp = parseFloat(inpPhp.value) || 0;
+            row.amountAud = row.amountPhp * stateP.phpAudRate;
+            tdAud.textContent = formatAUD(row.amountAud);
+            State.save(stateP);
+        };
+        tdPhp.appendChild(inpPhp);
         tr.appendChild(tdPhp);
 
-        // AUD amount
+        // AUD amount (calculated only)
         const tdAud = document.createElement("td");
-        tdAud.textContent = formatAUD(row.amountAud ?? 0);
+        tdAud.textContent = formatAUD(row.amountAud || 0);
         tr.appendChild(tdAud);
 
-        // Delete
+        // Delete button
         const tdDel = document.createElement("td");
         const btn = document.createElement("button");
         btn.textContent = "✕";
         btn.className = "secondary";
-btn.onclick = () => {
-    // Identify real index (not the sorted index)
-    const realIndex = stateP.philippines.indexOf(row);
-
-    if (realIndex !== -1) {
-        // Store for undo
-        phDeleteHistory.push({
-            index: realIndex,
-            row: { ...row }
-        });
-
-        // Delete
-        stateP.philippines.splice(realIndex, 1);
-        State.save(stateP);
-        renderRows();
-    }
-};
-
-
+        btn.onclick = () => {
+            const idx = stateP.philippines.indexOf(row);
+            if (idx !== -1) {
+                phDeleteHistory.push({ index: idx, row: { ...row } });
+                stateP.philippines.splice(idx, 1);
+                State.save(stateP);
+                renderRows();
+            }
+        };
         tdDel.appendChild(btn);
         tr.appendChild(tdDel);
 
@@ -266,27 +212,27 @@ btn.onclick = () => {
 }
 
 // ------------------------------
-// CSV Import
+// CSV Import (NO category generation!)
 // ------------------------------
 function parsePhilippinesCsv(text, rate) {
-    const lines = text.split(/\r?\n/).filter((l) => l.trim() !== "");
     const rows = [];
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
 
     lines.forEach((line, idx) => {
-        const cols = splitCsvLine(line);
-        if (!cols.length) return;
-        if (idx === 0) return; // header
+        if (idx === 0) return;
 
-        const phpAmount = parseMoney(cols[4]);
-        const bookDate = cols[6] || "";
-        const desc = cols[12] || "PH transaction";
+        const cols = line.split(",");
+
+        const php = parseMoney(cols[4]);
+        const date = cols[6];
+        const desc = cols[12] || "PH Transaction";
 
         rows.push({
-            date: normalisePhDate(bookDate),
+            date: normalisePhDate(date),
             reason: desc,
-            amountPhp: phpAmount,
-            amountAud: phpAmount * rate,
-            category: "",
+            category: "",  // user assigns later
+            amountPhp: php,
+            amountAud: php * rate
         });
     });
 
@@ -295,61 +241,38 @@ function parsePhilippinesCsv(text, rate) {
 
 function importPhilippinesCsv() {
     const file = elsP.csvFile.files[0];
-    if (!file) {
-        alert("Please choose a CSV file first.");
-        return;
-    }
-
-    const rate = stateP.phpAudRate;
+    if (!file) return alert("Choose a CSV file.");
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-        // Save backup
-        stateP.phLastImport = JSON.parse(JSON.stringify(stateP.philippines));
-
-        const newRows = parsePhilippinesCsv(e.target.result, rate);
-        if (!newRows.length) {
-            alert("No transactions detected.");
-            return;
-        }
-
-        stateP.philippines.push(...newRows);
+    reader.onload = e => {
+        stateP.phLastImport = [...stateP.philippines];
+        const rows = parsePhilippinesCsv(e.target.result, stateP.phpAudRate);
+        stateP.philippines.push(...rows);
         State.save(stateP);
         renderRows();
-        alert("PH CSV imported.");
+        alert("CSV imported.");
     };
-
     reader.readAsText(file);
 }
 
-// ------------------------------
-// Undo Import
-// ------------------------------
+// Undo last CSV import
 function undoLastPhImport() {
-    if (!stateP.phLastImport) {
-        alert("No previous import to undo.");
-        return;
-    }
+    if (!stateP.phLastImport) return alert("Nothing to undo.");
 
-    stateP.philippines = JSON.parse(JSON.stringify(stateP.phLastImport));
+    stateP.philippines = [...stateP.phLastImport];
     delete stateP.phLastImport;
+
     State.save(stateP);
     renderRows();
-    alert("Last PH import undone.");
 }
 
-// ------------------------------
-// CSV Export
-// ------------------------------
+// Export CSV
 function exportPhilippinesCsv() {
-    if (!stateP.philippines.length) {
-        alert("No data to export.");
-        return;
-    }
+    if (!stateP.philippines.length) return alert("Nothing to export.");
 
     let csv = "Date,Description,Category,AmountPHP,AmountAUD\n";
 
-    stateP.philippines.forEach((r) => {
+    stateP.philippines.forEach(r => {
         csv += `"${r.date}","${r.reason}","${r.category}",${r.amountPhp},${r.amountAud}\n`;
     });
 
@@ -364,52 +287,29 @@ function exportPhilippinesCsv() {
 }
 
 // ------------------------------
-// Exchange Rate Handling
-// ------------------------------
-function setRateFromInput() {
-    const v = parseFloat(elsP.rateInput.value);
-    if (v > 0) {
-        stateP.phpAudRate = v;
-        State.save(stateP);
-        renderRows();
-    }
-}
-
-function updateRateUI() {
-    const r = stateP.phpAudRate;
-    elsP.rateInput.value = r.toFixed(4);
-    elsP.rateDisplay.textContent = `1 PHP = ${r.toFixed(4)} AUD`;
-    elsP.rateNote.textContent = "Auto-loaded; you can edit this.";
-}
-
-// ------------------------------
 // Init
 // ------------------------------
 function init() {
     populateCategoryDropdown();
-    updateRateUI();
     renderRows();
 
     elsP.addBtn.onclick = () => {
         const date = elsP.date.value;
+        if (!date) return alert("Choose a date.");
+
         const desc = elsP.desc.value.trim();
-        const amt = parseFloat(elsP.amount.value) || 0;
+        if (!desc) return alert("Enter description.");
+
+        const php = parseFloat(elsP.amount.value) || 0;
         const cat = elsP.category.value;
 
-        if (!date || !desc || isNaN(amt)) {
-            alert("Enter date, description and amount.");
-            return;
-        }
-
         stateP.philippines.push({
-    date: normalisePhDate(date),
-    reason: desc,
-    amountPhp: 0,
-    amountAud: amt,
-    category: cat,
-});
-
-
+            date: normalisePhDate(date),
+            reason: desc,
+            amountPhp: php,
+            amountAud: php * stateP.phpAudRate,
+            category: cat
+        });
 
         State.save(stateP);
         renderRows();
@@ -418,24 +318,30 @@ function init() {
         elsP.amount.value = "";
     };
 
-    elsP.addCatBtn.onclick = addNewPhCategory;
     elsP.importBtn.onclick = importPhilippinesCsv;
     elsP.undoBtn.onclick = undoLastPhImport;
     elsP.exportBtn.onclick = exportPhilippinesCsv;
-    elsP.rateInput.oninput = setRateFromInput;
+
+    elsP.undoDeleteBtn.onclick = () => {
+        if (!phDeleteHistory.length) return alert("Nothing to undo.");
+
+        const last = phDeleteHistory.pop();
+        stateP.philippines.splice(last.index, 0, last.row);
+
+        State.save(stateP);
+        renderRows();
+    };
+
+    elsP.rateInput.oninput = () => {
+        const v = parseFloat(elsP.rateInput.value);
+        if (v > 0) {
+            stateP.phpAudRate = v;
+            State.save(stateP);
+            renderRows();
+        }
+    };
+
+    elsP.rateDisplay.textContent = `1 PHP = ${stateP.phpAudRate.toFixed(4)} AUD`;
 }
 
 document.addEventListener("DOMContentLoaded", init);
-document.getElementById("undoPhDeleteBtn").onclick = () => {
-    if (phDeleteHistory.length === 0) {
-        alert("Nothing to undo.");
-        return;
-    }
-
-    // Restore last deleted
-    const last = phDeleteHistory.pop();
-    stateP.philippines.splice(last.index, 0, last.row);
-
-    State.save(stateP);
-    renderRows();
-};

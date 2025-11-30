@@ -1,81 +1,118 @@
-// state.js  (Master shared state manager for ALL pages)
+// state.js – single source of truth for all pages
 
 const KEY = 'tobyBudgetV1_categories_budget_ledger_v1';
 
-/**
- * Default state – single source of truth
- */
+// -----------------------------
+// Default / empty state
+// -----------------------------
 function defaultState() {
   return {
     income: 0,
     housePct: 10,
     samalPct: 10,
 
-    categories: [],    // Ledger categories (Australia)
-    ledger: [],        // Ledger transactions (Australia)
-    incomes: [],       // Income entries
+    // Main AU budget categories
+    categories: [],
 
-    philippines: [],   // Philippines transactions (AUD + PHP)
-    phCategories: [],  // Philippines category list
-    phpAudRate: 0.0259,// Exchange rate
+    // Main AU ledger
+    ledger: [],
 
-    investments: [],   // Investments page
-    debts: [],         // Optional future debts page
+    // Income entries
+    incomes: [],
 
-    version: 1         // For upgrades later
+    // Philippines ledger rows
+    philippines: [],
+
+    // Philippines categories used by philippines.js
+    phCategories: [],
+
+    // Philippines budget categories used by ph-budget.js
+    phBudgetCategories: [],
+
+    // PHP → AUD rate
+    phpAudRate: 0.0259,
+
+    // Debts & investments
+    investments: [],
+    debts: [],
+    debtPayments: [],
+
+    version: 1
   };
 }
 
-/**
- * Load global state safely
- */
+// -----------------------------
+// Load / Save helpers
+// -----------------------------
 function loadState() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return defaultState();
+    if (!raw) {
+      return defaultState();
+    }
 
     const parsed = JSON.parse(raw);
     const base = defaultState();
 
-    // Merge defaults to ensure NO FIELD is ever missing
-    return {
+    const merged = {
+      // base defaults
       ...base,
+      // everything from storage
       ...parsed,
 
-      // Arrays must be arrays
-      categories: Array.isArray(parsed.categories) ? parsed.categories : [],
-      ledger: Array.isArray(parsed.ledger) ? parsed.ledger : [],
-      incomes: Array.isArray(parsed.incomes) ? parsed.incomes : [],
-      philippines: Array.isArray(parsed.philippines) ? parsed.philippines : [],
-      phCategories: Array.isArray(parsed.phCategories) ? parsed.phCategories : [],
-      investments: Array.isArray(parsed.investments) ? parsed.investments : [],
-      debts: Array.isArray(parsed.debts) ? parsed.debts : []
+      // Ensure core arrays always exist and are arrays
+      categories: Array.isArray(parsed.categories) ? parsed.categories : base.categories,
+      ledger: Array.isArray(parsed.ledger) ? parsed.ledger : base.ledger,
+      incomes: Array.isArray(parsed.incomes) ? parsed.incomes : base.incomes,
+
+      philippines: Array.isArray(parsed.philippines) ? parsed.philippines : base.philippines,
+
+      // PH categories for the ledger page
+      phCategories: Array.isArray(parsed.phCategories)
+        ? parsed.phCategories
+        : base.phCategories,
+
+      // PH budget categories for the PH budget page
+      phBudgetCategories: Array.isArray(parsed.phBudgetCategories)
+        ? parsed.phBudgetCategories
+        : base.phBudgetCategories,
+
+      investments: Array.isArray(parsed.investments) ? parsed.investments : base.investments,
+      debts: Array.isArray(parsed.debts) ? parsed.debts : base.debts,
+      debtPayments: Array.isArray(parsed.debtPayments) ? parsed.debtPayments : base.debtPayments,
+
+      phpAudRate:
+        typeof parsed.phpAudRate === 'number' && parsed.phpAudRate > 0
+          ? parsed.phpAudRate
+          : base.phpAudRate,
+
+      version: typeof parsed.version === 'number' ? parsed.version : 1
     };
+
+    return merged;
   } catch (e) {
-    console.error("Failed to load state:", e);
+    console.error('State.load – failed, using defaultState()', e);
     return defaultState();
   }
 }
 
-/**
- * Save global state safely (always full object)
- */
-function saveState(newState) {
+function saveState(state) {
   try {
-    const base = defaultState();
-    const merged = { ...base, ...newState };
-    localStorage.setItem(KEY, JSON.stringify(merged));
+    localStorage.setItem(KEY, JSON.stringify(state));
   } catch (e) {
-    console.error("Failed to save state:", e);
+    console.error('State.save – failed', e);
   }
 }
 
-/**
- * Export helpers
- */
-window.State = {
-  load: loadState,
-  save: saveState,
-  defaults: defaultState,
-  KEY
-};
+// -----------------------------
+// Public API
+// -----------------------------
+class State {
+  static load() {
+    return loadState();
+  }
+
+  static save(newState) {
+    saveState(newState);
+  }
+}

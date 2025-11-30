@@ -13,49 +13,74 @@
       <a href="budget.html" class="active">Budget</a>
       <a href="income.html">Income</a>
       <a href="philippines.html">Philippines</a>
+      <a href="ph-budget.html">PHBudget</a>
       <a href="debts.html">Debts</a>
       <a href="investments.html">Investments</a>
-      <a href="budget-graphs.html" class="active">Graphs</a>
+      <a href="budget-graphs.html">Graphs</a>
     </div>
   </header>
 
   <main class="container">
+
     <!-- Income & Summary -->
     <section class="card">
-      <h2>Income &amp; Summary</h2>
+      <h2>Income & Summary</h2>
+
       <div class="row summary-row">
+
         <div>
           <div class="small">Monthly Income</div>
           <div id="summaryIncome">$0.00</div>
         </div>
+
         <div>
           <div class="small">House Allocation</div>
           <div id="summaryHouse" class="badge"></div>
         </div>
+
         <div>
           <div class="small">Samal Allocation</div>
           <div id="summarySamal" class="badge"></div>
         </div>
+
         <div>
           <div class="small">Total Spend</div>
           <div id="summaryTotalSpend" class="badge"></div>
         </div>
+
         <div>
           <div class="small">Profit / Loss</div>
           <div id="summaryProfitLoss" class="badge"></div>
         </div>
+
+        <!-- AU budget -->
         <div>
-          <div class="small">Total Budget</div>
+          <div class="small">Total AU Budget</div>
           <div id="summaryTotalBudget" class="badge">$0.00</div>
         </div>
+
+        <!-- PH budget -->
+        <div>
+          <div class="small">Total PH Budget (PHP)</div>
+          <div id="summaryTotalPhBudget" class="badge">₱0.00</div>
+        </div>
+
+        <!-- Combined budget -->
+        <div>
+          <div class="small">Combined Total Budget (AUD)</div>
+          <div id="summaryCombinedBudget" class="badge">$0.00</div>
+        </div>
+
         <div>
           <div class="small">Total Ledger</div>
           <div id="summaryLedger" class="badge">$0.00</div>
         </div>
+
         <div>
-          <div class="small">PH Net Spend</div>
+          <div class="small">PH Net Spend (AUD)</div>
           <div id="summaryPhilippines" class="badge">$0.00</div>
         </div>
+
       </div>
     </section>
 
@@ -64,11 +89,13 @@
       <button id="saveBackupBtn" class="secondary">Save Backup</button>
       <input type="file" id="loadBackupInput" style="display: none" />
       <button id="loadBackupBtn" class="secondary">Load Backup</button>
+      <button id="refreshBtn" class="secondary">Refresh</button>
     </div>
 
     <!-- Categories -->
     <section class="card">
       <h2>Categories</h2>
+
       <div class="row" style="align-items: flex-end;">
         <div>
           <label for="newCategoryName">New Category Name</label>
@@ -78,17 +105,24 @@
             placeholder="e.g. Rent, Gym, Developers"
           />
         </div>
+
         <div>
           <label for="newCategoryMonthly">Monthly Budget ($)</label>
-          <input type="number" id="newCategoryMonthly" min="0" step="0.01" />
+          <input
+            type="number"
+            id="newCategoryMonthly"
+            min="0"
+            step="0.01"
+          />
         </div>
+
         <div>
           <button class="primary" id="addCategoryBtn">Add Category</button>
         </div>
       </div>
+
       <div class="small" style="margin-top: 0.4rem;">
-        These categories are shared with the Ledger page (for assigning
-        transactions).
+        These categories are shared with the Ledger page (for assigning transactions).
       </div>
 
       <div class="table-wrapper" style="margin-top: 0.75rem;">
@@ -104,14 +138,16 @@
             </tr>
           </thead>
           <tbody>
-            <!-- rows via JS -->
+            <!-- inserted by JS -->
           </tbody>
         </table>
       </div>
     </section>
+
   </main>
 
   <script src="state.js"></script>
   <script src="budget.js"></script>
+
 </body>
 </html>

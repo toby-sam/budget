@@ -1,424 +1,248 @@
-// ===============================
-// ledger.js (FINAL VERSION 2025-11-27)
-// Includes:
-// - AU CSV Import (always negative)
-// - Date Normalisation
-// - Undo Last Import
-// - Remove Duplicates
-// - Safe Sorting
-// - Manual Entry Logic
-// ===============================
+// ========================================================
+// LEDGER.JS – CLEAN, COMPLETE, CATEGORY-SYNCED VERSION
+// ========================================================
 
-// Load shared global state
 let state = State.load();
-State.save(state);
+if (!state.ledger) state.ledger = [];
+if (!state.categories) state.categories = [];
+let lastImportBackup = [];
 
-// Ensure arrays exist
-if (!Array.isArray(state.ledger)) state.ledger = [];
-if (!Array.isArray(state.categories)) state.categories = [];
+// --------------------------------------------------------
+// Helpers
+// --------------------------------------------------------
 
-// Undo history
-let lastLedgerBackup = null;
-
-// Elements
-const el = {
-  income: document.getElementById('income'),
-  housePct: document.getElementById('housePct'),
-  housePctLabel: document.getElementById('housePctLabel'),
-  samalPct: document.getElementById('samalPct'),
-  samalPctLabel: document.getElementById('samalPctLabel'),
-
-  csvFile: document.getElementById('csvFile'),
-  importBtn: document.getElementById('importBtn'),
-  clearLedgerBtn: document.getElementById('clearLedgerBtn'),
-  loader: document.getElementById('loader'),
-  undoBtn: document.getElementById('undoImportBtn'),
-
-  manualDate: document.getElementById('manualDate'),
-  manualDescription: document.getElementById('manualDescription'),
-  manualAmount: document.getElementById('manualAmount'),
-  manualCategory: document.getElementById('manualCategory'),
-  addManualBtn: document.getElementById('addManualBtn'),
-
-  ledgerBody: document.querySelector('#ledger tbody'),
-  ledgerSearch: document.getElementById('ledgerSearch'),
-
-  removeDupBtn: document.getElementById('removeDuplicatesBtn')
-};
-
-// ===============================
-// Date Normalisation
-// ===============================
-function normalizeDate(input) {
-  if (!input) return "";
-
-  // Try native parse
-  const parsed = Date.parse(input);
-  if (!isNaN(parsed)) {
-    return new Date(parsed).toISOString().slice(0, 10);
-  }
-
-  // Try format like "27 Nov 2025"
-  const months = {
-    jan: "01", feb: "02", mar: "03", apr: "04",
-    may: "05", jun: "06", jul: "07", aug: "08",
-    sep: "09", oct: "10", nov: "11", dec: "12"
-  };
-
-  const parts = input.trim().split(/\s+/);
-  if (parts.length === 3) {
-    const [d, mon, y] = parts;
-    const m = months[mon.toLowerCase().slice(0, 3)];
-    if (m) {
-      return `${y}-${m}-${String(d).padStart(2, "0")}`;
-    }
-  }
-
-  // Try dd/mm/yyyy or dd-mm-yyyy
-  if (/[-/]/.test(input)) {
-    const p = input.split(/[-/]/);
-    if (p.length === 3) {
-      const [d, m, y] = p;
-      const yyyy = y.length === 2 ? "20" + y : y;
-      return `${yyyy}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
-    }
-  }
-
-  console.warn("Unrecognised date format:", input);
-  return input;
+function formatAud(v) {
+    if (isNaN(v)) return "$0.00";
+    return "$" + Number(v).toFixed(2);
 }
 
-// ===============================
-// Render Ledger Table
-// ===============================
-function renderLedger() {
-  const search = el.ledgerSearch.value.trim().toLowerCase();
+function parseDate(str) {
+    if (!str) return "";
 
-  const rows = [...state.ledger].sort((a, b) => {
-    const da = Date.parse(a.date);
-    const db = Date.parse(b.date);
+    // Accept: dd/mm/yyyy or "27 Nov 2025"
+    if (str.includes("/")) return str;
 
-    if (isNaN(da) && isNaN(db)) return 0;
-    if (isNaN(da)) return 1;   // invalid dates at bottom
-    if (isNaN(db)) return -1;
-    return db - da;            // newest first
-  });
+    const d = new Date(str);
+    if (!isNaN(d)) {
+        return d.toLocaleDateString("en-GB"); // dd/mm/yyyy
+    }
+    return str;
+}
 
-  el.ledgerBody.innerHTML = "";
+// --------------------------------------------------------
+// 1. Load category dropdown (fixes empty dropdown bug)
+// --------------------------------------------------------
 
-  rows.forEach((row) => {
-    const descLC = (row.description || "").toLowerCase();
-    const catLC = (row.category || "").toLowerCase();
+function loadCategoryDropdown() {
+    const sel = document.getElementById("manualCategory");
+    sel.innerHTML = "";
 
-    if (search && !descLC.includes(search) && !catLC.includes(search)) {
-      return;
+    if (!state.categories || state.categories.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No categories yet";
+        sel.appendChild(opt);
+        return;
     }
 
-    const tr = document.createElement("tr");
-
-    // Date
-    const tdDate = document.createElement("td");
-    tdDate.textContent = row.date;
-    tr.appendChild(tdDate);
-
-    // Description
-    const tdDesc = document.createElement("td");
-    const inputDesc = document.createElement("input");
-    inputDesc.type = "text";
-    inputDesc.value = row.description || "";
-    inputDesc.style.width = "95%";
-    inputDesc.addEventListener("input", () => {
-      row.description = inputDesc.value;
-      State.save(state);
+    state.categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat.name;
+        opt.textContent = cat.name;
+        sel.appendChild(opt);
     });
-    tdDesc.appendChild(inputDesc);
-    tr.appendChild(tdDesc);
+}
 
-    // Category
-    const tdCat = document.createElement("td");
-    const selCat = document.createElement("select");
+// --------------------------------------------------------
+// 2. Render Ledger Table
+// --------------------------------------------------------
 
-    state.categories.forEach((cat) => {
-      const opt = document.createElement("option");
-      opt.value = cat.name;
-      opt.textContent = cat.name;
-      if (row.category === cat.name) opt.selected = true;
-      selCat.appendChild(opt);
+function renderLedger() {
+    const tbody = document.querySelector("#ledger tbody");
+    tbody.innerHTML = "";
+
+    state.ledger.forEach((tx, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${tx.date || ""}</td>
+            <td>${tx.description || ""}</td>
+            <td>${tx.category || ""}</td>
+            <td class="amount">${formatAud(tx.amount || 0)}</td>
+            <td><button class="delete-btn" data-index="${index}">✕</button></td>
+        `;
+
+        tbody.appendChild(tr);
     });
 
-    selCat.addEventListener("change", () => {
-      row.category = selCat.value;
-
-      // Category rules:
-      if (selCat.value.toLowerCase() === "income") {
-        row.amount = Math.abs(row.amount);
-      } else {
-        row.amount = -Math.abs(row.amount);
-      }
-
-      State.save(state);
-      renderLedger();
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.onclick = (e) => {
+            const idx = Number(e.target.dataset.index);
+            state.ledger.splice(idx, 1);
+            State.save(state);
+            renderLedger();
+        };
     });
+}
 
-    tdCat.appendChild(selCat);
-    tr.appendChild(tdCat);
+// --------------------------------------------------------
+// 3. Manual Add
+// --------------------------------------------------------
 
-    // Amount
-    const tdAmt = document.createElement("td");
-    const inputAmt = document.createElement("input");
-    inputAmt.type = "number";
-    inputAmt.step = "0.01";
-    inputAmt.value = row.amount ?? 0;
-    inputAmt.style.width = "100px";
+function setupManualAdd() {
+    const btn = document.getElementById("addManualBtn");
 
-    inputAmt.addEventListener("input", () => {
-      let amt = parseFloat(inputAmt.value) || 0;
+    btn.onclick = () => {
+        const date = parseDate(document.getElementById("manualDate").value.trim());
+        const desc = document.getElementById("manualDescription").value.trim();
+        const amount = Number(document.getElementById("manualAmount").value) || 0;
+        const category = document.getElementById("manualCategory").value;
 
-      if ((row.category || "").toLowerCase() === "income") {
-        amt = Math.abs(amt);
-      } else {
-        amt = -Math.abs(amt); // ALWAYS negative
-      }
+        if (!desc) return alert("Enter a description.");
 
-      row.amount = amt;
-      inputAmt.value = amt;
-      State.save(state);
+        state.ledger.push({
+            date,
+            description: desc,
+            amount,
+            category
+        });
+
+        State.save(state);
+
+        renderLedger();
+
+        // clear fields
+        document.getElementById("manualDescription").value = "";
+        document.getElementById("manualAmount").value = "";
+    };
+}
+
+// --------------------------------------------------------
+// 4. Search
+// --------------------------------------------------------
+
+function setupSearch() {
+    const searchInput = document.getElementById("ledgerSearch");
+
+    searchInput.addEventListener("input", () => {
+        const q = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll("#ledger tbody tr");
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(q) ? "" : "none";
+        });
     });
+}
 
-    tdAmt.appendChild(inputAmt);
-    tr.appendChild(tdAmt);
+// --------------------------------------------------------
+// 5. CSV Import
+// --------------------------------------------------------
 
-    // Delete
-    const tdDel = document.createElement("td");
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "✕";
-    delBtn.className = "secondary";
-    delBtn.onclick = () => {
-      const idx = state.ledger.indexOf(row);
-      if (idx !== -1) {
-        state.ledger.splice(idx, 1);
+function setupImport() {
+    const importBtn = document.getElementById("importBtn");
+    const loader = document.getElementById("loader");
+
+    importBtn.onclick = () => {
+        const fileInput = document.getElementById("csvFile");
+        const file = fileInput.files[0];
+
+        if (!file) return alert("Choose a CSV file.");
+
+        loader.classList.remove("hidden");
+        lastImportBackup = [...state.ledger]; // backup
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            const lines = e.target.result.split("\n").map(l => l.trim()).filter(l => l);
+
+            lines.forEach((line, i) => {
+                const parts = line.split(",");
+
+                if (parts.length < 3) return;
+
+                const date = parseDate(parts[0]);
+                const desc = parts[1];
+                const amount = Number(parts[2]) || 0;
+
+                state.ledger.push({
+                    date,
+                    description: desc,
+                    amount,
+                    category: ""
+                });
+            });
+
+            State.save(state);
+            renderLedger();
+            loader.classList.add("hidden");
+            alert("Import complete.");
+        };
+
+        reader.readAsText(file);
+    };
+
+    // Undo Last Import
+    document.getElementById("undoImportBtn").onclick = () => {
+        if (!lastImportBackup.length) return alert("No import to undo.");
+
+        state.ledger = [...lastImportBackup];
+        State.save(state);
+
+        renderLedger();
+        alert("Last import undone.");
+    };
+
+    // Remove duplicates
+    document.getElementById("removeDuplicatesBtn").onclick = () => {
+        const unique = [];
+        const seen = new Set();
+
+        state.ledger.forEach(tx => {
+            const key = tx.date + "|" + tx.description + "|" + tx.amount;
+            if (!seen.has(key)) {
+                seen.add(key);
+                unique.push(tx);
+            }
+        });
+
+        state.ledger = unique;
         State.save(state);
         renderLedger();
-      }
+        alert("Duplicates removed.");
     };
-    tdDel.appendChild(delBtn);
-    tr.appendChild(tdDel);
 
-    el.ledgerBody.appendChild(tr);
-  });
+    // Clear Ledger
+    document.getElementById("clearLedgerBtn").onclick = () => {
+        if (!confirm("Clear ALL ledger entries?")) return;
+
+        state.ledger = [];
+        State.save(state);
+        renderLedger();
+    };
+
+    // Export Ledger
+    document.getElementById("exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(state.ledger, null, 2)], {
+            type: "application/json"
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "ledger.json";
+        a.click();
+    };
 }
 
-// ===============================
-// Manual Entry
-// ===============================
-function addManualEntry() {
-  const date = normalizeDate(el.manualDate.value);
-  const desc = el.manualDescription.value.trim();
-  const amount = parseFloat(el.manualAmount.value);
-  const category = el.manualCategory.value;
+// --------------------------------------------------------
+// INIT
+// --------------------------------------------------------
 
-  if (!date || !desc || isNaN(amount)) {
-    alert("Please enter date, description and amount.");
-    return;
-  }
-
-  let amt = amount;
-  if (category.toLowerCase() !== "income") {
-    amt = -Math.abs(amount);
-  }
-
-  state.ledger.push({
-    date,
-    description: desc,
-    category,
-    amount: amt,
-  });
-
-  State.save(state);
-  renderLedger();
-
-  el.manualDescription.value = "";
-  el.manualAmount.value = "";
-}
-
-// ===============================
-// AU CSV Import
-// ===============================
-function parseCsv(text) {
-  const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
-  const rows = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const cols = lines[i].split(",");
-
-    if (cols.length < 2) continue;
-
-    const rawDate = cols[0].trim();
-    const rawDesc = cols[1].trim();
-    const rawAmt = cols[cols.length - 1].trim();
-
-    const date = normalizeDate(rawDate);
-    const description = rawDesc.replace(/"/g, "").trim();
-    let amount = parseFloat(rawAmt);
-
-    if (isNaN(amount)) continue;
-
-    // ALWAYS EXPENSE
-    amount = -Math.abs(amount);
-
-    rows.push({
-      date,
-      description,
-      category: "", // user assigns later
-      amount
-    });
-  }
-
-  return rows;
-}
-
-function importCsv() {
-  const file = el.csvFile.files[0];
-  if (!file) {
-    alert("Select a CSV file first.");
-    return;
-  }
-
-  // Backup for undo
-  lastLedgerBackup = JSON.parse(JSON.stringify(state.ledger));
-
-  el.loader.classList.remove("hidden");
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const newRows = parseCsv(e.target.result);
-
-    if (!newRows.length) {
-      alert("No usable transactions found.");
-      el.loader.classList.add("hidden");
-      return;
-    }
-
-    state.ledger.push(...newRows);
-    State.save(state);
+function initLedger() {
+    loadCategoryDropdown();
     renderLedger();
-
-    // Show undo button
-    if (el.undoBtn) el.undoBtn.classList.remove("hidden");
-
-    el.loader.classList.add("hidden");
-  };
-
-  reader.readAsText(file);
+    setupImport();
+    setupManualAdd();
+    setupSearch();
 }
 
-// ===============================
-// Undo Last Import
-// ===============================
-function undoLastImport() {
-  if (!lastLedgerBackup) {
-    alert("Nothing to undo.");
-    return;
-  }
-
-  state.ledger = JSON.parse(JSON.stringify(lastLedgerBackup));
-  lastLedgerBackup = null;
-
-  State.save(state);
-  renderLedger();
-
-  if (el.undoBtn) el.undoBtn.classList.add("hidden");
-
-  alert("Last import undone.");
-}
-
-// ===============================
-// Remove Duplicate Rows
-// ===============================
-function removeDuplicates() {
-  const seen = new Set();
-  const newLedger = [];
-
-  state.ledger.forEach(row => {
-    const key = [
-      row.date || "",
-      (row.description || "").trim().toLowerCase(),
-      row.amount || 0,
-      (row.category || "").trim().toLowerCase()
-    ].join("|");
-
-    if (!seen.has(key)) {
-      seen.add(key);
-      newLedger.push(row);
-    }
-  });
-
-  const removed = state.ledger.length - newLedger.length;
-  state.ledger = newLedger;
-
-  State.save(state);
-  renderLedger();
-
-  alert(`Removed ${removed} duplicate entries.`);
-}
-
-// ===============================
-// Clear Ledger
-// ===============================
-function clearLedger() {
-  if (!confirm("Clear the entire ledger?")) return;
-  state.ledger = [];
-  State.save(state);
-  renderLedger();
-}
-
-// ===============================
-// Event Listeners
-// ===============================
-el.addManualBtn.addEventListener("click", addManualEntry);
-el.importBtn.addEventListener("click", importCsv);
-el.clearLedgerBtn.addEventListener("click", clearLedger);
-el.ledgerSearch.addEventListener("input", renderLedger);
-
-if (el.undoBtn)
-  el.undoBtn.addEventListener("click", undoLastImport);
-
-if (el.removeDupBtn)
-  el.removeDupBtn.addEventListener("click", removeDuplicates);
-
-document.getElementById("exportBtn")?.addEventListener("click", exportCsv);
-
-// ===============================
-// Export CSV
-// ===============================
-function exportCsv() {
-  if (!state.ledger.length) {
-    alert("Ledger is empty — nothing to export.");
-    return;
-  }
-
-  let csv = "Date,Description,Category,Amount\n";
-
-  state.ledger.forEach((row) => {
-    const date = row.date || "";
-    const desc = (row.description || "").replace(/"/g, '""');
-    const cat = row.category || "";
-    const amt = row.amount ?? "";
-
-    csv += `"${date}","${desc}","${cat}",${amt}\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ledger_export.csv";
-  a.click();
-
-  URL.revokeObjectURL(url);
-}
-
-// ===============================
-// Initial Render
-// ===============================
-renderLedger();
+document.addEventListener("DOMContentLoaded", initLedger);
