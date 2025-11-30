@@ -1,5 +1,5 @@
 // ====================================================================
-//  BUDGET.JS – FULL CLEAN REBUILD (AU + PH + Profit/Loss fixed)
+//  BUDGET.JS – FINAL VERSION (AU + PH + AUD conversions)
 // ====================================================================
 
 // ------------------------------
@@ -16,6 +16,7 @@ if (!state.phpAudRate) state.phpAudRate = 0.0259;
 // Format Helpers
 // ------------------------------
 function formatAud(n) {
+    if (isNaN(n)) n = 0;
     return n.toLocaleString("en-AU", {
         style: "currency",
         currency: "AUD"
@@ -23,6 +24,7 @@ function formatAud(n) {
 }
 
 function formatPhp(n) {
+    if (isNaN(n)) n = 0;
     return n.toLocaleString("en-PH", {
         style: "currency",
         currency: "PHP"
@@ -37,7 +39,7 @@ function computeAuLedgerTotal() {
 }
 
 // ------------------------------
-// PH Spend in PHP and AUD
+// PH Spend (PHP + AUD)
 // ------------------------------
 function computePhSpendPhp() {
     return state.philippines.reduce((sum, tx) => {
@@ -53,26 +55,32 @@ function computePhSpendAud() {
 // AU Budget Total
 // ------------------------------
 function computeAuBudgetTotal() {
-    return state.categories.reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
+    return state.categories.reduce(
+        (sum, c) => sum + (c.budgetMonthly || 0),
+        0
+    );
 }
 
 // ------------------------------
 // PH Budget Total (PHP)
 // ------------------------------
 function computePhBudgetTotalPhp() {
-    return state.phBudgetCategories.reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
+    return state.phBudgetCategories.reduce(
+        (sum, c) => sum + (c.budgetMonthly || 0),
+        0
+    );
 }
 
 // ------------------------------
-// Profit / Loss Helper
+// Profit / Loss
 // ------------------------------
 function computeProfitLoss(incomeAud, spendAud) {
     return incomeAud - spendAud;
 }
 
-// ------------------------------
-// Render Summary (TOP BOXES)
-// ------------------------------
+// ====================================================================
+// RENDER SUMMARY (TOP BOXES)
+// ====================================================================
 function computeSummary() {
     const els = {
         summaryIncome: document.getElementById("summaryIncome"),
@@ -80,37 +88,66 @@ function computeSummary() {
         summarySamal: document.getElementById("summarySamal"),
         summaryTotalSpend: document.getElementById("summaryTotalSpend"),
         summaryProfitLoss: document.getElementById("summaryProfitLoss"),
-        summaryTotalBudget: document.getElementById("summaryTotalBudget"),
+        summaryTotalBudget: document.getElementById("summaryTotalBudget"),   // AU
+        summaryTotalPhBudget: document.getElementById("summaryTotalPhBudget"), // PH AUD
+        summaryCombinedBudget: document.getElementById("summaryCombinedBudget"),
         summaryLedger: document.getElementById("summaryLedger"),
-        summaryPhilippines: document.getElementById("summaryPhilippines"),
+        summaryPhilippines: document.getElementById("summaryPhilippines")
     };
 
     const income = state.income || 0;
 
-    const auLedger = computeAuLedgerTotal();                   // AU spend
-    const phSpendAud = computePhSpendAud();                    // PH spend converted to AUD
-    const totalSpendAud = auLedger + phSpendAud;               // Combined spend
-    const profitLoss = computeProfitLoss(income, totalSpendAud);
+    // AU spend
+    const auLedger = computeAuLedgerTotal();
 
-    // Render summary
-    els.summaryIncome.textContent = formatAud(income);
-    els.summaryHouse.textContent = state.housePct + "%";
-    els.summarySamal.textContent = state.samalPct + "%";
+    // PH Spend
+    const phSpendPhp = computePhSpendPhp();
+    const phSpendAud = computePhSpendAud();
 
-    els.summaryTotalSpend.textContent = formatAud(totalSpendAud);
-    els.summaryProfitLoss.textContent = formatAud(profitLoss);
+    // Budget totals
+    const auBudgetAud = computeAuBudgetTotal();
+    const phBudgetPhp = computePhBudgetTotalPhp();
+    const phBudgetAud = phBudgetPhp * state.phpAudRate;
 
-    els.summaryTotalBudget.textContent = formatAud(computeAuBudgetTotal());
+    // Combined budget AUD
+    const combinedBudgetAud = auBudgetAud + phBudgetAud;
 
-    els.summaryLedger.textContent = formatAud(auLedger);
+    // Overall Spend AUD
+    const totalSpendAud = auLedger + phSpendAud;
 
-    // PH Net Spend (AUD)
-    els.summaryPhilippines.textContent = formatAud(phSpendAud);
+    // Profit/Loss
+    const profitLossAud = computeProfitLoss(income, totalSpendAud);
+
+    // ------------------------------
+    // Render values
+    // ------------------------------
+    if (els.summaryIncome) els.summaryIncome.textContent = formatAud(income);
+    if (els.summaryHouse) els.summaryHouse.textContent = state.housePct + "%";
+    if (els.summarySamal) els.summarySamal.textContent = state.samalPct + "%";
+
+    if (els.summaryTotalSpend) els.summaryTotalSpend.textContent = formatAud(totalSpendAud);
+    if (els.summaryProfitLoss) els.summaryProfitLoss.textContent = formatAud(profitLossAud);
+
+    // AU budget
+    if (els.summaryTotalBudget) els.summaryTotalBudget.textContent = formatAud(auBudgetAud);
+
+    // PH budget (AUD)
+    if (els.summaryTotalPhBudget) els.summaryTotalPhBudget.textContent = formatAud(phBudgetAud);
+
+    // Combined budget (AUD)
+    if (els.summaryCombinedBudget) els.summaryCombinedBudget.textContent = formatAud(combinedBudgetAud);
+
+    // AU ledger only
+    if (els.summaryLedger) els.summaryLedger.textContent = formatAud(auLedger);
+
+    // PH Net spend (AUD)
+    if (els.summaryPhilippines) els.summaryPhilippines.textContent = formatAud(phSpendAud);
 }
 
 // ====================================================================
 // CATEGORY TABLE (AU)
 // ====================================================================
+
 function computeActualsByCategory() {
     const map = {};
 
@@ -144,7 +181,7 @@ function renderCategories() {
         tdName.textContent = cat.name;
         tr.appendChild(tdName);
 
-        // Budget input
+        // Budget Input
         const tdBudget = document.createElement("td");
         tdBudget.className = "amount";
 
@@ -168,7 +205,7 @@ function renderCategories() {
         tdBudget.appendChild(input);
         tr.appendChild(tdBudget);
 
-        // Actual Spend
+        // Actual AU spend
         const actual = actuals[cat.name] || 0;
         const tdActual = document.createElement("td");
         tdActual.className = "amount";
@@ -188,7 +225,7 @@ function renderCategories() {
         tdStatus.className = diff >= 0 ? "status-positive" : "status-negative";
         tr.appendChild(tdStatus);
 
-        // Delete button
+        // Delete btn
         const tdDelete = document.createElement("td");
         const btn = document.createElement("button");
         btn.textContent = "✕";
@@ -204,70 +241,6 @@ function renderCategories() {
 
         body.appendChild(tr);
     });
-}
-
-function addCategory() {
-    const nameEl = document.getElementById("newCategoryName");
-    const budgetEl = document.getElementById("newCategoryMonthly");
-
-    const name = nameEl.value.trim();
-    const budget = parseFloat(budgetEl.value) || 0;
-
-    if (!name) return alert("Enter a category name.");
-
-    if (state.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-        return alert("Category already exists.");
-    }
-
-    state.categories.push({
-        name,
-        budgetMonthly: budget
-    });
-
-    State.save(state);
-    nameEl.value = "";
-    budgetEl.value = "";
-
-    renderCategories();
-    computeSummary();
-}
-
-// ====================================================================
-// BACKUP
-// ====================================================================
-function downloadBackup() {
-    const blob = new Blob([JSON.stringify(state, null, 2)], {
-        type: "application/json"
-    });
-
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "budget-backup.json";
-    a.click();
-}
-
-function triggerLoadBackup() {
-    document.getElementById("loadBackupInput").click();
-}
-
-function handleBackupFileChange(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = ev => {
-        try {
-            state = JSON.parse(ev.target.result);
-            State.save(state);
-            renderCategories();
-            computeSummary();
-            alert("Backup restored.");
-        } catch {
-            alert("Invalid backup file.");
-        }
-    };
-
-    reader.readAsText(file);
 }
 
 // ====================================================================
