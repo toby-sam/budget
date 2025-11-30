@@ -285,6 +285,85 @@ function renderCategories() {
         body.appendChild(tr);
     });
 }
+// ====================================================================
+// BACKUP SYSTEM
+// ====================================================================
+
+// Download current state as JSON file
+function downloadBackup() {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "budget-backup.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// Trigger hidden file input
+function triggerLoadBackup() {
+    const input = document.getElementById("loadBackupInput");
+    if (input) input.click();
+}
+
+// Load backup file
+function handleBackupFileChange(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        try {
+            const loaded = JSON.parse(e.target.result);
+            State.save(loaded);
+            state = loaded;
+
+            computeSummary();
+            renderCategories();
+
+            alert("Backup loaded successfully!");
+        } catch (err) {
+            alert("Failed to load backup file – invalid JSON.");
+        }
+    };
+
+    reader.readAsText(file);
+}
+// ====================================================================
+// ADD CATEGORY
+// ====================================================================
+function addCategory() {
+    const name = document.getElementById("newCategoryName").value.trim();
+    const monthly = parseFloat(document.getElementById("newCategoryMonthly").value) || 0;
+
+    if (!name) {
+        alert("Please enter a category name.");
+        return;
+    }
+
+    // prevent duplicates
+    if (state.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        alert("Category already exists.");
+        return;
+    }
+
+    state.categories.push({
+        name: name,
+        budgetMonthly: monthly
+    });
+
+    State.save(state);
+
+    document.getElementById("newCategoryName").value = "";
+    document.getElementById("newCategoryMonthly").value = "";
+
+    renderCategories();
+    computeSummary();
+}
 
 // ====================================================================
 // INIT
