@@ -115,6 +115,7 @@ function computeSummary() {
 
         // FIXED: predictedProf now points to the correct element
         predictedProf: document.getElementById("predictedProf"),
+        summaryAuLedgerTotal: document.getElementById("summaryAuLedgerTotal"),
 
         summaryTotalSpend: document.getElementById("summaryTotalSpend"),
         summaryProfitLoss: document.getElementById("summaryProfitLoss"),
@@ -126,6 +127,7 @@ function computeSummary() {
     };
 
     const income = state.income || 0;
+    const auLedgerTotal = computeAuCost();
 
     // AU Spend
     const auLedger = computeAuLedgerTotal();
@@ -155,6 +157,9 @@ function computeSummary() {
     // ------------------------------------------
     if (els.summaryIncome) els.summaryIncome.textContent = formatAud(income);
     if (els.summaryHouse) els.summaryHouse.textContent = state.housePct + "%";
+    if (els.summaryAuLedgerTotal) {
+        els.summaryAuLedgerTotal.textContent = formatAud(auLedgerTotal);
+    }
 
     const elAuCost = document.getElementById("summaryAuCost");
     if (elAuCost) elAuCost.textContent = formatAud(auCost);
