@@ -207,7 +207,10 @@ function setupImport() {
 
                 const date = parseDate(parts[0]);
                 const desc = parts[1];
-                const amount = Number(parts[2]) || 0;
+                // Clean the amount to handle $, AUD, quotes, etc.
+                let rawAmount = parts[2].replace(/[^0-9.-]/g, "");
+                const amount = Number(rawAmount) || 0;
+
 
                 state.ledger.push({
                     date,

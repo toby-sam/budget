@@ -112,7 +112,10 @@ function computeSummary() {
     const els = {
         summaryIncome: document.getElementById("summaryIncome"),
         summaryHouse: document.getElementById("summaryHouse"),
-        summarySamal: document.getElementById("summarySamal"),
+
+        // FIXED: predictedProf now points to the correct element
+        predictedProf: document.getElementById("predictedProf"),
+
         summaryTotalSpend: document.getElementById("summaryTotalSpend"),
         summaryProfitLoss: document.getElementById("summaryProfitLoss"),
         summaryTotalBudget: document.getElementById("summaryTotalBudget"),   // AU
@@ -124,22 +127,16 @@ function computeSummary() {
 
     const income = state.income || 0;
 
-
-   // AU spend (full ledger)
+    // AU Spend
     const auLedger = computeAuLedgerTotal();
-
-    // AU cost only (no income)
     const auCost = computeAuCost();
 
-    // PH cost only (AUD)
-    const phCostAud = computePhCostAud();
-
-
     // PH Spend
+    const phCostAud = computePhCostAud();
     const phSpendPhp = computePhSpendPhp();
     const phSpendAud = computePhSpendAud();
 
-    // Budget totals
+    // Budgets
     const auBudgetAud = computeAuBudgetTotal();
     const phBudgetPhp = computePhBudgetTotalPhp();
     const phBudgetAud = phBudgetPhp * state.phpAudRate;
@@ -147,45 +144,44 @@ function computeSummary() {
     // Combined budget AUD
     const combinedBudgetAud = auBudgetAud + phBudgetAud;
 
-    // Overall Spend AUD
+    // Total Spend (AUD)
     const totalSpendAud = auCost + phCostAud;
-
 
     // Profit/Loss
     const profitLossAud = computeProfitLoss(income, totalSpendAud);
 
-    // ------------------------------
-    // Render values
-    // ------------------------------
+    // ------------------------------------------
+    // RENDER SUMMARY
+    // ------------------------------------------
     if (els.summaryIncome) els.summaryIncome.textContent = formatAud(income);
     if (els.summaryHouse) els.summaryHouse.textContent = state.housePct + "%";
-    if (els.summarySamal) els.summarySamal.textContent = state.samalPct + "%";
-    // AU Cost
+
     const elAuCost = document.getElementById("summaryAuCost");
     if (elAuCost) elAuCost.textContent = formatAud(auCost);
 
-    // PH Cost (AUD)
     const elPhCost = document.getElementById("summaryPhCost");
     if (elPhCost) elPhCost.textContent = formatAud(phCostAud);
 
     if (els.summaryTotalSpend) els.summaryTotalSpend.textContent = formatAud(totalSpendAud);
     if (els.summaryProfitLoss) els.summaryProfitLoss.textContent = formatAud(profitLossAud);
 
-    // AU budget
     if (els.summaryTotalBudget) els.summaryTotalBudget.textContent = formatAud(auBudgetAud);
-
-    // PH budget (AUD)
     if (els.summaryTotalPhBudget) els.summaryTotalPhBudget.textContent = formatAud(phBudgetAud);
-
-    // Combined budget (AUD)
     if (els.summaryCombinedBudget) els.summaryCombinedBudget.textContent = formatAud(combinedBudgetAud);
 
-    // summaryledger 
     if (els.summaryLedger) els.summaryLedger.textContent = formatAud(totalSpendAud);
-
-    // PH Net spend (AUD)
     if (els.summaryPhilippines) els.summaryPhilippines.textContent = formatAud(phSpendAud);
+
+    // ------------------------------------------
+    // ⭐ PREDICTED RESULT = INCOME – COMBINED BUDGET
+    // ------------------------------------------
+    const predictedResult = income - combinedBudgetAud;
+
+    if (els.predictedProf) {
+        els.predictedProf.textContent = formatAud(predictedResult);
+    }
 }
+
 
 // ====================================================================
 // CATEGORY TABLE (AU)
