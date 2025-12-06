@@ -171,7 +171,7 @@ if (duplicates.has(dupKey)) {
     tr.style.fontWeight = "bold";
     tr.title = "Duplicate entry (amount sign ignored)";
 }
-
+/* Saving 6th dec */
 
     // Build category options
     let optionsHtml = "";
