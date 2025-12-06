@@ -197,12 +197,25 @@ function computeActualsByCategory() {
 
     state.ledger.forEach(entry => {
         if (!entry.category) return;
+
+        // create category bucket if needed
         if (!map[entry.category]) map[entry.category] = 0;
-        map[entry.category] += entry.amount || 0;
+
+        const amt = entry.amount || 0;
+
+        // Income = positive
+        if (entry.category.toLowerCase() === "income") {
+            map[entry.category] += Math.abs(amt);
+        } 
+        // all other spending categories become negative
+        else {
+            map[entry.category] -= Math.abs(amt);
+        }
     });
 
     return map;
 }
+
 
 function renderCategories() {
     const body = document.querySelector("#categoriesTable tbody");
@@ -257,7 +270,7 @@ function renderCategories() {
         tr.appendChild(tdActual);
 
         // Difference
-        const diff = (cat.budgetMonthly || 0) - actual;
+        const diff = (cat.budgetMonthly || 0) - Math.abs(actual);
         const tdDiff = document.createElement("td");
         tdDiff.className = "amount";
         tdDiff.textContent = formatAud(diff);
