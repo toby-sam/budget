@@ -84,31 +84,54 @@ function computeActualsByCategory() {
 // Compute Summary
 // ---------------------------------------------------
 function computeTotals() {
-  let totalLedgerPhp = 0;
 
-  (stateB.philippines || []).forEach(tx => {
-    const php = tx.amountPhp || 0;
-    if (php > 0) totalLedgerPhp += php;
-  });
+    const phpToAud = (stateB.phpAudRate || 0.0259);
 
-  if (elsPH.summaryLedger) {
-    elsPH.summaryLedger.textContent = formatPHP(totalLedgerPhp);
-  }
+    // 🔹 Total budget excluding income categories
+    const filteredBudget = stateB.phBudgetCategories
+        .filter(c => c.name !== "AU_Income" && c.name !== "Income")
+        .reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
 
-  const totalBudgetPhp = stateB.phBudgetCategories.reduce(
-    (sum, c) => sum + (c.budgetMonthly || 0),
-    0
-  );
+    // 🔹 Compute actual income + spent
+    let auIncomePHP = 0, phIncomePHP = 0, spendPHP = 0;
 
-  if (elsPH.summaryTotalBudget) {
-    elsPH.summaryTotalBudget.textContent = formatPHP(totalBudgetPhp);
-  }
+    (stateB.philippines || []).forEach(tx => {
+        const php = tx.amountPhp || 0;
+        if (!tx.category) return;
 
-  if (elsPH.summaryPhilippines) {
-    // For now PH Net Spend = total ledger PHP spend
-    elsPH.summaryPhilippines.textContent = formatPHP(totalLedgerPhp);
-  }
+        if (tx.category === "AU_Income") auIncomePHP += php;
+        else if (tx.category === "Income") phIncomePHP += php;
+        else spendPHP += php;
+    });
+
+    const totalIncomePHP = auIncomePHP + phIncomePHP;
+    const totalIncomeAUD = totalIncomePHP * phpToAud;
+    const profitLossAUD = (totalIncomePHP - spendPHP) * phpToAud;
+
+    // 🔥 Update UI
+// 🔥 Display everything in PHP
+elsPH.summaryIncome.textContent = totalIncomePHP.toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP"
+});
+
+elsPH.summaryTotalBudget.textContent = filteredBudget.toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP"
+});
+
+elsPH.summaryTotalSpend.textContent = spendPHP.toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP"
+});
+
+elsPH.summaryProfitLoss.textContent = (totalIncomePHP - spendPHP).toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP"
+});
+
 }
+
 
 // ---------------------------------------------------
 // Render Categories Table

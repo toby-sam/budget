@@ -16,43 +16,74 @@
       <a href="ph-budget.html">PHBudget</a>
       <a href="debts.html">Debts</a>
       <a href="investments.html">Investments</a>
-      <a href="budget-graphs.html" class="active">Graphs</a>
+      <a href="budget-graphs.html">Graphs</a>
     </div>
   </header>
 
   <main class="container">
-    <section class="card">
-      <h2>Monthly Income</h2>
-      <p class="small">
-        This page shows income entries detected from the main Ledger.
-        To add or change income, edit transactions on the <strong>Ledger</strong> page
-        and assign them the category <strong>"Income"</strong>.
-      </p>
 
-      <div class="table-wrapper" style="margin-top: 0.75rem;">
-        <table id="incomeTable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Income Source</th>
-              <th class="amount">Amount ($)</th>
-            </tr>
-          </thead>
-          <tbody id="incomeTableBody">
-            <!-- populated by income.js -->
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="2"><strong>Total</strong></td>
-              <td class="amount">
-                <strong id="incomeTotal">$0.00</strong>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </section>
+      <!-- ================== AUSTRALIAN INCOME ================== -->
+      <section class="card">
+        <h2>Australian Income</h2>
+        <p class="small">Automatically detected from Ledger entries where category = <b>"Income"</b>.</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Source</th>
+                <th class="amount">Amount (AUD)</th>
+              </tr>
+            </thead>
+            <tbody id="incomeTableBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><strong>Total Australian Income</strong></td>
+                <td class="amount"><strong id="incomeTotalAU">$0.00</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ================== PHILIPPINE INCOME ================== -->
+      <section class="card">
+        <h2>Philippine Income</h2>
+        <p class="small">Converted automatically → AUD using your PHP ➜ AUD rate.</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Source</th>
+                <th class="amount">Amount (AUD)</th>
+              </tr>
+            </thead>
+            <tbody id="phIncomeTableBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><strong>Total Philippine Income</strong></td>
+                <td class="amount"><strong id="incomeTotalPH">$0.00</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ================== COMBINED TOTAL ================== -->
+      <section class="card">
+        <h2 style="margin-bottom:0.6rem;">Total Income (AU + PH)</h2>
+        <div style="font-size:2rem;font-weight:bold;color:#2a6;">
+            <span id="incomeTotalAll">$0.00</span>
+        </div>
+      </section>
+
   </main>
+
   <script src="state.js"></script>
   <script src="income.js"></script>
 </body>

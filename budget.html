@@ -6,10 +6,11 @@
   <title>Budget – Categories</title>
   <link rel="stylesheet" href="budget.css" />
 </head>
+
 <body>
-  <header class="navbar">
-    <h1>Toby Budget – Budget</h1>
-    <div class="nav-links">
+<header class="navbar">
+  <h1>Toby Budget – Budget</h1>
+  <div class="nav-links">
       <a href="ledger.html">Ledger</a>
       <a href="budget.html" class="active">Budget</a>
       <a href="income.html">Income</a>
@@ -18,146 +19,108 @@
       <a href="debts.html">Debts</a>
       <a href="investments.html">Investments</a>
       <a href="budget-graphs.html">Graphs</a>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- =====================  CLEAN SUMMARY  ===================== -->
+<section class="card">
+  <h2>Income & Summary</h2>
+
+  <div class="row summary-row">
+
+    <div><div class="small">Monthly Income</div>
+      <div id="summaryIncome" class="badge">$0.00</div></div>
+
+    <div><div class="small">Combined Total Budget (AUD)</div>
+      <div id="summaryCombinedBudget" class="badge">$0.00</div></div>
+
+    <div><div class="small">Total Spend</div>
+      <div id="summaryTotalSpend" class="badge">$0.00</div></div>
+
+
+    <div><div class="small">AU Ledger Total</div>
+      <div id="summaryAuLedgerTotal" class="badge">$0.00</div></div>
+
+    <div><div class="small">PH Ledger Cost (AUD)</div>
+      <div id="summaryPhCost" class="badge">$0.00</div></div>
+
+    <div><div class="small">Total AU Budget</div>
+      <div id="summaryTotalBudget" class="badge">$0.00</div></div>
+
+    <div><div class="small">Predicted Result</div>
+      <div id="predictedProf" class="badge">$0.00</div></div>
+
+    <div><div class="small">Total PH Budget</div>
+      <div id="summaryTotalPhBudget" class="badge">$0.00</div></div>
+
+    <!-- 👇 Savings Fields -->
+    <div>
+      <div class="small">Samal Savings (per month)</div>
+      <input type="number" id="samalSavingInput" class="badge input-badge" step="0.01">
     </div>
-  </header>
 
-  <main class="container">
+    <div>
+      <div class="small">AU Savings (per month)</div>
+      <input type="number" id="auSavingInput" class="badge input-badge" step="0.01">
+    </div>
 
-    <!-- Income & Summary -->
-    <section class="card">
-      <h2>Income & Summary</h2>
+    <div>
+      <div class="small"><b>Remaining After Savings</b></div>
+      <div id="remainingAfterSavings" class="badge" style="background:#28a745;color:white;font-weight:bold;"></div>
+    </div>
 
-      <div class="row summary-row">
+  </div>
+</section>
 
-        <div>
-          <div class="small">Monthly Income</div>
-          <div id="summaryIncome"class="badge"></div>
-        </div>
-        <!-- Combined budget -->
-        <div>
-          <div class="small">Combined Total Budget (AUD)</div>
-          <div id="summaryCombinedBudget" class="badge">$0.00</div>
-        </div>
-        <!--
-        <div>
-          <div class="small">House Allocation</div>
-          <div id="summaryHouse"class="badge"></div>
-        </div>
- 
-        <div>
-        <div class="small">Samal Allocation</div>
-          <div id="summarySamal" class="badge"></div>
-        </div>
-        -->
-
-        <div>
-          <div class="small">Total Spend</div>
-          <div id="summaryTotalSpend" class="badge"></div>
-        </div>
-
-        <div>
-          <div class="small">Profit / Loss</div>
-          <div id="summaryProfitLoss" class="badge"></div>
-        </div>
-  <div>
-    <div class="small">AU Ledger Total</div>
-    <div id="summaryAuLedgerTotal" class="badge"></div>
+<!-- =====================  BACKUP BAR  ===================== -->
+<div class="backup-controls">
+    <button id="saveBackupBtn" class="secondary">Save Backup</button>
+    <input type="file" id="loadBackupInput" style="display:none" />
+    <button id="loadBackupBtn" class="secondary">Load Backup</button>
+    <button id="refreshBtn" class="secondary">Refresh</button>
 </div>
 
-<!-- PH Ledger Cost (AUD) -->
-        <div>
-          <div class="small">PH Ledger Cost (AUD)</div>
-          <div id="summaryPhCost" class="badge">$0.00</div>
-        </div>
-        <!-- AU budget -->
-        <div>
-          <div class="small">Total AU Budget</div>
-          <div id="summaryTotalBudget" class="badge">$0.00</div>
-        </div>
+<!-- =====================  CATEGORIES  ===================== -->
+<section class="card">
+  <h2>Categories</h2>
 
-
-<div>
-          <div class="small">Predicted Result</div>
-          <div id="predictedProf" class="badge"></div>
-        </div>
-
-
-        <div>
-          <div class="small">Total PH Budget</div>
-          <div id="summaryTotalPhBudget" class="badge">$0.00</div>
-        </div>
-
-
-
-
-
+  <div class="row" style="align-items:flex-end;">
+      <div>
+          <label>New Category Name</label>
+          <input type="text" id="newCategoryName" placeholder="e.g. Rent, Gym, Developers"/>
       </div>
-    </section>
 
-    <!-- Backup controls -->
-    <div class="backup-controls">
-      <button id="saveBackupBtn" class="secondary">Save Backup</button>
-      <input type="file" id="loadBackupInput" style="display: none" />
-      <button id="loadBackupBtn" class="secondary">Load Backup</button>
-      <button id="refreshBtn" class="secondary">Refresh</button>
-    </div>
+      <div>
+          <label>Monthly Budget ($)</label>
+          <input type="number" id="newCategoryMonthly" min="0" step="0.01"/>
+      </div>
 
-    <!-- Categories -->
-    <section class="card">
-      <h2>Categories</h2>
-
-      <div class="row" style="align-items: flex-end;">
-        <div>
-          <label for="newCategoryName">New Category Name</label>
-          <input
-            type="text"
-            id="newCategoryName"
-            placeholder="e.g. Rent, Gym, Developers"
-          />
-        </div>
-
-        <div>
-          <label for="newCategoryMonthly">Monthly Budget ($)</label>
-          <input
-            type="number"
-            id="newCategoryMonthly"
-            min="0"
-            step="0.01"
-          />
-        </div>
-
-        <div>
+      <div>
           <button class="primary" id="addCategoryBtn">Add Category</button>
-        </div>
       </div>
+  </div>
 
-      <div class="small" style="margin-top: 0.4rem;">
-        These categories are shared with the Ledger page (for assigning transactions).
-      </div>
+  <div class="small" style="margin-top:0.5rem;">These categories are shared with Ledger.</div>
 
-      <div class="table-wrapper" style="margin-top: 0.75rem;">
-        <table id="categoriesTable">
+  <div class="table-wrapper">
+      <table id="categoriesTable">
           <thead>
-            <tr>
-              <th>Category</th>
-              <th class="amount">Budget ($)</th>
-              <th class="amount">Actual ($)</th>
-              <th class="amount">Difference ($)</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
+              <tr>
+                  <th>Category</th><th class="amount">Budget ($)</th>
+                  <th class="amount">Actual ($)</th><th class="amount">Difference ($)</th>
+                  <th>Status</th><th></th>
+              </tr>
           </thead>
-          <tbody>
-            <!-- inserted by JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+          <tbody></tbody>
+      </table>
+  </div>
+</section>
 
-  </main>
+</main>
 
-  <script src="state.js"></script>
-  <script src="budget.js"></script>
-
+<script src="state.js"></script>
+<script src="budget.js"></script>
 </body>
 </html>

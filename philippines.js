@@ -94,28 +94,50 @@ function populateCategoryDropdown() {
 // ------------------------------
 // Summary Computation
 // ------------------------------
+// ------------------------------
+// Summary Computation
+// ------------------------------
+// ------------------------------
+// Summary Computation (FINAL – per requirements)
+// ------------------------------
+// =========================
+// Summary Computation (FINAL REQUIRED VERSION)
+// =========================
 function computeTotals() {
-    let earned = 0, spent = 0, totalPHP = 0, totalAUD = 0;
+
+    let sentPHP = 0;     // AU_Income category transactions (PHP)
+    let earnedPHP = 0;   // Income category (PHP)
+    let spentPHP = 0;    // All other categories = PH Spend (PHP)
 
     stateP.philippines.forEach(r => {
+
         const php = r.amountPhp || 0;
-        const aud = r.amountAud || 0;
+        const cat = r.category?.toLowerCase() || "";
 
-        if (aud > 0) earned += aud;
-        if (aud < 0) spent += Math.abs(aud);
+        // From Australia → category must be EXACT: AU_Income
+        if (cat === "au_income") sentPHP += php;
 
-        totalPHP += php;
-        totalAUD += aud;
+        // Earned inside PH → category must be EXACT: Income
+        if (cat === "income") earnedPHP += php;
+
+        // Everything else = expense/spend
+        if (cat !== "income" && cat !== "au_income") spentPHP += php;
     });
 
-    elsP.moneyEarned.textContent = formatAUD(earned);
-    elsP.moneySpent.textContent = formatAUD(spent);
-    elsP.moneySent.textContent = formatAUD(0);
-    elsP.phNet.textContent = formatAUD(earned - spent);
-    elsP.phLeft.textContent = formatAUD(earned - spent);
-    elsP.totalPHP.textContent = formatPHP(totalPHP);
-    elsP.totalAUD.textContent = formatAUD(totalAUD);
+    // Calculate Net
+    let phNetPHP = sentPHP + earnedPHP - spentPHP;
+    let phNetAUD = phNetPHP * stateP.phpAudRate;
+
+    // UPDATE UI DISPLAY
+    document.getElementById("ph_sent").textContent   = formatPHP(sentPHP);
+    document.getElementById("ph_income").textContent = formatPHP(earnedPHP);
+    document.getElementById("ph_spent").textContent  = formatPHP(spentPHP);
+    document.getElementById("ph_net").textContent    = formatPHP(phNetPHP);
+    document.getElementById("ph_net_aud").textContent = formatAUD(phNetAUD);
 }
+
+
+
 
 // ------------------------------
 // Render Ledger Table

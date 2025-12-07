@@ -1,105 +1,113 @@
-// income.js – unified with shared state.js
+// ===============================
+//    INCOME PAGE CONTROLLER
+//    (AU + Philippines Support)
+// ===============================
 
-let state = State.load();   // <-- global unified state
+// Load state from LocalStorage
+let state = State.load();
 
-// Ensure incomes exists
-if (!Array.isArray(state.incomes)) state.incomes = [];
-State.save(state);
+// Ensure structures exist
+if (!state.ledger) state.ledger = [];
+if (!state.philippines) state.philippines = [];
+if (typeof state.phpAudRate !== "number") state.phpAudRate = 0.026;  // conversion rate
 
-const elsI = {
-  tableBody: document.getElementById('incomeTableBody'),
-  total: document.getElementById('incomeTotal')
+// UI bindings (must match income.html)
+const els = {
+    auBody: document.getElementById("incomeTableBody"),
+    auTotal: document.getElementById("incomeTotalAU"),
+
+    phBody: document.getElementById("phIncomeTableBody"),
+    phTotal: document.getElementById("incomeTotalPH"),
+   
+
+    combined: document.getElementById("incomeTotalAll")
 };
 
-function formatCurrency(v) {
-  if (isNaN(v)) return '$0.00';
-  return '$' + v.toFixed(2);
-}
+// Format currency
+const fmt = v => "$" + Number(v || 0).toFixed(2);
 
-function normalizeDate(d) {
-  if (!d) return '';
-  const parsed = new Date(d);
-  if (parsed.toString() === 'Invalid Date') return d;
-  return parsed.toISOString().split('T')[0];
-}
 
-/* -------------------------------------------
-   Sync income rows from ledger (category=Income)
--------------------------------------------- */
-function syncIncomesFromLedger() {
-  const incomes = [];
+// =====================================================
+//  BUILD INCOME LISTS FROM LEDGERS
+// =====================================================
+function calculateIncome() {
 
-  (state.ledger || []).forEach(row => {
-    if (!row) return;
+    let AU = [];
+    let PH = [];
 
-    if (String(row.category || '').toLowerCase() !== 'income') return;
-
-    const amt =
-      typeof row.amount === 'number'
-        ? row.amount
-        : parseFloat(row.amount) || 0;
-
-    incomes.push({
-      date: normalizeDate(row.date),
-      name: row.description || 'Income',
-      amount: Math.abs(amt)
+    // ---------- AUSTRALIAN LEDGER ----------
+    state.ledger.forEach(row => {
+        if (row && String(row.category).toLowerCase() === "income") {
+            AU.push({
+                date: row.date,
+                source: row.description || "Income",
+                amount: Math.abs(Number(row.amount) || 0)
+            });
+        }
     });
-  });
 
-  // Sort newest (descending)
-  incomes.sort((a, b) => (a.date < b.date ? 1 : -1));
+    // ---------- PHILIPPINE LEDGER ----------
+    state.philippines.forEach(row => {
+        if (row && String(row.category).toLowerCase() === "income") {
+            let audValue = Number(row.amountAud) || 0;
+            PH.push({
+                date: row.date,
+                source: row.desc || "PH Income",
+                amountAud: audValue
+            });
+        }
+    });
 
-  state.incomes = incomes;
-  State.save(state);
+    // Totals
+    state.totalIncomeAU = AU.reduce((t, r) => t + r.amount, 0);
+    state.totalIncomePH = PH.reduce((t, r) => t + r.amountAud, 0);
+    state.totalIncomeAll = state.totalIncomeAU + state.totalIncomePH;
+
+    State.save(state);
+    renderIncomePage(AU, PH);
 }
 
-/* -------------------------------------------
-   Compute total income
--------------------------------------------- */
-function computeIncomeTotal() {
-  const total = (state.incomes || []).reduce(
-    (sum, row) => sum + (parseFloat(row.amount) || 0),
-    0
-  );
 
-  state.income = total;
-  State.save(state);
+// =====================================================
+//  RENDER INTO HTML TABLES
+// =====================================================
+function renderIncomePage(AU, PH) {
 
-  if (elsI.total) {
-    elsI.total.textContent = formatCurrency(total);
-  }
+    // ----- AU Income -----
+    els.auBody.innerHTML = "";
+    AU.forEach(r => {
+        els.auBody.innerHTML += `
+        <tr>
+            <td>${r.date}</td>
+            <td>${r.source}</td>
+            <td>${fmt(r.amount)}</td>
+        </tr>`;
+    });
+
+    // 🔥 THIS WAS MISSING — NOW THE AU TOTAL DISPLAYS
+    els.auTotal.textContent = fmt(state.totalIncomeAU);
+
+
+
+    // ----- PH Income -----
+    els.phBody.innerHTML = "";
+    PH.forEach(r => {
+        els.phBody.innerHTML += `
+        <tr>
+            <td>${r.date}</td>
+            <td>${r.source}</td>
+            <td>${fmt(r.amountAud)}</td>
+        </tr>`;
+    });
+
+    els.phTotal.textContent = fmt(state.totalIncomePH);
+
+
+
+    // ----- Combined Total -----
+    els.combined.textContent = fmt(state.totalIncomeAll);
 }
 
-/* -------------------------------------------
-   Render table
--------------------------------------------- */
-function renderIncomes() {
-  if (!elsI.tableBody) return;
-  elsI.tableBody.innerHTML = '';
 
-  (state.incomes || []).forEach(row => {
-    const tr = document.createElement('tr');
-
-    const tdDate = document.createElement('td');
-    tdDate.textContent = row.date || '';
-    tr.appendChild(tdDate);
-
-    const tdName = document.createElement('td');
-    tdName.textContent = row.name || '';
-    tr.appendChild(tdName);
-
-    const tdAmount = document.createElement('td');
-    tdAmount.className = 'amount';
-    tdAmount.textContent = formatCurrency(row.amount);
-    tr.appendChild(tdAmount);
-
-    elsI.tableBody.appendChild(tr);
-  });
-}
-
-/* -------------------------------------------
-   Initialize page
--------------------------------------------- */
-syncIncomesFromLedger();
-computeIncomeTotal();
-renderIncomes();
+// Init run
+calculateIncome();

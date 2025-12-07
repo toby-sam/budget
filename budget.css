@@ -459,3 +459,49 @@ th.ph-amount-aud {
     padding: 8px 16px;
     border-radius: 20px;
 }
+#incomeTotalAll {
+    font-size: 22px;   /* CHANGE value to size you want */
+    font-weight: 600;  /* optional */
+}
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    margin-bottom: 25px;
+}
+
+/* Summary row layout */
+.summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+}
+
+.badge {
+    background:#e9f4ff;
+    padding:8px 14px;
+    border-radius:20px;
+    font-weight:600;
+    margin-top:4px;
+    display:inline-block;
+}
+
+.input-badge {
+    background:white;
+    border:1px solid #d6e5f3;
+    margin-top:4px;
+    padding:6px 12px;
+    border-radius:10px;
+}
+#samalSavingInput,
+#auSavingInput {
+    width:70px;
+    padding:6px 10px;
+    border-radius:20px;
+    border:1px solid #dce6f2;
+    background:#f8fbff;
+    font-weight:600;
+    text-align:right;
+}
