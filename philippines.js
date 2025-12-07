@@ -83,13 +83,16 @@ function normalisePhDate(str) {
 function populateCategoryDropdown() {
     elsP.category.innerHTML = "";
 
-    stateP.phBudgetCategories.forEach(cat => {
-        const opt = document.createElement("option");
-        opt.value = cat.name;
-        opt.textContent = cat.name;
-        elsP.category.appendChild(opt);
-    });
+    [...stateP.phBudgetCategories]
+        .sort((a,b) => a.name.localeCompare(b.name))   // 🔥 ALPHABETICAL SORT
+        .forEach(cat => {
+            const opt = document.createElement("option");
+            opt.value = cat.name;
+            opt.textContent = cat.name;
+            elsP.category.appendChild(opt);
+        });
 }
+
 
 // ------------------------------
 // Summary Computation
@@ -169,26 +172,31 @@ function renderRows() {
         };
         tdDesc.appendChild(inpDesc);
         tr.appendChild(tdDesc);
+// Category (PH Budget only)
+const tdCat = document.createElement("td");
+const sel = document.createElement("select");
 
-        // Category (PH Budget only)
-        const tdCat = document.createElement("td");
-        const sel = document.createElement("select");
+// Sort alphabetically before building list
+const sortedCats = [...stateP.phBudgetCategories].sort((a,b) => 
+    a.name.localeCompare(b.name)
+);
 
-        stateP.phBudgetCategories.forEach(cat => {
-            const opt = document.createElement("option");
-            opt.value = cat.name;
-            opt.textContent = cat.name;
-            if (row.category === cat.name) opt.selected = true;
-            sel.appendChild(opt);
-        });
+sortedCats.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat.name;
+    opt.textContent = cat.name;
+    if (row.category === cat.name) opt.selected = true;
+    sel.appendChild(opt);
+});
 
-        sel.onchange = () => {
-            row.category = sel.value;
-            State.save(stateP);
-        };
+sel.onchange = () => {
+    row.category = sel.value;
+    State.save(stateP);
+};
 
-        tdCat.appendChild(sel);
-        tr.appendChild(tdCat);
+tdCat.appendChild(sel);
+tr.appendChild(tdCat);
+
 
         // PHP amount
         const tdPhp = document.createElement("td");

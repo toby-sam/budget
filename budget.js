@@ -165,7 +165,12 @@ function renderCategories(){
                 onblur="State.save(state);renderCategories();computeSummary();"></td>
             <td class="amount">${formatAud(actuals[cat.name]||0)}</td>
             <td class="amount">${formatAud((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))}</td>
-            <td>${((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))>=0?"Under Budget":"Over Budget"}</td>
+<td class="${
+    ((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))>=0 ? "status-good" : "status-bad"
+}">
+    ${((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))>=0 ? "Under Budget" : "Over Budget"}
+</td>
+
             <td><button onclick="state.categories.splice(${idx},1);State.save(state);renderCategories();computeSummary();">✕</button></td>`;
         body.appendChild(tr);
     });
