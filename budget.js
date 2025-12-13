@@ -55,7 +55,10 @@ function computeAuCost(){
 }
 
 function computePhCostAud(){
-    return state.philippines.reduce((s,t)=>s+Math.abs(t.amountAud||0),0);
+    return state.philippines.reduce((sum, t) => {
+        if (t.category?.toLowerCase() === "income") return sum;
+        return sum + Math.abs(t.amountAud || 0);
+    }, 0);
 }
 
 function computePhSpendPhp(){

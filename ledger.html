@@ -1,136 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-    <script>git  
-if (sessionStorage.getItem("budgetAuth") !== "yes") {
+<script>git
+  if (sessionStorage.getItem("budgetAuth") !== "yes") {
     window.location.href = "login.html";
-}
+  }
 </script>
+
 <head>
   <meta charset="UTF-8" />
   <title>Toby Budget – Ledger</title>
   <link rel="stylesheet" href="budget.css" />
 </head>
+
 <body>
 
-<header class="navbar">
-  <h1>Toby Budget – Ledger</h1>
-  <div class="nav-links">
-    <a href="ledger.html" class="active">Ledger</a>
-    <a href="budget.html">Budget</a>
-    <a href="income.html">Income</a>
-    <a href="philippines.html">Philippines</a>
-    <a href="ph-budget.html">PHBudget</a>
-    <a href="debts.html">Debts</a>
-    <a href="investments.html">Investments</a>
-    <a href="budget-graphs.html">Graphs</a>
-  </div>
-</header>
-
-<main class="container">
-
-  <!-- Import CSV Section -->
-  <section class="card">
-    <h2>Import AU Bank CSV</h2>
-
-    <div class="row">
-      <div>
-        <label>CSV file</label>
-        <input type="file" id="csvFile" accept=".csv" />
-      </div>
-
-      <button id="importBtn" class="primary">Import CSV</button>
-
-      <div id="loader" class="hidden" style="margin-left:1rem;">
-
-      </div>
+  <header class="navbar">
+    <h1>Toby Budget – Ledger</h1>
+    <div class="nav-links">
+      <!-- Populated by nav.js -->
     </div>
+  </header>
 
-    <!-- Undo + Remove Duplicates -->
-    <div class="row" style="margin-top:0.75rem;">
-      <button id="undoImportBtn" class="secondary hidden">
-        Undo Last Import
-      </button>
+  <main class="container">
 
-      <button id="removeDuplicatesBtn" class="secondary" style="margin-left:10px;">
-        Remove Duplicates
-      </button>
+    <!-- Import CSV Section -->
+    <section class="card">
+      <h2>Import AU Bank CSV</h2>
 
-      <button id="clearLedgerBtn" class="secondary" style="margin-left:10px;">
-        Clear Ledger
-      </button>
+      <div class="row">
+        <div>
+          <label>CSV file</label>
+          <input type="file" id="csvFile" accept=".csv" />
+        </div>
 
-      <button id="exportBtn" class="secondary" style="margin-left:10px;">
-        Export Ledger
-      </button>
-    </div>
-  </section>
+        <button id="importBtn" class="primary">Import CSV</button>
 
-  <!-- Manual Entry -->
-  <section class="card">
-    <h2>Add Manual Entry</h2>
+        <div id="loader" class="hidden" style="margin-left:1rem;">
 
-    <div class="row">
-      <div>
-        <label>Date</label>
-        <input type="text" id="manualDate" placeholder="dd/mm/yyyy or 27 Nov 2025" />
+        </div>
       </div>
 
-      <div style="flex: 1;">
-        <label>Description</label>
-        <input type="text" id="manualDescription" placeholder="e.g. Groceries" />
+      <!-- Undo + Remove Duplicates -->
+      <div class="row" style="margin-top:0.75rem;">
+        <button id="undoImportBtn" class="secondary hidden">
+          Undo Last Import
+        </button>
+
+        <button id="removeDuplicatesBtn" class="secondary" style="margin-left:10px;">
+          Remove Duplicates
+        </button>
+
+        <button id="clearLedgerBtn" class="secondary" style="margin-left:10px;">
+          Clear Ledger
+        </button>
+
+        <button id="exportBtn" class="secondary" style="margin-left:10px;">
+          Export Ledger
+        </button>
       </div>
+    </section>
 
-      <div>
-        <label>Amount</label>
-        <input type="number" id="manualAmount" step="0.01" />
+    <!-- Manual Entry -->
+    <section class="card">
+      <h2>Add Manual Entry</h2>
+
+      <div class="row">
+        <div>
+          <label>Date</label>
+          <input type="text" id="manualDate" placeholder="dd/mm/yyyy or 27 Nov 2025" />
+        </div>
+
+        <div style="flex: 1;">
+          <label>Description</label>
+          <input type="text" id="manualDescription" placeholder="e.g. Groceries" />
+        </div>
+
+        <div>
+          <label>Amount</label>
+          <input type="number" id="manualAmount" step="0.01" />
+        </div>
+
+        <div>
+          <label>Category</label>
+          <select id="manualCategory"></select>
+        </div>
+
+        <button id="addManualBtn" class="primary">Add</button>
       </div>
+    </section>
 
-      <div>
-        <label>Category</label>
-        <select id="manualCategory"></select>
+    <!-- Search -->
+    <section class="card">
+      <h2>Search</h2>
+      <input type="text" id="ledgerSearch" placeholder="Search description or category…"
+        style="width: 50%; padding: 0.4rem;" />
+    </section>
+
+    <!-- Ledger Table -->
+    <section class="card">
+      <h2>Ledger</h2>
+
+      <div class="table-wrapper">
+        <table id="ledger">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th class="amount">Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows populated via JS -->
+          </tbody>
+        </table>
       </div>
+    </section>
 
-      <button id="addManualBtn" class="primary">Add</button>
-    </div>
-  </section>
+  </main>
 
-  <!-- Search -->
-  <section class="card">
-    <h2>Search</h2>
-    <input
-      type="text"
-      id="ledgerSearch"
-      placeholder="Search description or category…"
-      style="width: 50%; padding: 0.4rem;"
-    />
-  </section>
-
-  <!-- Ledger Table -->
-  <section class="card">
-    <h2>Ledger</h2>
-
-    <div class="table-wrapper">
-      <table id="ledger">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th class="amount">Amount</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Rows populated via JS -->
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-</main>
-
-<script src="state.js"></script>
-<script src="ledger.js"></script>
+  <script src="state.js"></script>
+  <script src="nav.js"></script>
+  <script src="ledger.js"></script>
 
 </body>
+
 </html>

@@ -129,8 +129,14 @@ function loadCategoryDropdown() {
 // ---- Render ledger table (with duplicate highlight) ------------------------
 
 function renderLedger() {
+  console.log('=== renderLedger START ===');
+  console.log('state.ledger length:', state.ledger ? state.ledger.length : 'undefined');
+  
   const tbody = document.querySelector("#ledger tbody");
-  if (!tbody) return;
+  if (!tbody) {
+    console.error('tbody not found!');
+    return;
+  }
   tbody.innerHTML = "";
 
   // Normalise dates & keep schema clean
@@ -146,16 +152,47 @@ function renderLedger() {
     return db.localeCompare(da);
   });
 
-  // Duplicate detection (same date + same amount)
-// Detect duplicates (same date + ABS amount — ignore + or -)
-const seen = new Set();
-const duplicates = new Set();
-
-state.ledger.forEach(tx => {
-    const key = `${tx.date}|${Math.abs(tx.amount)}`;
-    if (seen.has(key)) duplicates.add(key);
-    else seen.add(key);
-});
+  // Duplicate detection - same amount AND dates within 2 days of each other
+  const duplicates = new Set();
+  
+  // Helper function to calculate days difference between two dates
+  function daysDifference(date1, date2) {
+    if (!date1 || !date2) return Infinity;
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    const diffTime = Math.abs(d2 - d1);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
+  
+  // Compare each transaction with all others
+  for (let i = 0; i < state.ledger.length; i++) {
+    for (let j = i + 1; j < state.ledger.length; j++) {
+      const tx1 = state.ledger[i];
+      const tx2 = state.ledger[j];
+      
+      // Check if amounts are the same (using absolute value)
+      const amount1 = Math.abs(tx1.amount);
+      const amount2 = Math.abs(tx2.amount);
+      
+      if (amount1 === amount2) {
+        // Check if dates are within 2 days
+        const daysDiff = daysDifference(tx1.date, tx2.date);
+        
+        if (daysDiff <= 2) {
+          // Mark both transactions as duplicates
+          duplicates.add(i);
+          duplicates.add(j);
+        }
+      }
+    }
+  }
+  
+  console.log('Duplicate detection:', {
+    totalEntries: state.ledger.length,
+    duplicateIndices: Array.from(duplicates),
+    duplicateCount: duplicates.size
+  });
 
   const hasCategories =
     Array.isArray(state.categories) && state.categories.length > 0;
@@ -165,13 +202,8 @@ state.ledger.forEach(tx => {
 
   state.ledger.forEach((tx, index) => {
     const tr = document.createElement("tr");
-   const dupKey = `${tx.date}|${Math.abs(tx.amount)}`;
-if (duplicates.has(dupKey)) {
-    tr.style.color = "red";
-    tr.style.fontWeight = "bold";
-    tr.title = "Duplicate entry (amount sign ignored)";
-}
-/* Saving 6th dec */
+    const isDuplicate = duplicates.has(index);  // Check by index, not key
+
 
     // Build category options
     let optionsHtml = "";
@@ -208,7 +240,21 @@ if (duplicates.has(dupKey)) {
     `;
 
     tbody.appendChild(tr);
+
+    // Apply red highlighting to all cells if duplicate
+    if (isDuplicate) {
+      console.log('>>> FOUND DUPLICATE - applying red style to index:', index, tx);
+      tr.title = "Duplicate: same amount within 2 days";
+      const cells = tr.querySelectorAll('td');
+      console.log('>>> Number of cells to style:', cells.length);
+      cells.forEach(cell => {
+        cell.style.setProperty('color', 'red', 'important');
+        cell.style.setProperty('font-weight', 'bold', 'important');
+      });
+      console.log('>>> Finished styling cells for index:', index);
+    }
   });
+
 
   // Delete buttons
   document.querySelectorAll(".delete-btn").forEach(btn => {

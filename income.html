@@ -1,90 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Toby Budget – Income</title>
   <link rel="stylesheet" href="budget.css">
 </head>
+
 <body>
   <header class="navbar">
     <h1>Toby Budget – Income</h1>
     <div class="nav-links">
-      <a href="ledger.html">Ledger</a>
-      <a href="budget.html">Budget</a>
-      <a href="income.html" class="active">Income</a>
-      <a href="philippines.html">Philippines</a>
-      <a href="ph-budget.html">PHBudget</a>
-      <a href="debts.html">Debts</a>
-      <a href="investments.html">Investments</a>
-      <a href="budget-graphs.html">Graphs</a>
+      <!-- Populated by nav.js -->
     </div>
   </header>
 
   <main class="container">
 
-      <!-- ================== AUSTRALIAN INCOME ================== -->
-      <section class="card">
-        <h2>Australian Income</h2>
-        <p class="small">Automatically detected from Ledger entries where category = <b>"Income"</b>.</p>
+    <!-- ================== AUSTRALIAN INCOME ================== -->
+    <section class="card">
+      <h2>Australian Income</h2>
+      <p class="small">Automatically detected from Ledger entries where category = <b>"Income"</b>.</p>
 
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Source</th>
-                <th class="amount">Amount (AUD)</th>
-              </tr>
-            </thead>
-            <tbody id="incomeTableBody"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2"><strong>Total Australian Income</strong></td>
-                <td class="amount"><strong id="incomeTotalAU">$0.00</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
-
-
-      <!-- ================== PHILIPPINE INCOME ================== -->
-      <section class="card">
-        <h2>Philippine Income</h2>
-        <p class="small">Converted automatically → AUD using your PHP ➜ AUD rate.</p>
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Source</th>
-                <th class="amount">Amount (AUD)</th>
-              </tr>
-            </thead>
-            <tbody id="phIncomeTableBody"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2"><strong>Total Philippine Income</strong></td>
-                <td class="amount"><strong id="incomeTotalPH">$0.00</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Source</th>
+              <th class="amount">Amount (AUD)</th>
+            </tr>
+          </thead>
+          <tbody id="incomeTableBody"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total Australian Income</strong></td>
+              <td class="amount"><strong id="incomeTotalAU">$0.00</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
 
 
-      <!-- ================== COMBINED TOTAL ================== -->
-      <section class="card">
-        <h2 style="margin-bottom:0.6rem;">Total Income (AU + PH)</h2>
-        <div style="font-size:2rem;font-weight:bold;color:#2a6;">
-            <span id="incomeTotalAll">$0.00</span>
-        </div>
-      </section>
+    <!-- ================== PHILIPPINE INCOME ================== -->
+    <section class="card">
+      <h2>Philippine Income</h2>
+      <p class="small">Converted automatically → AUD using your PHP ➜ AUD rate.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Source</th>
+              <th class="amount">Amount (AUD)</th>
+            </tr>
+          </thead>
+          <tbody id="phIncomeTableBody"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total Philippine Income</strong></td>
+              <td class="amount"><strong id="incomeTotalPH">$0.00</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ================== COMBINED TOTAL ================== -->
+    <section class="card">
+      <h2 style="margin-bottom:0.6rem;">Total Income (AU + PH)</h2>
+      <div style="font-size:2rem;font-weight:bold;color:#2a6;">
+        <span id="incomeTotalAll">$0.00</span>
+      </div>
+    </section>
 
   </main>
 
   <script src="state.js"></script>
+  <script src="nav.js"></script>
   <script src="income.js"></script>
 </body>
+
 </html>
