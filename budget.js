@@ -195,6 +195,42 @@ function init(){
         state.auSavings=parseFloat(e.target.value)||0; State.save(state); computeSummary();
     };
 
+    // 🔥 ADD CATEGORY
+    document.getElementById("addCategoryBtn").onclick = () => {
+        const nameInput = document.getElementById("newCategoryName");
+        const monthlyInput = document.getElementById("newCategoryMonthly");
+        
+        const name = (nameInput.value || "").trim();
+        const monthly = parseFloat(monthlyInput.value) || 0;
+        
+        if (!name) {
+            alert("Please enter a category name.");
+            return;
+        }
+        
+        // Check for duplicates
+        if (state.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+            alert("Category already exists.");
+            return;
+        }
+        
+        // Add new category
+        state.categories.push({
+            name: name,
+            budgetMonthly: monthly
+        });
+        
+        State.save(state);
+        
+        // Clear inputs
+        nameInput.value = "";
+        monthlyInput.value = "";
+        
+        // Refresh display
+        renderCategories();
+        computeSummary();
+    };
+
 // 🔥 SAVE BACKUP
 // 🔥 SAVE BACKUP WITH CUSTOM FILENAME
 document.getElementById("saveBackupBtn").onclick = () => {

@@ -478,6 +478,18 @@ function initLedger() {
   setupImport();
   setupManualAdd();
   setupSearch();
+  
+  // 🔥 Refresh categories when page becomes visible (e.g., navigating back from budget page)
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      // Reload state from localStorage
+      state = State.load();
+      // Refresh the category dropdown
+      loadCategoryDropdown();
+      // Also refresh the ledger table to update category dropdowns in existing rows
+      renderLedger();
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", initLedger);
