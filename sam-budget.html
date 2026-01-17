@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sam Business Budget</title>
+
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="budget.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <h1>Toby Budget – Sam Business Budget</h1>
+        <div class="nav-links">
+            <!-- Populated by nav.js -->
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- ========================= -->
+        <!-- Income & Summary          -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Income & Summary</h2>
+
+            <div class="row summary-row">
+                <div class="row summary-row" class="badge">
+                    <div>
+                        <div class="small">Monthly Income (AUD)</div>
+                        <div id="summaryIncome" class="badge">$0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="small">Total Spend</div>
+                        <div id="summaryTotalSpend" class="badge"></div>
+                    </div>
+
+                    <div>
+                        <div class="small">Profit / Loss (AUD)</div>
+                        <div id="summaryProfitLoss" class="badge"></div>
+                    </div>
+
+                    <div>
+                        <div class="small">Total Budget</div>
+                        <div id="summaryTotalBudget" class="badge">$0.00</div>
+                    </div>
+                </div>
+
+
+                <div class="backup-controls">
+                    <button id="saveBackupBtn" class="secondary">Save Backup</button>
+                    <input type="file" id="loadBackupInput" style="display:none;">
+                    <button id="loadBackupBtn" class="secondary">Load Backup</button>
+                    <button id="refreshBtn" class="secondary">Refresh</button>
+                </div>
+        </section>
+
+        <!-- ========================= -->
+        <!-- Sam Categories            -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Sam Business Categories</h2>
+
+            <div class="row" style="align-items:flex-end; gap:15px;">
+                <div>
+                    <label for="newCategoryName">New Category Name</label>
+                    <input type="text" id="newCategoryName" placeholder="e.g. Consulting, Equipment">
+                </div>
+
+                <div>
+                    <label for="newCategoryMonthly">Monthly Budget (AUD)</label>
+                    <input type="number" id="newCategoryMonthly" step="0.01">
+                </div>
+
+                <button id="addCategoryBtn" class="primary">Add Category</button>
+            </div>
+
+            <div class="small" style="margin-top:0.5rem;">
+                These categories are used for Sam business transaction assignments.
+            </div>
+
+            <div class="table-wrapper" style="margin-top:0.75rem;">
+                <table id="categoriesTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th class="amount">Budget (AUD)</th>
+                            <th class="amount">Actual (AUD)</th>
+                            <th class="amount">Difference</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- JS -->
+    <script src="state.js"></script>
+    <script src="nav.js"></script>
+    <script src="sam-budget.js"></script>
+
+</body>
+
+</html>

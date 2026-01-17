@@ -32,6 +32,18 @@ function defaultState() {
     // PHP → AUD rate
     phpAudRate: 0.0259,
 
+    // Sam business ledger rows
+    samLedger: [],
+
+    // Sam business categories used by sam-ledger.js
+    samCategories: [],
+
+    // Sam business budget categories used by sam-budget.js
+    samBudgetCategories: [],
+
+    // Bonus income entries
+    bonusIncome: [],
+
     // Debts & investments
     investments: [],
     debts: [],
@@ -76,6 +88,22 @@ function loadState() {
       phBudgetCategories: Array.isArray(parsed.phBudgetCategories)
         ? parsed.phBudgetCategories
         : base.phBudgetCategories,
+
+      // Sam business ledger
+      samLedger: Array.isArray(parsed.samLedger) ? parsed.samLedger : base.samLedger,
+
+      // Sam categories for the ledger page
+      samCategories: Array.isArray(parsed.samCategories)
+        ? parsed.samCategories
+        : base.samCategories,
+
+      // Sam budget categories for the Sam budget page
+      samBudgetCategories: Array.isArray(parsed.samBudgetCategories)
+        ? parsed.samBudgetCategories
+        : base.samBudgetCategories,
+
+      // Bonus income entries
+      bonusIncome: Array.isArray(parsed.bonusIncome) ? parsed.bonusIncome : base.bonusIncome,
 
       investments: Array.isArray(parsed.investments) ? parsed.investments : base.investments,
       debts: Array.isArray(parsed.debts) ? parsed.debts : base.debts,

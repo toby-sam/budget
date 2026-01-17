@@ -9,8 +9,8 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   background: #f5f7fb;
   color: #222;
 }
@@ -115,24 +115,24 @@ input[readonly] {
   background: #f9fafb;
 }
 .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem 2rem;
-    margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem 2rem;
+  margin-top: 0.75rem;
 }
 
 .summary-item {
-    padding: 0.5rem 0;
+  padding: 0.5rem 0;
 }
 
 .summary-label {
-    font-size: 0.85rem;
-    color: #555;
+  font-size: 0.85rem;
+  color: #555;
 }
 
 summary-value {
-    font-weight: bold;
-    font-size: 1.1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
 button {
@@ -337,171 +337,169 @@ th.ph-amount-aud {
   height: 100%;
 }
 
-
 /* === BuddyVitals theme for Budget Graphs === */
 
 /* Legend swatches */
 .legend-swatch.legend-budget {
-  background: #00C49A !important;   /* BuddyVitals green = Budget */
+  background: #00c49a !important; /* BuddyVitals green = Budget */
 }
 
 .legend-swatch.legend-actual {
-  background: #0EA5E9 !important;   /* BuddyVitals blue = Actual */
+  background: #0ea5e9 !important; /* BuddyVitals blue = Actual */
 }
 
 /* Bars (support both class patterns) */
 .graph-bar-budget,
 .graph-bar.budget {
-  background: #00C49A !important;   /* Budget bar = BV green */
+  background: #00c49a !important; /* Budget bar = BV green */
 }
 
 .graph-bar-actual,
 .graph-bar.actual {
-  background: #0EA5E9 !important;   /* Actual bar = BV blue */
+  background: #0ea5e9 !important; /* Actual bar = BV blue */
 }
 
 /* "Over by" text – clear, readable red */
 .graph-diff {
-  color: #EF4444 !important;        /* Tailwind-style red */
+  color: #ef4444 !important; /* Tailwind-style red */
 }
 
 /* Optional: tweak over-budget message */
 .graph-empty {
-  color: #00C49A !important;        /* Success message in BV green */
+  color: #00c49a !important; /* Success message in BV green */
 }
 .top-nav {
-    background-color: #0b132b;
-    padding: 15px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background-color: #0b132b;
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .top-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 40px;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
 }
 
 .top-nav a {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
 }
 
 .top-nav a.active {
-    background: #14b866;
-    padding: 6px 18px;
-    border-radius: 20px;
+  background: #14b866;
+  padding: 6px 18px;
+  border-radius: 20px;
 }
 /* ============================
    FIX: Consistent Page Width
    ============================ */
 .page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
-
 
 /* ============================
    FIX: Right-Aligned Top Menu
    ============================ */
 .top-nav nav ul {
-    display: flex;
-    justify-content: flex-end;
-    gap: 25px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 25px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .top-nav {
-    background: #0f1a2c;
-    padding: 15px 30px;
+  background: #0f1a2c;
+  padding: 15px 30px;
 }
 
 .top-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
 }
 
 .top-nav a.active {
-    background: #0aa34f;
-    padding: 6px 14px;
-    border-radius: 18px;
-    color: white;
+  background: #0aa34f;
+  padding: 6px 14px;
+  border-radius: 18px;
+  color: white;
 }
 .top-nav {
-    background: #0B1A2A;
-    padding: 20px 0;
+  background: #0b1a2a;
+  padding: 20px 0;
 }
 
 .top-nav .nav-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
 }
 
 .top-nav nav ul {
-    display: flex;
-    justify-content: flex-end; /* moves menu to the RIGHT */
-    align-items: center;
-    gap: 25px;
+  display: flex;
+  justify-content: flex-end; /* moves menu to the RIGHT */
+  align-items: center;
+  gap: 25px;
 }
 
 .top-nav nav ul li a.active {
-    background: #10B981;
-    padding: 8px 16px;
-    border-radius: 20px;
+  background: #10b981;
+  padding: 8px 16px;
+  border-radius: 20px;
 }
 #incomeTotalAll {
-    font-size: 22px;   /* CHANGE value to size you want */
-    font-weight: 600;  /* optional */
+  font-size: 22px; /* CHANGE value to size you want */
+  font-weight: 600; /* optional */
 }
 .card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
-    margin-bottom: 25px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  margin-bottom: 25px;
 }
 
 /* Summary row layout */
 .summary-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 28px;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
 }
 
 .badge {
-    background:#e9f4ff;
-    padding:8px 14px;
-    border-radius:20px;
-    font-weight:600;
-    margin-top:4px;
-    display:inline-block;
+  background: #e9f4ff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-top: 4px;
+  display: inline-block;
 }
 
 .input-badge {
-    background:white;
-    border:1px solid #d6e5f3;
-    margin-top:4px;
-    padding:6px 12px;
-    border-radius:10px;
+  background: white;
+  border: 1px solid #d6e5f3;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: 10px;
 }
 #samalSavingInput,
 #auSavingInput {
-    width:70px;
-    padding:6px 10px;
-    border-radius:20px;
-    border:1px solid #dce6f2;
-    background:#f8fbff;
-    font-weight:600;
-    text-align:right;
+  width: 70px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid #dce6f2;
+  background: #f8fbff;
+  font-weight: 600;
+  text-align: right;
 }

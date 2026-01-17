@@ -25,7 +25,7 @@ function cleanSpaces(str) {
 function formatAud(v) {
   const n = Number(v);
   if (isNaN(n)) return "$0.00";
-  return "$" + n.toFixed(2);
+  return n.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 }
 
 // Parse CSV-style dates such as "8 Dec 2025" or "08 December 2025"
@@ -241,6 +241,12 @@ function renderLedger() {
 
     tbody.appendChild(tr);
 
+    // Set the selected value AFTER the element is in the DOM
+    const selectEl = tr.querySelector(".ledger-category");
+    if (selectEl) {
+      selectEl.value = tx.category || "";
+    }
+
     // Apply red highlighting to all cells if duplicate
     if (isDuplicate) {
       console.log('>>> FOUND DUPLICATE - applying red style to index:', index, tx);
@@ -276,6 +282,31 @@ function renderLedger() {
       State.save(state);
     };
   });
+  
+  // Update summary
+  updateLedgerSummary();
+}
+
+// ---- Update Ledger Summary ------------------------------------------------
+
+function updateLedgerSummary() {
+  // Exclude income and use Math.abs() to match budget page AU Ledger Total
+  const runningTotal = state.ledger.reduce((sum, tx) => {
+    if (tx.category?.toLowerCase() === "income") return sum;
+    return sum + Math.abs(tx.amount || 0);
+  }, 0);
+  const totalEntries = state.ledger.length;
+  
+  const runningTotalEl = document.getElementById("ledgerRunningTotal");
+  const totalEntriesEl = document.getElementById("ledgerTotalEntries");
+  
+  if (runningTotalEl) {
+    runningTotalEl.textContent = formatAud(runningTotal);
+  }
+  
+  if (totalEntriesEl) {
+    totalEntriesEl.textContent = totalEntries;
+  }
 }
 
 // ---- Manual Add ------------------------------------------------------------

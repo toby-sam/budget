@@ -111,11 +111,17 @@ function computeTotals() {
     let sentPHP = 0;     // AU_Income category transactions (PHP)
     let earnedPHP = 0;   // Income category (PHP)
     let spentPHP = 0;    // All other categories = PH Spend (PHP)
+    let runningTotalPHP = 0;  // Running total of all entries (excluding "income")
 
     stateP.philippines.forEach(r => {
 
         const php = r.amountPhp || 0;
         const cat = r.category?.toLowerCase() || "";
+
+        // Add to running total (exclude "income" category)
+        if (cat !== "income") {
+            runningTotalPHP += php;
+        }
 
         // From Australia → category must be EXACT: AU_Income
         if (cat === "au_income") sentPHP += php;
@@ -130,11 +136,15 @@ function computeTotals() {
     // Calculate Net
     let phNetPHP = sentPHP + earnedPHP - spentPHP;
     let phNetAUD = phNetPHP * stateP.phpAudRate;
+    
+    // Convert spent to AUD
+    let spentAUD = spentPHP * stateP.phpAudRate;
 
     // UPDATE UI DISPLAY
+    document.getElementById("ph_running_total").textContent = formatPHP(runningTotalPHP);
     document.getElementById("ph_sent").textContent   = formatPHP(sentPHP);
     document.getElementById("ph_income").textContent = formatPHP(earnedPHP);
-    document.getElementById("ph_spent").textContent  = formatPHP(spentPHP);
+    document.getElementById("ph_spent").textContent  = formatAUD(spentAUD);  // Display in AUD
     document.getElementById("ph_net").textContent    = formatPHP(phNetPHP);
     document.getElementById("ph_net_aud").textContent = formatAUD(phNetAUD);
 }

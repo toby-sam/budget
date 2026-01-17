@@ -1,0 +1,2075 @@
+{
+  "income": 25746.28,
+  "housePct": 10,
+  "samalPct": 10,
+  "categories": [
+    {
+      "name": "kids",
+      "budgetMonthly": 800
+    },
+    {
+      "name": "Toby",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Rent",
+      "budgetMonthly": 4200
+    },
+    {
+      "name": "Household",
+      "budgetMonthly": 2500
+    },
+    {
+      "name": "Food",
+      "budgetMonthly": 1500
+    },
+    {
+      "name": "CAR",
+      "budgetMonthly": 1200
+    },
+    {
+      "name": "WG",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Philippines",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Electricty",
+      "budgetMonthly": 500
+    },
+    {
+      "name": "Life Insurance",
+      "budgetMonthly": 400
+    },
+    {
+      "name": "Google",
+      "budgetMonthly": 276.1
+    },
+    {
+      "name": "Gymn",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "CC Debt",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Takeout",
+      "budgetMonthly": 100
+    },
+    {
+      "name": "Amazon",
+      "budgetMonthly": 30
+    },
+    {
+      "name": "Cole CC",
+      "budgetMonthly": 100
+    },
+    {
+      "name": "Toll",
+      "budgetMonthly": 25
+    },
+    {
+      "name": "ChatGpt",
+      "budgetMonthly": 60
+    },
+    {
+      "name": "Income",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Zip",
+      "budgetMonthly": 396.44
+    },
+    {
+      "name": "Spotify",
+      "budgetMonthly": 29.99
+    },
+    {
+      "name": "Super",
+      "budgetMonthly": 400
+    },
+    {
+      "name": "Health",
+      "budgetMonthly": 75
+    },
+    {
+      "name": "Holiday",
+      "budgetMonthly": 300
+    },
+    {
+      "name": "Charity",
+      "budgetMonthly": 50
+    },
+    {
+      "name": "Mobile",
+      "budgetMonthly": 162.55
+    },
+    {
+      "name": "Internet",
+      "budgetMonthly": 84.95
+    },
+    {
+      "name": "Loans",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Gift",
+      "budgetMonthly": 2000
+    },
+    {
+      "name": "Developers",
+      "budgetMonthly": 3320.72
+    },
+    {
+      "name": "Lottery",
+      "budgetMonthly": 50
+    },
+    {
+      "name": "Judea",
+      "budgetMonthly": 100
+    },
+    {
+      "name": "School",
+      "budgetMonthly": 1000
+    },
+    {
+      "name": "Swimming",
+      "budgetMonthly": 250
+    },
+    {
+      "name": "Tennis",
+      "budgetMonthly": 130
+    },
+    {
+      "name": "Bank charge",
+      "budgetMonthly": 10
+    },
+    {
+      "name": "GoDaddy",
+      "budgetMonthly": 46.73
+    },
+    {
+      "name": "Latutude - Toby",
+      "budgetMonthly": 100
+    },
+    {
+      "name": "Latitude - Judz",
+      "budgetMonthly": 468.01
+    },
+    {
+      "name": "Afterpay",
+      "budgetMonthly": 810
+    },
+    {
+      "name": "Soccer",
+      "budgetMonthly": 130
+    },
+    {
+      "name": "Transport",
+      "budgetMonthly": 50
+    },
+    {
+      "name": "Eating Out",
+      "budgetMonthly": 1250
+    },
+    {
+      "name": "Bad Income",
+      "budgetMonthly": 0
+    }
+  ],
+  "ledger": [
+    {
+      "date": "2025-12-22",
+      "description": "CHEMIST WAREHOUSE ERMI ERMINGTON AUClick for details",
+      "amount": -233.75,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "MCDONALDS WEST RYDE WEST RYDE AUClick for details",
+      "amount": -16.65,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "TransportforNSW Tap Sydney AUClick for details",
+      "amount": -1,
+      "category": "Transport"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "PLINE PH PARRAMATTA PARRAMATTA AUClick for details",
+      "amount": -13.49,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "The Trustee for Qube Parramatta AUClick for details",
+      "amount": -86.2,
+      "category": "Eating Out"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "TOP RYDE FOOD PTY LT RYDE AUClick for details",
+      "amount": -7.4,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "Chatime Top Ryde Ryde AUClick for details",
+      "amount": -9.54,
+      "category": "Judea"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "GoodGamesTopRyde Ryde AUClick for details",
+      "amount": -30.24,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "Breadtop Top Ryde Ryde AUClick for details",
+      "amount": -40.91,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "TOP RYDE CITY NEWSPOWE RYDE AUClick for details",
+      "amount": -6.01,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "CBeach Parramatta Parramatta AUClick for details",
+      "amount": -99.99,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "TARGET 5144 PARRAMATTA AUClick for details",
+      "amount": -60.5,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "KMART 1146 PARRAMATTA AUClick for details",
+      "amount": -26.5,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "WITHDRAWAL 1411587 PAYTO Ma JUDEA Ackland Kit account for Morgan Kit account for Morgan 20 DEC 2025Click for details",
+      "amount": -6,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "WITHDRAWAL 1412534 PAYTO Ma JUDEA Ackland Kit account for Corban Kit account for Corban 20 DEC 2025Click for details",
+      "amount": -5,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "Westfield - Parramatta Parramatta AUClick for details",
+      "amount": -11,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "DIGIDIRECT PARRAMATTA AUClick for details",
+      "amount": -25.24,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-22",
+      "description": "KMART Mulgrave AUClick for details",
+      "amount": -10.5,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-21",
+      "description": "ALDI STORES RYDALMERE NSWAUClick for details",
+      "amount": -39,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-20",
+      "description": "BUNNINGS RYDALMERE 733RYDALMERE NSWAUClick for details",
+      "amount": -43.67,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-20",
+      "description": "BUNNINGS RYDALMERE 733RYDALMERE NSWAUClick for details",
+      "amount": -103.74,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE ZIPMONEY* P822691672 SYDNEY AUSClick for details",
+      "amount": -277.75,
+      "category": "Zip"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE SHEIKE & CO PTY LTD PARRAMATTA AUSClick for details",
+      "amount": -159.99,
+      "category": "Judea"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE PHARMACY JUNCTION CHEM PARRAMATTA AUSClick for details",
+      "amount": -39.99,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE LOOKSMART RETAIL PTY L PARRAMATTA AUSClick for details",
+      "amount": -5,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1047015441575Click for details",
+      "amount": -140.25,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE MYER PARRAMATTA PARRAMATTA AUSClick for details",
+      "amount": -119.88,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE MYER PARRAMATTA PARRAMATTA AUSClick for details",
+      "amount": -109.99,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-19",
+      "description": "DEBIT CARD PURCHASE UBER *TRIP HELP.UBER.C 14518236738 AUSClick for details",
+      "amount": -15.22,
+      "category": "Transport"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "DEBIT CARD PURCHASE Chatime L5 Parramatta Parramatta AUSClick for details",
+      "amount": -10.2,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "EFTPOS DEBIT 0906943 ALDI STORES 4092 RYDALMERE 17/12Click for details",
+      "amount": -11.78,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "EFTPOS DEBIT 0275701 Boost Juice Parra L5 Parramatta 18/12Click for details",
+      "amount": -16.4,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "EFTPOS DEBIT 0018311 STRANDBAGS 151 PARRAMATTA 18/12Click for details",
+      "amount": -139.97,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "EFTPOS DEBIT 0017838 YD PTY LTD 604 PARRAMATTA 18/12Click for details",
+      "amount": -134.98,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": -81.37,
+      "category": "Afterpay"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "DEBIT CARD PURCHASE SP TYMO BEAUTY SACRAMENTO USAClick for details",
+      "amount": -74.87,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-18",
+      "description": "DEBIT CARD PURCHASE MBXphys MELBOURNE AUSClick for details",
+      "amount": -17.33,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-17",
+      "description": "OVERDRAWN FEE 16-DECEMBER-2025Click for details",
+      "amount": -15,
+      "category": "Bank charge"
+    },
+    {
+      "date": "2025-12-16",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046942942745Click for details",
+      "amount": -99.3,
+      "category": "Developers"
+    },
+    {
+      "date": "2025-12-16",
+      "description": "PAYMENT BY AUTHORITY TO BUDGET DIRECT 121873192145754989Click for details",
+      "amount": -173.78,
+      "category": "CAR"
+    },
+    {
+      "date": "2025-12-16",
+      "description": "OVERDRAWN FEE 15-DECEMBER-2025Click for details",
+      "amount": -15,
+      "category": "Bank charge"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "Alfe",
+      "amount": 7773.93,
+      "category": "Income"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE COLES 7663 PARRAMATTA AUSClick for details",
+      "amount": -119.15,
+      "category": "Cole CC"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE KMART 1146 PARRAMATTA AUSClick for details",
+      "amount": -9.75,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE LINS HOMEWARE TRADING LIDCOMBE AUSClick for details",
+      "amount": -3,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046872140898Click for details",
+      "amount": -57,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046919551312Click for details",
+      "amount": -34.98,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046919200758Click for details",
+      "amount": -26,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046907960131Click for details",
+      "amount": -10,
+      "category": "Charity"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 845942994624Click for details",
+      "amount": -170,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 099062492570Click for details",
+      "amount": -34,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "EFTPOS DEBIT 0375686 DONATION TO GREENPEA CE\\ 13/12Click for details",
+      "amount": -18,
+      "category": "Charity"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "EFTPOS DEBIT 0010851 MTRAN & DTRUONG PTY LTWEST RYDE 13/12Click for details",
+      "amount": -9.29,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE AMAZON AU MARKETPLACE SYDNEY AUSClick for details",
+      "amount": -43.3,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE PlusFitness RYM MITCHELL AUSClick for details",
+      "amount": -34.2,
+      "category": "Gymn"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE MBXphys MELBOURNE AUSClick for details",
+      "amount": -17.33,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "DEBIT CARD PURCHASE AD FREE FOR PRIMEVIDEO SYDNEY AUSClick for details",
+      "amount": -2.99,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-15",
+      "description": "negative income ALFE",
+      "amount": 2773.93,
+      "category": "Bad Income"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "Optus Billing MacquariePakAUClick for details",
+      "amount": -172.55,
+      "category": "Mobile"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "MBXphys MELBOURNE AUClick for details",
+      "amount": -17.33,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "Amal'sDiscountChemist West Ryde AUClick for details",
+      "amount": -126.66,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "Amal'sDiscountChemist West Ryde AUClick for details",
+      "amount": -9.99,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "CIH Dispensary Seventeen MilAUClick for details",
+      "amount": -159.69,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "CIH Dispensary Seventeen MilAUClick for details",
+      "amount": -153.03,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "KMART 1146 PARRAMATTA AUClick for details",
+      "amount": -33,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "SMP*BAKERS DELIGHT PAA PARRAMATTA AUClick for details",
+      "amount": -10.19,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "ALDI STORES PARRAMATTA AUClick for details",
+      "amount": -47.16,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "TARGET 5144 PARRAMATTA AUClick for details",
+      "amount": -52.5,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "PORTICO CHICKEN ERMING ERMINGTON AUClick for details",
+      "amount": -43.14,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "Chatime Top Ryde Ryde AUClick for details",
+      "amount": -10.5,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "BIG W 0117 RYDE AUClick for details",
+      "amount": -106,
+      "category": "Judea"
+    },
+    {
+      "date": "2025-12-14",
+      "description": "KMART 1251 Top Ryde AUClick for details",
+      "amount": -81.5,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-12",
+      "description": "AD FREE FOR PRIMEVIDEO SYDNEY AUClick for details",
+      "amount": -2.99,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-12",
+      "description": "MTRAN & DTRUONG PTY LTWEST RYDE NSWAUClick for details",
+      "amount": -9.29,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-12",
+      "description": "DONATION TO GREENPEACE\\Click for details",
+      "amount": -18,
+      "category": "Charity"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046846985980Click for details",
+      "amount": -21.73,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "EFTPOS DEBIT 0913250 MCDONALDS RYDALMERE 1535 RYDALMERE 11/12Click for details",
+      "amount": -14.39,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "EFTPOS DEBIT 0088768 BP EXPRESS 0976 \\ RYDALMERE 11/12Click for details",
+      "amount": -15.3,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "EFTPOS DEBIT 0013543 UNITED RYDALMERE \\ RYDALMERE 11/12Click for details",
+      "amount": -148.9,
+      "category": "CAR"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "DEBIT CARD PURCHASE AMAZON AU MARKETPLACE SYDNEY AUSClick for details",
+      "amount": -109.87,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "DEBIT CARD PURCHASE AMAZON AU MARKETPLACE SYDNEY AUSClick for details",
+      "amount": -60.21,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-11",
+      "description": "PAYMENT BY AUTHORITY TO SpinTel 31559007526118Click for details",
+      "amount": -84.95,
+      "category": "Internet"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1413214 T REWETIClick for details",
+      "amount": -135,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1271966 Ekkp GroupClick for details",
+      "amount": -156,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "DEBIT CARD PURCHASE SPOTLIGHT 045 BERALA AUSClick for details",
+      "amount": -89.6,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": -82.16,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": -61.65,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-10",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": -36.52,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "EFTPOS DEBIT 0037691 BP EXPRESS 0976 \\ RYDALMERE 09/12Click for details",
+      "amount": -34,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "EFTPOS DEBIT 0006133 BUNNINGS RYDALMERE 7 33RYDALMERE 10/12Click for details",
+      "amount": -18,
+      "category": "CAR"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "DEBIT CARD PURCHASE WOOLWORTHS 1106 PARRAMATTA AUSClick for details",
+      "amount": -39.44,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "PAYMENT BY AUTHORITY TO GEM VISA 091225 006010732009397160Click for details",
+      "amount": -126.45,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "DEBIT CARD PURCHASE ZLR*Merrylands merrylands AUSClick for details",
+      "amount": -23,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-09",
+      "description": "DEBIT CARD PURCHASE AMAZON PRIME*OI1798V63 SEATTLE USA USD 14.99 incl. Foreign Transaction Fee AUD $0.67Click for details",
+      "amount": -23.35,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "LIQUORLAND 3414 ERMINGTON AUClick for details",
+      "amount": -89,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "WOOLWORTHS 1366 ERMINGTON AUClick for details",
+      "amount": -12.5,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "AMAZON AU MARKETPLACE Sydney AUClick for details",
+      "amount": -86.25,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "WOOLWORTHS 1366 ERMINGTON AUClick for details",
+      "amount": -50.55,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046786804532Click for details",
+      "amount": -16.49,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "EFTPOS DEBIT 0932094 FC PARRAMATTA PTY LT0001 PARRAMATTA 09/12Click for details",
+      "amount": -66.8,
+      "category": "Soccer"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "DEBIT CARD PURCHASE CLAUDE.AI SUBSCRIPTION SAN FRANCISC USAClick for details",
+      "amount": -309.09,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "DEBIT CARD PURCHASE BWS LIQUOR 1395 RYDALMERE AUSClick for details",
+      "amount": -4,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "DEBIT CARD PURCHASE Amazon Prime*Z97CX9NR4 LONDON GBR GBP 8.99 incl. Foreign Transaction Fee AUD $0.54Click for details",
+      "amount": -18.64,
+      "category": "Amazon"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "DEBIT CARD PURCHASE ALDI STORES MERRYLANDS AUSClick for details",
+      "amount": -82.35,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-08",
+      "description": "DEBIT CARD PURCHASE BUNNINGS 388000 RYDALMERE AUSClick for details",
+      "amount": -33.44,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046717525910Click for details",
+      "amount": -22.99,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 845037139450Click for details",
+      "amount": -170,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 099031940193Click for details",
+      "amount": -34,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "PAYMENT BY AUTHORITY TO AustralianSuper 2870055398Click for details",
+      "amount": -200,
+      "category": "Super"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1773119 WISE AUSTRALIA PTY LTD 07 DEC 2025Click for details",
+      "amount": -150.56,
+      "category": "Developers"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1286701 WISE AUSTRALIA PTY LTD 06 DEC 2025Click for details",
+      "amount": -151.58,
+      "category": "Developers"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE SP BEYSIS PTY LTD SURRY HILLS AUSClick for details",
+      "amount": -170.55,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE DANELFIN BARCELONA ESP USD 228.00 incl. Foreign Transaction Fee AUD $10.36Click for details",
+      "amount": -355.66,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE WOOLWORTHS 1258 MERRYLANDS AUSClick for details",
+      "amount": -179.55,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE OFFICEWORKS 0230 WEST RYDE AUSClick for details",
+      "amount": -131.25,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE TRIMS FRESH MERRYLAN MERRYLANDS AUSClick for details",
+      "amount": -108.52,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE SQ *ENZE Ryde AUSClick for details",
+      "amount": -69,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE TRIMS FRESH MERRYLAN MERRYLANDS AUSClick for details",
+      "amount": -52.05,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE THE REJECT SHOP 2312 MERRYLANDS AUSClick for details",
+      "amount": -46.4,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE JOES GOURMET POULTRY MERRYLANDS AUSClick for details",
+      "amount": -30.1,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE BIG W 0166 MERRYLANDS AUSClick for details",
+      "amount": -14.6,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE COLES 5793 MERRYLANDS AUSClick for details",
+      "amount": -10.94,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE SMP*BAKERS DELIGHT MEB MERRYLANDS AUSClick for details",
+      "amount": -9.48,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE TRIMS FRESH MERRYLAN MERRYLANDS AUSClick for details",
+      "amount": -8.1,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-07",
+      "description": "DEBIT CARD PURCHASE JIAYUAN SUPERMARKET PT MERRYLANDS AUSClick for details",
+      "amount": -4.48,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-05",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1768949 WISE AUSTRALIA PTY LTDClick for details",
+      "amount": -913.74,
+      "category": "Developers"
+    },
+    {
+      "date": "2025-12-05",
+      "description": "WITHDRAWAL-OSKO PAYMENT 1569543 WISE AUSTRALIA PTY LTDClick for details",
+      "amount": -1828.74,
+      "category": "Developers"
+    },
+    {
+      "date": "2025-12-04",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": -95.44,
+      "category": "Afterpay"
+    },
+    {
+      "date": "2025-12-04",
+      "description": "DEBIT CARD PURCHASE EASTERN SUBURBS PHARMA DUNDAS AUSClick for details",
+      "amount": -64.47,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-04",
+      "description": "DEBIT CARD PURCHASE OPENAI *CHATGPT SUBSCR SAN FRANCISC USA USD 22.00",
+      "amount": -34.67,
+      "category": "ChatGpt"
+    },
+    {
+      "date": "2025-12-04",
+      "description": "DEBIT CARD PURCHASE ZipMoney P816800019 Sydney AUSClick for details",
+      "amount": -150,
+      "category": "Zip"
+    },
+    {
+      "date": "2025-12-04",
+      "description": "DEBIT CARD PURCHASE ZIPMONEY* P816784208 SYDNEY AUSClick for details",
+      "amount": -47.06,
+      "category": "Zip"
+    },
+    {
+      "date": "2025-12-03",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046642494906Click for details",
+      "amount": -42.99,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-03",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046643224933Click for details",
+      "amount": -15.95,
+      "category": "Holiday"
+    },
+    {
+      "date": "2025-12-03",
+      "description": "EFTPOS DEBIT 0528312 SQ *UNIMARK AUSTRALI A Rydalmere 03/12Click for details",
+      "amount": -42,
+      "category": "Holiday"
+    },
+    {
+      "date": "2025-12-03",
+      "description": "DEBIT CARD PURCHASE WOOLWORTHS 1366 ERMINGTON AUSClick for details",
+      "amount": -18,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-02",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046615864105Click for details",
+      "amount": -99.3,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-02",
+      "description": "DEBIT CARD PURCHASE GOOGLE*GSUITE SOLECT.P CC GOOGLE.CO SGP",
+      "amount": -12.39,
+      "category": "Google"
+    },
+    {
+      "date": "2025-12-02",
+      "description": "DEBIT CARD PURCHASE ALDI STORES PARRAMATTA AUSClick for details",
+      "amount": -134.94,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-02",
+      "description": "DEBIT CARD PURCHASE Ezy-Way Arncliffe AUSClick for details",
+      "amount": -60,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-02",
+      "description": "WilliamGreen Toby expense",
+      "amount": 226.29,
+      "category": "Income"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "Westfield  Parramatta Parramatta AUClick for details",
+      "amount": 8,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "BUNNINGS RYDALMERE 733 RYDALMERE AUClick for details",
+      "amount": 21.8,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "WITHDRAWAL ONLINE 1490485 PYMT Toby Ackla insuranceClick for details",
+      "amount": 400,
+      "category": "Life Insurance"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "Myer Pty Ltd Docklands AUClick for details",
+      "amount": 59.96,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "SP SKIN DIVATECH LIMIT HONG KONG HKClick for details",
+      "amount": 23.2,
+      "category": "Judea"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "Myer Pty Ltd Docklands AUClick for details",
+      "amount": 89.94,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "SP CLICK BLOCKS CENTRAL HKClick for details",
+      "amount": 143.95,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "TRANSPORT NSW ETOLL PARRAMATTA AUClick for details",
+      "amount": 25.11,
+      "category": "Toll"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "UNITED SWIMMING\\Top Ryde\\Click for details",
+      "amount": 195.93,
+      "category": "Swimming"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "WITHDRAWAL ONLINE 1908245 PYMT Angle Auto 11356708Click for details",
+      "amount": 1000,
+      "category": "CAR"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046515523417Click for details",
+      "amount": -57,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046568044175Click for details",
+      "amount": -34.99,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046582001319Click for details",
+      "amount": -26,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PYPL Payin4 1046510275983Click for details",
+      "amount": -21.73,
+      "category": "CC Debt"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046573421779Click for details",
+      "amount": -14.58,
+      "category": "Toby"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046563991915Click for details",
+      "amount": -14.39,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 845986449592Click for details",
+      "amount": -170,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "PAYMENT BY AUTHORITY TO EnergyAustralia 099988708612Click for details",
+      "amount": -34,
+      "category": "Electricty"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "EFTPOS DEBIT 0036845 RYDALMERE PIZZA PIDE KRYDALME 28/11Click for details",
+      "amount": -16.27,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "EFTPOS DEBIT 0006225 BUNNINGS RYDALMERE 7 33RYDALMERE 30/11Click for details",
+      "amount": -27.64,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "EFTPOS DEBIT 0006219 BUNNINGS RYDALMERE 7 33RYDALMERE 30/11Click for details",
+      "amount": -41.15,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "WITHDRAWAL 1087287 PAYTr Morgan Kit account for MorganClick for details",
+      "amount": -7,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "WITHDRAWAL 1077 Kit account for CorbanClick for details",
+      "amount": -6,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE TEMPLE & WEBSTER 1300900675 AUSClick for details",
+      "amount": -299.94,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE COLES 7663 PARRAMATTA AUSClick for details",
+      "amount": -182.12,
+      "category": "Food"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE MYER PARRAMATTA PARRAMATTA AUSClick for details",
+      "amount": -140.4,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE MYER PARRAMATTA PARRAMATTA AUSClick for details",
+      "amount": -140.4,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE TEMPLE & WEBSTER 1300900675 AUSClick for details",
+      "amount": -107.92,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE BUNNINGS 388000 RYDALMERE AUSClick for details",
+      "amount": -78.65,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE PHARMACY JUNCTION CHEM PARRAMATTA AUSClick for details",
+      "amount": -47.94,
+      "category": "Health"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE Nisbets Australia Pty Campbelltown AUSClick for details",
+      "amount": -36.65,
+      "category": "Household"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE ZLR*Bonbons Top Ryde C ryde AUSClick for details",
+      "amount": -30,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE Chatime L5 Parramatta Parramatta AUSClick for details",
+      "amount": -17.05,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE KMART 1251 Top Ryde AUSClick for details",
+      "amount": -12,
+      "category": "kids"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE Hokkaido Baked Cheese Ryde AUSClick for details",
+      "amount": -9.95,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE SMP*BAKERS DELIGHT PAA PARRAMATTA AUSClick for details",
+      "amount": -9.89,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "DEBIT CARD PURCHASE Chatime Top Ryde Ryde AUSClick for details",
+      "amount": -5.61,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-12-01",
+      "description": "School",
+      "amount": 1000,
+      "category": "School"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "Navan Income",
+      "amount": 5111.58,
+      "category": "Income"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "WIlliamGreen",
+      "amount": 5976.67,
+      "category": "Income"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "ALfe",
+      "amount": 6657.81,
+      "category": "Income"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "DEBIT CARD PURCHASE SP JISULIFE KWUN TONG HKGClick for details",
+      "amount": 346.65,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "DEBIT CARD PURCHASE TONG LI SUPERMARKETQPS PARRAMATTA AUSClick for details",
+      "amount": 30.11,
+      "category": "Food"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "INTERESTClick for details",
+      "amount": 0.01,
+      "category": "Bank charge"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "PAYMENT BY AUTHORITY TO PAYPAL AUSTRALIA 1046503898241Click for details",
+      "amount": 46.73,
+      "category": "GoDaddy"
+    },
+    {
+      "date": "2025-11-28",
+      "description": "DEBIT CARD PURCHASE SP TYMO BEAUTY SACRAMENTO USAClick for details",
+      "amount": 263.85,
+      "category": "Gift"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "WITHDRAWAL CASH 0000000 PARRAMATTA WESTFIELD NSWClick for details",
+      "amount": 600,
+      "category": "Household"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE GOOGLE*GOOGLE STORE G.CO/HELPPAY AUSClick for details",
+      "amount": 276.1,
+      "category": "Google"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE COLES 7663 PARRAMATTA AUSClick for details",
+      "amount": 171.39,
+      "category": "Food"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE TARGET 5144 PARRAMATTA AUSClick for details",
+      "amount": 80.5,
+      "category": "Household"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE KMART 1146 PARRAMATTA AUSClick for details",
+      "amount": 20,
+      "category": "kids"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE Chatime L5 Parramatta Parramatta AUSClick for details",
+      "amount": 9.35,
+      "category": "Takeout"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "EFTPOS DEBIT 0908162 ALDI STORES 4092 RYDALMERE 26/11Click for details",
+      "amount": 52.37,
+      "category": "Food"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "EFTPOS DEBIT 0905217 ALDI STORES 4092 RYDALMERE 26/11Click for details",
+      "amount": 46.18,
+      "category": "Food"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": 254.28,
+      "category": "Afterpay"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE SP REMOTE CONTROL WH PEMULWUY AUSClick for details",
+      "amount": 88,
+      "category": "Household"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": 10.5,
+      "category": "Afterpay"
+    },
+    {
+      "date": "2025-11-27",
+      "description": "DEBIT CARD PURCHASE Afterpay afterpay.com AUSClick for details",
+      "amount": 8,
+      "category": "Afterpay"
+    },
+    {
+      "date": "2025-11-26",
+      "description": "EFTPOS DEBIT 0009214 BP EXPRESS 2241 \\ WEST RYDE 25/11Click for details",
+      "amount": 137.66,
+      "category": "CAR"
+    },
+    {
+      "date": "2025-12-25",
+      "description": "bad",
+      "amount": 2800,
+      "category": "Bad Income"
+    }
+  ],
+  "incomes": [
+    {
+      "date": "2025-12-15",
+      "name": "Alfe",
+      "amount": 7773.93
+    },
+    {
+      "date": "2025-12-02",
+      "name": "WilliamGreen Toby expense",
+      "amount": 226.29
+    },
+    {
+      "date": "2025-11-28",
+      "name": "ALfe",
+      "amount": 6657.81
+    },
+    {
+      "date": "2025-11-28",
+      "name": "WIlliamGreen",
+      "amount": 5976.67
+    },
+    {
+      "date": "2025-11-28",
+      "name": "Navan Income",
+      "amount": 5111.58
+    }
+  ],
+  "philippines": [
+    {
+      "date": "Nov 28, 2025",
+      "reason": "Dog",
+      "amountPhp": 500,
+      "amountAud": 12.95,
+      "category": "Dog Food"
+    },
+    {
+      "date": "Nov 28, 2025",
+      "reason": "Rice",
+      "amountPhp": 1100,
+      "amountAud": 28.49,
+      "category": "Food"
+    },
+    {
+      "date": "Nov 28, 2025",
+      "reason": "Google",
+      "amountPhp": 940.42,
+      "amountAud": 24.356878,
+      "category": "Google"
+    },
+    {
+      "date": "Dec 02, 2025",
+      "reason": "Jayren Jollibee",
+      "amountPhp": 159,
+      "amountAud": 4.1181,
+      "category": "Jayren"
+    },
+    {
+      "date": "Dec 02, 2025",
+      "reason": "Rent",
+      "amountPhp": 25000,
+      "amountAud": 647.5,
+      "category": "House Rent"
+    },
+    {
+      "date": "Dec 03, 2025",
+      "reason": "Mackay Salary",
+      "amountPhp": 7010,
+      "amountAud": 181.559,
+      "category": "Macky"
+    },
+    {
+      "date": "Dec 03, 2025",
+      "reason": "amazon",
+      "amountPhp": 2350.26,
+      "amountAud": 60.871734000000004,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 03, 2025",
+      "reason": "Blu Medicine",
+      "amountPhp": 1720,
+      "amountAud": 44.548,
+      "category": "Dogs Health"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Australian",
+      "amountPhp": 1675.05,
+      "amountAud": 43.383795,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Solect Materials",
+      "amountPhp": 1418,
+      "amountAud": 36.7262,
+      "category": "SOLECT COST"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Jayren Tuition",
+      "amountPhp": 10000,
+      "amountAud": 259,
+      "category": "Jayren"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Food",
+      "amountPhp": 4000,
+      "amountAud": 103.6,
+      "category": "Food"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Dog Food",
+      "amountPhp": 500,
+      "amountAud": 12.95,
+      "category": "Dog Food"
+    },
+    {
+      "date": "Dec 04, 2025",
+      "reason": "Jerome",
+      "amountPhp": 1000,
+      "amountAud": 25.9,
+      "category": "Jerome"
+    },
+    {
+      "date": "Dec 05, 2025",
+      "reason": "Dog food",
+      "amountPhp": 2612,
+      "amountAud": 67.6508,
+      "category": "Dog Food"
+    },
+    {
+      "date": "Dec 05, 2025",
+      "reason": "Nanay Tatay",
+      "amountPhp": 6000,
+      "amountAud": 155.4,
+      "category": "NanayTatay"
+    },
+    {
+      "date": "Dec 09, 2025",
+      "reason": "Boat",
+      "amountPhp": 15000,
+      "amountAud": 388.5,
+      "category": "Boat"
+    },
+    {
+      "date": "Nov 28, 2025",
+      "reason": "Food Allowance",
+      "amountPhp": 4000,
+      "amountAud": 103.6,
+      "category": "Food"
+    },
+    {
+      "date": "Nov 07, 2025",
+      "reason": "House Sale",
+      "amountPhp": 418000,
+      "amountAud": 10826.199999999999,
+      "category": "Income"
+    },
+    {
+      "date": "Dec 09, 2025",
+      "reason": "jollibee",
+      "amountPhp": 159,
+      "amountAud": 4.1181,
+      "category": "Food"
+    },
+    {
+      "date": "Dec 12, 2025",
+      "reason": "groceriws",
+      "amountPhp": 6500,
+      "amountAud": 168.35,
+      "category": "Food"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "Bonds Paramatta",
+      "amountPhp": 1018.68,
+      "amountAud": 26.383812,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "Chatime - Judea",
+      "amountPhp": 382.23,
+      "amountAud": 9.899757000000001,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "COLES - FOOD",
+      "amountPhp": 5790.83,
+      "amountAud": 149.982497,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "ALDI-FOOD",
+      "amountPhp": 3673.76,
+      "amountAud": 95.150384,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "bakers delight - takout",
+      "amountPhp": 489.71,
+      "amountAud": 12.683489,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "Mackay",
+      "amountPhp": 7010,
+      "amountAud": 181.559,
+      "category": "Macky"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "Office Rent",
+      "amountPhp": 21000,
+      "amountAud": 543.9,
+      "category": "Office Rent"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "container",
+      "amountPhp": 4800,
+      "amountAud": 124.32,
+      "category": "Container"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "medicine",
+      "amountPhp": 5000,
+      "amountAud": 129.5,
+      "category": "NanayTatay"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "Aquaflask etc",
+      "amountPhp": 8000,
+      "amountAud": 207.2,
+      "category": "Home Cost eg Dogs, Gas, Food"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "PLdt office",
+      "amountPhp": 1899,
+      "amountAud": 49.1841,
+      "category": "PLDT Office"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "jollibee",
+      "amountPhp": 159,
+      "amountAud": 4.1181,
+      "category": "Jayren"
+    },
+    {
+      "date": "Dec 15, 2025",
+      "reason": "ALDI-Food",
+      "amountPhp": 243.76,
+      "amountAud": 6.313383999999999,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 16, 2025",
+      "reason": "Container shipping",
+      "amountPhp": 50000,
+      "amountAud": 1295,
+      "category": "SOLECT COST"
+    },
+    {
+      "date": "Dec 16, 2025",
+      "reason": "Kuya",
+      "amountPhp": 5000,
+      "amountAud": 129.5,
+      "category": "Caloan"
+    },
+    {
+      "date": "Dec 16, 2025",
+      "reason": "SISU Vet",
+      "amountPhp": 1480,
+      "amountAud": 38.332,
+      "category": "Dogs Health"
+    },
+    {
+      "date": "Dec 16, 2025",
+      "reason": "ALDI - FOOD",
+      "amountPhp": 2489.95,
+      "amountAud": 64.489705,
+      "category": "Australia"
+    },
+    {
+      "date": "Dec 16, 2025",
+      "reason": "Container shipping",
+      "amountPhp": 40000,
+      "amountAud": 1036,
+      "category": "SOLECT COST"
+    },
+    {
+      "date": "Dec 18, 2025",
+      "reason": "SISU",
+      "amountPhp": 1445,
+      "amountAud": 37.4255,
+      "category": "Dogs Health"
+    },
+    {
+      "date": "Dec 18, 2025",
+      "reason": "GAS",
+      "amountPhp": 1100,
+      "amountAud": 28.49,
+      "category": "misc"
+    },
+    {
+      "date": "Dec 22, 2025",
+      "reason": "CAR GAS",
+      "amountPhp": 1000,
+      "amountAud": 25.9,
+      "category": "Car"
+    },
+    {
+      "date": "Dec 18, 2025",
+      "reason": "Food",
+      "amountPhp": 4500,
+      "amountAud": 116.55,
+      "category": "Food"
+    },
+    {
+      "date": "Dec 18, 2025",
+      "reason": "mi",
+      "amountPhp": 1000,
+      "amountAud": 25.9,
+      "category": "Home Cost eg Dogs, Gas, Food"
+    },
+    {
+      "date": "Dec 22, 2025",
+      "reason": "Label printer",
+      "amountPhp": 2600,
+      "amountAud": 67.34,
+      "category": "SOLECT COST"
+    },
+    {
+      "date": "Dec 22, 2025",
+      "reason": "Ship[ment bike rack",
+      "amountPhp": 2600,
+      "amountAud": 67.34,
+      "category": "Home Cost eg Dogs, Gas, Food"
+    },
+    {
+      "date": "Dec 22, 2025",
+      "reason": "Macky advance",
+      "amountPhp": 3000,
+      "amountAud": 77.7,
+      "category": "Macky"
+    }
+  ],
+  "phCategories": [
+    {
+      "name": "Macky",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Jerome",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Electricity Office",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Electricity Home",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "NanayTatay",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "NanayTatayLoan",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Solect Stock",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Macky Loan",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "House Rent",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Office Rent",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Google",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Loan to Jive",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "GIFT",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Materials",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Debt Payment",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Income",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "XFER",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Jayren School",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Container",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Utilities Office",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Utilities Home",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "misc",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Australia",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Home Cost eg Dogs, Gas, Food",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Fuel",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Car",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "SOLECT COST",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Boat",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Bank Charge",
+      "budgetMonthly": 0
+    }
+  ],
+  "phBudgetCategories": [
+    {
+      "name": "Macky",
+      "budgetMonthly": 14000
+    },
+    {
+      "name": "Jerome",
+      "budgetMonthly": 4000
+    },
+    {
+      "name": "Electricity Office",
+      "budgetMonthly": 4000
+    },
+    {
+      "name": "Electricity Home",
+      "budgetMonthly": 6000
+    },
+    {
+      "name": "NanayTatay",
+      "budgetMonthly": 11000
+    },
+    {
+      "name": "NanayTatayLoan",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Solect Stock",
+      "budgetMonthly": 10000
+    },
+    {
+      "name": "Macky Loan",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "House Rent",
+      "budgetMonthly": 25000
+    },
+    {
+      "name": "Office Rent",
+      "budgetMonthly": 21000
+    },
+    {
+      "name": "Google",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Loan to Jive",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "GIFT",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Materials",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Debt Payment",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Income",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "XFER",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Jayren School",
+      "budgetMonthly": 10000
+    },
+    {
+      "name": "Container",
+      "budgetMonthly": 4800
+    },
+    {
+      "name": "Utilities Office",
+      "budgetMonthly": 1000
+    },
+    {
+      "name": "Utilities Home",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "misc",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Australia",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Home Cost eg Dogs, Gas, Food",
+      "budgetMonthly": 2000
+    },
+    {
+      "name": "Fuel",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Car",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "SOLECT COST",
+      "budgetMonthly": 90000
+    },
+    {
+      "name": "Boat",
+      "budgetMonthly": 81000
+    },
+    {
+      "name": "Bank Charge",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Dog Grooming",
+      "budgetMonthly": 2000
+    },
+    {
+      "name": "Dog Food",
+      "budgetMonthly": 5000
+    },
+    {
+      "name": "PLDT Home",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "PLDT Office",
+      "budgetMonthly": 1899
+    },
+    {
+      "name": "Food",
+      "budgetMonthly": 18000
+    },
+    {
+      "name": "Caloan",
+      "budgetMonthly": 0
+    },
+    {
+      "name": "Jayren",
+      "budgetMonthly": 250
+    },
+    {
+      "name": "Dogs Health",
+      "budgetMonthly": 500
+    },
+    {
+      "name": "AU_Income",
+      "budgetMonthly": 0
+    }
+  ],
+  "phpAudRate": 0.0259,
+  "investments": [
+    {
+      "id": "17636005133523009e12cb77248",
+      "date": "2025-11-19",
+      "name": "Jivescribe Loan",
+      "description": "",
+      "value": 5180
+    },
+    {
+      "id": "17637831231208e7ce80bb29f9",
+      "date": "",
+      "name": "December Jive salary",
+      "description": "sacrifice will get back",
+      "value": 8000
+    }
+  ],
+  "debts": [
+    {
+      "id": "1763783156719",
+      "name": "Judz Lat",
+      "total": 3351.54
+    },
+    {
+      "id": "1763783188253",
+      "name": "Judz Zip",
+      "total": 2820.87
+    },
+    {
+      "id": "1763783217872",
+      "name": "Judz Afterpay",
+      "total": 1060.95
+    },
+    {
+      "id": "1763783310197",
+      "name": "Toby Latitude",
+      "total": 3214.14
+    },
+    {
+      "id": "1763783442225",
+      "name": "Toby Coles",
+      "total": 1041.71
+    }
+  ],
+  "debtPayments": [],
+  "version": 1,
+  "samalSavings": 0,
+  "auSavings": 0,
+  "totalIncomeAU": 20172.350000000002,
+  "totalIncomePH": 10826.199999999999,
+  "totalIncomeAll": 30998.550000000003,
+  "incomeAU": [],
+  "incomePH": [],
+  "badIncomeTotal": 5573.93
+}

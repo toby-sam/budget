@@ -34,6 +34,7 @@ function calculateIncome() {
 
     let AU = [];
     let PH = [];
+    let badIncomeTotal = 0;
 
     // ---------- AUSTRALIAN LEDGER ----------
     state.ledger.forEach(row => {
@@ -43,6 +44,10 @@ function calculateIncome() {
                 source: row.description || "Income",
                 amount: Math.abs(Number(row.amount) || 0)
             });
+        }
+        // Calculate bad income total
+        if (row && String(row.category).toLowerCase() === "bad income") {
+            badIncomeTotal += Math.abs(Number(row.amount) || 0);
         }
     });
 
@@ -59,7 +64,8 @@ function calculateIncome() {
     });
 
     // Totals
-    state.totalIncomeAU = AU.reduce((t, r) => t + r.amount, 0);
+    state.totalIncomeAU = AU.reduce((t, r) => t + r.amount, 0) - badIncomeTotal;
+    state.badIncomeTotal = badIncomeTotal;
     state.totalIncomePH = PH.reduce((t, r) => t + r.amountAud, 0);
     state.totalIncomeAll = state.totalIncomeAU + state.totalIncomePH;
 
@@ -83,6 +89,16 @@ function renderIncomePage(AU, PH) {
             <td>${fmt(r.amount)}</td>
         </tr>`;
     });
+
+    // Add "Bad payment" row if there are bad income entries
+    if (state.badIncomeTotal > 0) {
+        els.auBody.innerHTML += `
+        <tr style="color: #cc0000;">
+            <td></td>
+            <td><strong>Bad payment</strong></td>
+            <td><strong>-${fmt(state.badIncomeTotal)}</strong></td>
+        </tr>`;
+    }
 
     // 🔥 THIS WAS MISSING — NOW THE AU TOTAL DISPLAYS
     els.auTotal.textContent = fmt(state.totalIncomeAU);

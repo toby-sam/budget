@@ -11,6 +11,8 @@ if (!state.ledger) state.ledger = [];
 if (!state.philippines) state.philippines = [];
 if (!state.phBudgetCategories) state.phBudgetCategories = [];
 if (!state.phpAudRate) state.phpAudRate = 0.0259;
+if (!state.samLedger) state.samLedger = [];
+if (!state.samBudgetCategories) state.samBudgetCategories = [];
 if (!state.samalSavings) state.samalSavings = 0;
 if (!state.auSavings) state.auSavings = 0;
 
@@ -29,10 +31,13 @@ function formatAud(n){
 // ------------------------------
 function getMonthlyIncomeDirect(){
     let total = 0;
+    let badIncome = 0;
 
     state.ledger.forEach(r=>{
         if(r.category?.toLowerCase()==="income")
             total += Math.abs(r.amount||0);
+        if(r.category?.toLowerCase()==="bad income")
+            badIncome += Math.abs(r.amount||0);
     });
 
     state.philippines.forEach(r=>{
@@ -40,7 +45,7 @@ function getMonthlyIncomeDirect(){
             total += Math.abs(r.amountAud||0);
     });
 
-    return total;
+    return total - badIncome;
 }
 
 
@@ -61,6 +66,13 @@ function computePhCostAud(){
     }, 0);
 }
 
+function computeSamCostAud(){
+    return state.samLedger.reduce((sum, t) => {
+        if (t.category?.toLowerCase() === "income") return sum;
+        return sum + Math.abs(t.amountAud || 0);
+    }, 0);
+}
+
 function computePhSpendPhp(){
     return state.philippines.reduce((s,t)=>s+(t.amountPhp||0),0);
 }
@@ -68,14 +80,49 @@ function computePhSpendPhp(){
 function computePhSpendAud(){ return computePhSpendPhp()*state.phpAudRate; }
 
 function computeAuBudgetTotal(){
-    return state.categories.reduce((s,c)=>s+(c.budgetMonthly||0),0);
+    return state.categories.reduce((s,c)=>{
+        const catNameLower = c.name?.toLowerCase() || "";
+        // Exclude income and bad income from budget totals
+        if (catNameLower === "income" || catNameLower === "bad income") return s;
+        return s + (c.budgetMonthly||0);
+    },0);
 }
 
 function computePhBudgetTotalPhp(){
     return state.phBudgetCategories.reduce((s,c)=>s+(c.budgetMonthly||0),0);
 }
 
+function computeSamBudgetTotalAud(){
+    return state.samBudgetCategories.reduce((s,c)=>s+(c.budgetMonthly||0),0);
+}
+
 function computeProfitLoss(income,spend){ return income-spend; }
+
+function computePredictedTotal(){
+    const actuals = computeActualsByCategory();
+    let predictedTotal = 0;
+    
+    state.categories.forEach(cat => {
+        const catNameLower = cat.name.toLowerCase();
+        
+        // Skip income and bad income categories
+        if (catNameLower === "income" || catNameLower === "bad income") return;
+        
+        const budget = cat.budgetMonthly || 0;
+        const actual = Math.abs(actuals[cat.name] || 0);
+        const difference = budget - actual;
+        
+        // If under budget (difference >= 0), use budget
+        // If over budget (difference < 0), use actual
+        if (difference >= 0) {
+            predictedTotal += budget;
+        } else {
+            predictedTotal += actual;
+        }
+    });
+    
+    return predictedTotal;
+}
 
 
 // ====================================================================
@@ -91,10 +138,14 @@ const els = {
     summaryProfitLoss: document.getElementById("summaryProfitLoss"),
     summaryTotalBudget: document.getElementById("summaryTotalBudget"),
     summaryTotalPhBudget: document.getElementById("summaryTotalPhBudget"),
+    summaryTotalSamBudget: document.getElementById("summaryTotalSamBudget"),
     summaryCombinedBudget: document.getElementById("summaryCombinedBudget"),
     
     /* 🔥 Missing UI Bindings — These FIX the problem */
-    summaryPhCost: document.getElementById("summaryPhCost"),        // ← NEW
+    summaryPhCost: document.getElementById("summaryPhCost"),
+    summarySamCost: document.getElementById("summarySamCost"),
+    summaryPredictedTotal: document.getElementById("summaryPredictedTotal"),
+    grandPredictedTotal: document.getElementById("grandPredictedTotal"),
     summaryLedger: document.getElementById("summaryLedger"),        // optional future use
     summaryPhilippines: document.getElementById("summaryPhilippines") // optional future use
 };
@@ -102,18 +153,35 @@ const els = {
     const income = getMonthlyIncomeDirect();
     const auCost = computeAuCost();
     const phCostAud = computePhCostAud();
+    const samCostAud = computeSamCostAud();
 
     const auBudgetAud = computeAuBudgetTotal();
     const phBudgetAud = computePhBudgetTotalPhp()*state.phpAudRate;
+    const samBudgetAud = computeSamBudgetTotalAud();
 
-    const combinedBudgetAud = auBudgetAud + phBudgetAud;
-    const totalSpendAud = auCost + phCostAud;
+    const combinedBudgetAud = auBudgetAud + phBudgetAud + samBudgetAud;
+    const totalSpendAud = auCost + phCostAud + samCostAud;
 
-    const predictedResult = income - combinedBudgetAud;
+    const predictedTotal = computePredictedTotal();
+    const grandPredictedTotal = predictedTotal + phBudgetAud + samBudgetAud;
+    const predictedResult = income - grandPredictedTotal;
 
-    // 🔥 SAVINGS ADJUSTMENT
-    const totalSavings = (state.samalSavings||0) + (state.auSavings||0);
-    const remainingAfterSavings = predictedResult - totalSavings;
+    // 🔥 WHATS LEFT = Income - Grand Predicted Total
+    const whatsLeft = income - grandPredictedTotal;
+
+    // 🔥 CALCULATE TOTAL RUNNING TOTAL (AU + PH in AUD)
+    // Exclude income and use Math.abs() to match ledger running total
+    const auRunningTotal = state.ledger.reduce((sum, tx) => {
+        if (tx.category?.toLowerCase() === "income") return sum;
+        return sum + Math.abs(tx.amount || 0);
+    }, 0);
+    // Exclude "income" category from PH running total
+    const phRunningTotalPhp = state.philippines.reduce((sum, tx) => {
+        const cat = tx.category?.toLowerCase() || "";
+        return cat !== "income" ? sum + (tx.amountPhp || 0) : sum;
+    }, 0);
+    const phRunningTotalAud = phRunningTotalPhp * state.phpAudRate;
+    const totalRT = auRunningTotal + phRunningTotalAud;
 
     // ---- Write to UI ----
     if(els.summaryIncome) els.summaryIncome.textContent = formatAud(income);
@@ -121,17 +189,21 @@ const els = {
     
     if(els.summaryTotalBudget) els.summaryTotalBudget.textContent = formatAud(auBudgetAud);
     if(els.summaryTotalPhBudget) els.summaryTotalPhBudget.textContent = formatAud(phBudgetAud);
+    if(els.summaryTotalSamBudget) els.summaryTotalSamBudget.textContent = formatAud(samBudgetAud);
+    if(els.summaryPredictedTotal) els.summaryPredictedTotal.textContent = formatAud(predictedTotal);
+    if(els.grandPredictedTotal) els.grandPredictedTotal.textContent = formatAud(grandPredictedTotal);
     if(els.summaryCombinedBudget) els.summaryCombinedBudget.textContent = formatAud(combinedBudgetAud);
     if(els.summaryProfitLoss) els.summaryProfitLoss.textContent = formatAud(predictedResult);
     if(els.predictedProf) els.predictedProf.textContent = formatAud(predictedResult);
     // Update Ledger Totals
     if (els.summaryAuLedgerTotal) els.summaryAuLedgerTotal.textContent = formatAud(auCost);
     if (els.summaryPhCost) els.summaryPhCost.textContent = formatAud(phCostAud);
+    if (els.summarySamCost) els.summarySamCost.textContent = formatAud(samCostAud);
+    if (els.summaryTotalRT) els.summaryTotalRT.textContent = formatAud(totalRT);
 
-    document.getElementById("remainingAfterSavings").textContent = formatAud(remainingAfterSavings);
+    document.getElementById("remainingAfterSavings").textContent = formatAud(whatsLeft);
 
     // push input values back
-    document.getElementById("samalSavingInput").value = state.samalSavings;
     document.getElementById("auSavingInput").value   = state.auSavings;
 
 }   // <<<<<< FIXED — THIS WAS MISSING
@@ -160,20 +232,29 @@ function renderCategories(){
         const idx=state.categories.findIndex(c=>c.name===cat.name);
         if(idx==-1) return;
 
+        const catNameLower = cat.name.toLowerCase();
+        const isIncome = catNameLower === "income" || catNameLower === "bad income";
+        
+        // For income: positive difference means earning MORE than budget (good)
+        // For expenses: positive difference means spending LESS than budget (good)
+        const budget = cat.budgetMonthly || 0;
+        const actual = Math.abs(actuals[cat.name] || 0);
+        const difference = isIncome ? (actual - budget) : (budget - actual);
+        
+        const isGood = difference >= 0;
+        const statusText = isGood ? (isIncome ? "Over Budget" : "Under Budget") : (isIncome ? "Under Budget" : "Over Budget");
+
         const tr=document.createElement("tr");
         tr.innerHTML=`
             <td>${cat.name}</td>
-            <td><input type="number" step="0.01" value="${cat.budgetMonthly||0}" style="width:90px"
+            <td><input type="number" step="0.01" value="${budget}" style="width:90px"
                 oninput="state.categories[${idx}].budgetMonthly=parseFloat(this.value)||0;State.save(state);"
                 onblur="State.save(state);renderCategories();computeSummary();"></td>
-            <td class="amount">${formatAud(actuals[cat.name]||0)}</td>
-            <td class="amount">${formatAud((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))}</td>
-<td class="${
-    ((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))>=0 ? "status-good" : "status-bad"
-}">
-    ${((cat.budgetMonthly||0)-Math.abs(actuals[cat.name]||0))>=0 ? "Under Budget" : "Over Budget"}
-</td>
-
+            <td class="amount">${formatAud(actual)}</td>
+            <td class="amount">${formatAud(difference)}</td>
+            <td class="${isGood ? "status-good" : "status-bad"}">
+                ${statusText}
+            </td>
             <td><button onclick="state.categories.splice(${idx},1);State.save(state);renderCategories();computeSummary();">✕</button></td>`;
         body.appendChild(tr);
     });
@@ -187,9 +268,7 @@ function init(){
     computeSummary();
     renderCategories();
 
-    document.getElementById("samalSavingInput").oninput = e=>{
-        state.samalSavings=parseFloat(e.target.value)||0; State.save(state); computeSummary();
-    };
+
 
     document.getElementById("auSavingInput").oninput = e=>{
         state.auSavings=parseFloat(e.target.value)||0; State.save(state); computeSummary();
