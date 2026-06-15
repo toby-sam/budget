@@ -41,6 +41,18 @@ function defaultState() {
     // Sam business budget categories used by sam-budget.js
     samBudgetCategories: [],
 
+    // Solect ledger rows
+    solect: [],
+
+    // Solect categories used by solect-ledger.js
+    solectCategories: [],
+
+    // Solect budget categories used by solect-budget.js
+    solectBudgetCategories: [],
+
+    // SOL → AUD rate (PHP→AUD ≈ 0.0259)
+    solAudRate: 0.0259,
+
     // Bonus income entries
     bonusIncome: [],
 
@@ -102,12 +114,30 @@ function loadState() {
         ? parsed.samBudgetCategories
         : base.samBudgetCategories,
 
+      // Solect ledger
+      solect: Array.isArray(parsed.solect) ? parsed.solect : base.solect,
+
+      // Solect categories for the ledger page
+      solectCategories: Array.isArray(parsed.solectCategories)
+        ? parsed.solectCategories
+        : base.solectCategories,
+
+      // Solect budget categories for the Solect budget page
+      solectBudgetCategories: Array.isArray(parsed.solectBudgetCategories)
+        ? parsed.solectBudgetCategories
+        : base.solectBudgetCategories,
+
       // Bonus income entries
       bonusIncome: Array.isArray(parsed.bonusIncome) ? parsed.bonusIncome : base.bonusIncome,
 
       investments: Array.isArray(parsed.investments) ? parsed.investments : base.investments,
       debts: Array.isArray(parsed.debts) ? parsed.debts : base.debts,
       debtPayments: Array.isArray(parsed.debtPayments) ? parsed.debtPayments : base.debtPayments,
+
+      solAudRate:
+        typeof parsed.solAudRate === 'number' && parsed.solAudRate > 0
+          ? parsed.solAudRate
+          : base.solAudRate,
 
       phpAudRate:
         typeof parsed.phpAudRate === 'number' && parsed.phpAudRate > 0

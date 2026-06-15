@@ -58,7 +58,31 @@ function renderDebtDefinitions() {
 
     const tdTotal = document.createElement('td');
     tdTotal.className = 'amount';
-    tdTotal.textContent = formatCurrency(parseMoney(debt.total));
+    
+    // Create editable input for debt total
+    const inputTotal = document.createElement('input');
+    inputTotal.type = 'number';
+    inputTotal.step = '0.01';
+    inputTotal.value = parseMoney(debt.total);
+    inputTotal.style.width = '100%';
+    inputTotal.style.textAlign = 'right';
+    
+    // Save on blur or Enter key
+    const saveTotal = () => {
+      const newTotal = parseMoney(inputTotal.value);
+      debt.total = newTotal;
+      State.save(state);
+      renderDebtDefinitions();
+    };
+    
+    inputTotal.onblur = saveTotal;
+    inputTotal.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        saveTotal();
+      }
+    };
+    
+    tdTotal.appendChild(inputTotal);
     tr.appendChild(tdTotal);
 
     const scheduled = paymentsByDebt[debt.id] || 0;
@@ -95,6 +119,42 @@ function renderDebtDefinitions() {
 
     tbody.appendChild(tr);
   });
+
+  updateDebtSummary();
+}
+
+/* ------------------------------
+    Update Debt Summary Totals
+------------------------------ */
+function updateDebtSummary() {
+  const paymentsByDebt = {};
+  state.debtPayments.forEach(p => {
+    const amt = parseMoney(p.amount);
+    if (!paymentsByDebt[p.debtId]) paymentsByDebt[p.debtId] = 0;
+    paymentsByDebt[p.debtId] += amt;
+  });
+
+  let totalDebt = 0;
+  let totalScheduled = 0;
+  let totalRemaining = 0;
+
+  state.debts.forEach(debt => {
+    const debtAmount = parseMoney(debt.total);
+    const scheduled = paymentsByDebt[debt.id] || 0;
+    const remaining = debtAmount - scheduled;
+
+    totalDebt += debtAmount;
+    totalScheduled += scheduled;
+    totalRemaining += remaining;
+  });
+
+  const elTotalDebt = document.getElementById('summaryTotalDebt');
+  const elTotalScheduled = document.getElementById('summaryTotalScheduled');
+  const elTotalRemaining = document.getElementById('summaryTotalRemaining');
+
+  if (elTotalDebt) elTotalDebt.textContent = formatCurrency(totalDebt);
+  if (elTotalScheduled) elTotalScheduled.textContent = formatCurrency(totalScheduled);
+  if (elTotalRemaining) elTotalRemaining.textContent = formatCurrency(totalRemaining);
 }
 
 /* ------------------------------
@@ -160,11 +220,18 @@ function renderPayments() {
     tr.appendChild(tdAmt);
 
     if (!runningByDebt[p.debtId]) runningByDebt[p.debtId] = 0;
+    const previousTotal = runningByDebt[p.debtId];
     runningByDebt[p.debtId] += amountNum;
+    const newTotal = runningByDebt[p.debtId];
 
     const tdRun = document.createElement('td');
     tdRun.className = 'amount';
-    tdRun.textContent = formatCurrency(runningByDebt[p.debtId]);
+    // Show calculation: (previous + current = new total)
+    if (previousTotal === 0) {
+      tdRun.textContent = formatCurrency(newTotal);
+    } else {
+      tdRun.textContent = `(${formatCurrency(previousTotal)} + ${formatCurrency(amountNum)} = ${formatCurrency(newTotal)})`;
+    }
     tr.appendChild(tdRun);
 
     const tdActions = document.createElement('td');
@@ -197,8 +264,8 @@ function addDebt() {
   const name = elsD.debtName.value.trim();
   const total = parseMoney(elsD.debtTotal.value);
 
-  if (!name || !total) {
-    alert('Enter debt name & total.');
+  if (!name) {
+    alert('Enter debt name.');
     return;
   }
 

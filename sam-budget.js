@@ -36,9 +36,6 @@ const elsSB = {
 
   catBody: document.querySelector('#categoriesTable tbody'),
 
-  saveBackupBtn: document.getElementById('saveBackupBtn'),
-  loadBackupBtn: document.getElementById('loadBackupBtn'),
-  loadBackupInput: document.getElementById('loadBackupInput'),
   refreshBtn: document.getElementById('refreshBtn')
 };
 
@@ -89,7 +86,7 @@ function computeTotals() {
         else spendAUD += aud;
     });
 
-    const profitLossAUD = incomeAUD - spendAUD;
+    const profitLossAUD = incomeAUD - filteredBudget;
 
     // Update UI
     elsSB.summaryIncome.textContent = formatAUD(incomeAUD);
@@ -224,57 +221,6 @@ function addCategory() {
 }
 
 // ---------------------------------------------------
-// Backup (Sam budget only)
-// ---------------------------------------------------
-function downloadBackup() {
-  const payload = {
-    samBudgetCategories: stateSB.samBudgetCategories
-  };
-
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {
-    type: 'application/json'
-  });
-
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'sam-budget-backup.json';
-  a.click();
-}
-
-function triggerLoadBackup() {
-  elsSB.loadBackupInput.click();
-}
-
-function handleBackupFileChange(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const parsed = JSON.parse(ev.target.result);
-
-      if (Array.isArray(parsed.samBudgetCategories)) {
-        stateSB.samBudgetCategories = parsed.samBudgetCategories.map(c => ({
-          name: c.name,
-          budgetMonthly: c.budgetMonthly || 0
-        }));
-        State.save(stateSB);
-        renderCategories();
-        computeTotals();
-        alert('Sam Budget backup restored.');
-      } else {
-        alert('Backup file does not contain samBudgetCategories.');
-      }
-    } catch {
-      alert('Invalid backup file.');
-    }
-  };
-
-  reader.readAsText(file);
-}
-
-// ---------------------------------------------------
 // Init
 // ---------------------------------------------------
 function initSamBudget() {
@@ -282,10 +228,6 @@ function initSamBudget() {
   computeTotals();
 
   if (elsSB.addCategoryBtn) elsSB.addCategoryBtn.onclick = addCategory;
-
-  if (elsSB.saveBackupBtn) elsSB.saveBackupBtn.onclick = downloadBackup;
-  if (elsSB.loadBackupBtn) elsSB.loadBackupBtn.onclick = triggerLoadBackup;
-  if (elsSB.loadBackupInput) elsSB.loadBackupInput.onchange = handleBackupFileChange;
 
   if (elsSB.refreshBtn) {
     elsSB.refreshBtn.onclick = () => {

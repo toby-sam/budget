@@ -225,6 +225,59 @@ function clearAllTransactionsNoSave() {
   alert('All ledger and Philippines transactions have been cleared.');
 }
 
+// ---------- Save / Restore all data ----------
+
+function saveAllData() {
+  let name = prompt('Enter a name for your backup:', '');
+
+  if (!name || !name.trim()) {
+    const now = new Date();
+    const stamp = now.toISOString().split('T')[0];
+    name = `BudgetBackup_${stamp}`;
+  }
+
+  if (!name.toLowerCase().endsWith('.json')) {
+    name = name + '.json';
+  }
+
+  state = State.load();
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function restoreAllData() {
+  document.getElementById('restoreDataInput').click();
+}
+
+function handleRestoreFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      state = State.load();
+      Object.assign(state, data);
+      State.save(state);
+      state = State.load();
+      renderOverBudget();
+      renderPieChart();
+      alert('Backup restored!');
+    } catch {
+      alert('Invalid backup file.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
 // ---------- Wiring ----------
 
 function initBudgetGraphs() {
@@ -236,9 +289,15 @@ function initBudgetGraphs() {
 
   const closeBtn = document.getElementById('closeMonthBtn');
   const clearBtn = document.getElementById('clearAllTxBtn');
+  const saveBtn = document.getElementById('saveDataBtn');
+  const restoreBtn = document.getElementById('restoreDataBtn');
+  const restoreInput = document.getElementById('restoreDataInput');
 
   if (closeBtn) closeBtn.addEventListener('click', closeMonthAndSave);
   if (clearBtn) clearBtn.addEventListener('click', clearAllTransactionsNoSave);
+  if (saveBtn) saveBtn.addEventListener('click', saveAllData);
+  if (restoreBtn) restoreBtn.addEventListener('click', restoreAllData);
+  if (restoreInput) restoreInput.addEventListener('change', handleRestoreFile);
 
   renderOverBudget();
   renderPieChart();

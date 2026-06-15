@@ -3,20 +3,25 @@
 
 
 // =============================================
-// ph-budget.js – FINAL, SAFE, SEPARATED VERSION
+// Solect-budget.js – FINAL, SAFE, SEPARATED VERSION
 // =============================================
 
 let stateB = State.load();
-// Stop PH script from running on AU budget page
+// Stop Solect script from running on AU budget page
 
 
-// Ensure PH Budget categories list exists
-if (!Array.isArray(stateB.phBudgetCategories)) {
-  stateB.phBudgetCategories = [];
+// Ensure Solect Budget categories list exists
+if (!Array.isArray(stateB.solectBudgetCategories)) {
+  stateB.solectBudgetCategories = [];
+}
+
+// Manual monthly budget (single editable value)
+if (typeof stateB.solectMonthlyBudget !== 'number') {
+  stateB.solectMonthlyBudget = 0;
 }
 
 // Normalise any legacy entries (strings → objects)
-stateB.phBudgetCategories = stateB.phBudgetCategories.map(c => {
+stateB.solectBudgetCategories = stateB.solectBudgetCategories.map(c => {
   if (typeof c === 'string') return { name: c, budgetMonthly: 0 };
   if (!c || !c.name) return { name: String(c), budgetMonthly: 0 };
   return {
@@ -30,8 +35,8 @@ State.save(stateB);
 // ---------------------------------------------------
 // Element references
 // ---------------------------------------------------
-const elsPH = {
-  summaryIncome: document.getElementById('summaryIncome'),
+const elsSolect = {
+  manualMonthlyBudget: document.getElementById('manualMonthlyBudget'),
   summaryHouse: document.getElementById('summaryHouse'),
   summarySamal: document.getElementById('summarySamal'),
   summaryTotalSpend: document.getElementById('summaryTotalSpend'),
@@ -39,7 +44,7 @@ const elsPH = {
 
   summaryTotalBudget: document.getElementById('summaryTotalBudget'),
   summaryLedger: document.getElementById('summaryLedger'),
-  summaryPhilippines: document.getElementById('summaryPhilippines'),
+  summarysolect: document.getElementById('summarysolect'),
 
   newCategoryName: document.getElementById('newCategoryName'),
   newCategoryMonthly: document.getElementById('newCategoryMonthly'),
@@ -53,25 +58,25 @@ const elsPH = {
 // ---------------------------------------------------
 // Helpers
 // ---------------------------------------------------
-function formatPHP(n) {
+function formatSOL(n) {
   if (isNaN(n)) n = 0;
-  return n.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+  return n.toLocaleString('en-Solect', { style: 'currency', currency: 'SOL' });
 }
 
-// Totals grouped by category (using PH Ledger data only)
+// Totals grouped by category (using Solect Ledger data only)
 function computeActualsByCategory() {
   const map = {};
 
-  (stateB.philippines || []).forEach(tx => {
+  (stateB.solect || []).forEach(tx => {
     if (!tx) return;
 
-    const php = tx.amountPhp || 0;
-    if (php <= 0) return; // only expenses
+    const SOL = tx.amountSOL || 0;
+    if (SOL <= 0) return; // only expenses
 
     const cat = tx.category || 'Uncategorised';
     if (!map[cat]) map[cat] = 0;
 
-    map[cat] += php;
+    map[cat] += SOL;
   });
 
   return map;
@@ -82,50 +87,42 @@ function computeActualsByCategory() {
 // ---------------------------------------------------
 function computeTotals() {
 
-    const phpToAud = (stateB.phpAudRate || 0.0259);
-
-    // 🔹 Total budget excluding income categories
-    const filteredBudget = stateB.phBudgetCategories
+    // 🔹 Total category budget excluding income categories
+    const filteredBudget = stateB.solectBudgetCategories
         .filter(c => c.name !== "AU_Income" && c.name !== "Income")
         .reduce((sum, c) => sum + (c.budgetMonthly || 0), 0);
 
-    // 🔹 Compute actual income + spent
-    let auIncomePHP = 0, phIncomePHP = 0, spendPHP = 0;
+    // 🔹 Compute spend (income categories excluded)
+    let spendSOL = 0;
 
-    (stateB.philippines || []).forEach(tx => {
-        const php = tx.amountPhp || 0;
+    (stateB.solect || []).forEach(tx => {
+        const SOL = tx.amountSOL || 0;
         if (!tx.category) return;
-
-        if (tx.category === "AU_Income") auIncomePHP += php;
-        else if (tx.category === "Income") phIncomePHP += php;
-        else spendPHP += php;
+        if (tx.category === "AU_Income" || tx.category === "Income") return;
+        spendSOL += SOL;
     });
 
-    const totalIncomePHP = auIncomePHP + phIncomePHP;
-    const totalIncomeAUD = totalIncomePHP * phpToAud;
-    const profitLossAUD = (totalIncomePHP - spendPHP) * phpToAud;
+    const manualBudget = stateB.solectMonthlyBudget || 0;
 
-    // 🔥 Update UI
-// 🔥 Display everything in PHP
-elsPH.summaryIncome.textContent = totalIncomePHP.toLocaleString("en-PH", {
-    style: "currency",
-    currency: "PHP"
-});
+    if (elsSolect.manualMonthlyBudget && document.activeElement !== elsSolect.manualMonthlyBudget) {
+        elsSolect.manualMonthlyBudget.value = manualBudget;
+    }
 
-elsPH.summaryTotalBudget.textContent = filteredBudget.toLocaleString("en-PH", {
-    style: "currency",
-    currency: "PHP"
-});
+    elsSolect.summaryTotalBudget.textContent = filteredBudget.toLocaleString("en-Solect", {
+        style: "currency",
+        currency: "SOL"
+    });
 
-elsPH.summaryTotalSpend.textContent = spendPHP.toLocaleString("en-PH", {
-    style: "currency",
-    currency: "PHP"
-});
+    elsSolect.summaryTotalSpend.textContent = spendSOL.toLocaleString("en-Solect", {
+        style: "currency",
+        currency: "SOL"
+    });
 
-elsPH.summaryProfitLoss.textContent = (totalIncomePHP - filteredBudget).toLocaleString("en-PH", {
-    style: "currency",
-    currency: "PHP"
-});
+    // Profit/Loss = manual budget left after spend
+    elsSolect.summaryProfitLoss.textContent = (manualBudget - spendSOL).toLocaleString("en-Solect", {
+        style: "currency",
+        currency: "SOL"
+    });
 
 }
 
@@ -135,14 +132,14 @@ elsPH.summaryProfitLoss.textContent = (totalIncomePHP - filteredBudget).toLocale
 // ---------------------------------------------------
 function renderCategories() {
   const actuals = computeActualsByCategory();
-  elsPH.catBody.innerHTML = '';
+  elsSolect.catBody.innerHTML = '';
 
-  const sorted = [...stateB.phBudgetCategories].sort((a, b) =>
+  const sorted = [...stateB.solectBudgetCategories].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
   sorted.forEach(cat => {
-    const idx = stateB.phBudgetCategories.findIndex(c => c.name === cat.name);
+    const idx = stateB.solectBudgetCategories.findIndex(c => c.name === cat.name);
     if (idx === -1) return;
 
     const tr = document.createElement('tr');
@@ -152,7 +149,7 @@ function renderCategories() {
     tdName.textContent = cat.name;
     tr.appendChild(tdName);
 
-    // Budget (PHP)
+    // Budget (SOL)
     const tdBudget = document.createElement('td');
     tdBudget.className = 'amount';
 
@@ -163,7 +160,7 @@ function renderCategories() {
     input.style.width = '90px';
 
     input.oninput = () => {
-      stateB.phBudgetCategories[idx].budgetMonthly = parseFloat(input.value) || 0;
+      stateB.solectBudgetCategories[idx].budgetMonthly = parseFloat(input.value) || 0;
       State.save(stateB);
     };
 
@@ -176,18 +173,18 @@ function renderCategories() {
     tdBudget.appendChild(input);
     tr.appendChild(tdBudget);
 
-    // Actual Spend (PHP)
-    const actualPhp = actuals[cat.name] || 0;
+    // Actual Spend (SOL)
+    const actualSOL = actuals[cat.name] || 0;
     const tdActual = document.createElement('td');
     tdActual.className = 'amount';
-    tdActual.textContent = formatPHP(actualPhp);
+    tdActual.textContent = formatSOL(actualSOL);
     tr.appendChild(tdActual);
 
     // Difference
-    const diff = (cat.budgetMonthly || 0) - actualPhp;
+    const diff = (cat.budgetMonthly || 0) - actualSOL;
     const tdDiff = document.createElement('td');
     tdDiff.className = 'amount';
-    tdDiff.textContent = formatPHP(diff);
+    tdDiff.textContent = formatSOL(diff);
     tr.appendChild(tdDiff);
 
     // Status
@@ -211,10 +208,10 @@ function renderCategories() {
     btnDel.className = 'secondary';
 
     btnDel.onclick = () => {
-      if (!confirm(`Delete category "${cat.name}" from PH Budget?`)) return;
-      const realIndex = stateB.phBudgetCategories.findIndex(c => c.name === cat.name);
+      if (!confirm(`Delete category "${cat.name}" from Solect Budget?`)) return;
+      const realIndex = stateB.solectBudgetCategories.findIndex(c => c.name === cat.name);
       if (realIndex !== -1) {
-        stateB.phBudgetCategories.splice(realIndex, 1);
+        stateB.solectBudgetCategories.splice(realIndex, 1);
         State.save(stateB);
         renderCategories();
         computeTotals();
@@ -224,7 +221,7 @@ function renderCategories() {
     tdActions.appendChild(btnDel);
     tr.appendChild(tdActions);
 
-    elsPH.catBody.appendChild(tr);
+    elsSolect.catBody.appendChild(tr);
   });
 }
 
@@ -232,24 +229,24 @@ function renderCategories() {
 // Add Category
 // ---------------------------------------------------
 function addCategory() {
-  const name = (elsPH.newCategoryName.value || '').trim();
-  const monthly = parseFloat(elsPH.newCategoryMonthly.value) || 0;
+  const name = (elsSolect.newCategoryName.value || '').trim();
+  const monthly = parseFloat(elsSolect.newCategoryMonthly.value) || 0;
 
   if (!name) return alert('Enter a category name.');
 
-  if (stateB.phBudgetCategories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+  if (stateB.solectBudgetCategories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
     return alert('Category already exists.');
   }
 
-  stateB.phBudgetCategories.push({
+  stateB.solectBudgetCategories.push({
     name,
     budgetMonthly: monthly
   });
 
   State.save(stateB);
 
-  elsPH.newCategoryName.value = '';
-  elsPH.newCategoryMonthly.value = '';
+  elsSolect.newCategoryName.value = '';
+  elsSolect.newCategoryMonthly.value = '';
 
   renderCategories();
   computeTotals();
@@ -258,14 +255,23 @@ function addCategory() {
 // ---------------------------------------------------
 // Init
 // ---------------------------------------------------
-function initPhBudget() {
+function initSolectBudget() {
   renderCategories();
   computeTotals();
 
-  if (elsPH.addCategoryBtn) elsPH.addCategoryBtn.onclick = addCategory;
+  if (elsSolect.manualMonthlyBudget) {
+    elsSolect.manualMonthlyBudget.value = stateB.solectMonthlyBudget || 0;
+    elsSolect.manualMonthlyBudget.oninput = () => {
+      stateB.solectMonthlyBudget = parseFloat(elsSolect.manualMonthlyBudget.value) || 0;
+      State.save(stateB);
+      computeTotals();
+    };
+  }
 
-  if (elsPH.refreshBtn) {
-    elsPH.refreshBtn.onclick = () => {
+  if (elsSolect.addCategoryBtn) elsSolect.addCategoryBtn.onclick = addCategory;
+
+  if (elsSolect.refreshBtn) {
+    elsSolect.refreshBtn.onclick = () => {
       // reload from storage in case another tab changed it
       stateB = State.load();
       renderCategories();
@@ -273,16 +279,16 @@ function initPhBudget() {
     };
   }
 
-  if (elsPH.newCategoryName) {
-    elsPH.newCategoryName.onkeydown = e => {
+  if (elsSolect.newCategoryName) {
+    elsSolect.newCategoryName.onkeydown = e => {
       if (e.key === 'Enter') addCategory();
     };
   }
-  if (elsPH.newCategoryMonthly) {
-    elsPH.newCategoryMonthly.onkeydown = e => {
+  if (elsSolect.newCategoryMonthly) {
+    elsSolect.newCategoryMonthly.onkeydown = e => {
       if (e.key === 'Enter') addCategory();
     };
   }
 }
 
-document.addEventListener('DOMContentLoaded', initPhBudget);
+document.addEventListener('DOMContentLoaded', initSolectBudget);

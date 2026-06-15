@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solect Ledger</title>
+
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="budget.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <h1>Toby Budget – Solect</h1>
+        <div class="nav-links">
+            <!-- Populated by nav.js -->
+        </div>
+    </header>
+
+    <main class="page">
+
+        <!-- ========================= -->
+        <!--  MANUAL Solect COST ENTRY     -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Add Solect Item (Manual)</h2>
+            <p>Enter SOL amounts. CSV imports also store SOL and compute AUD via the exchange rate.</p>
+
+            <div class="row" style="gap:10px;">
+                <input id="SolectDate" type="date">
+                <input id="SolectDesc" type="text" placeholder="e.g. Rent, groceries">
+                <input id="SolectAmount" type="number" step="0.01" placeholder="Amount (SOL)">
+                <select id="SolectType">
+                    <option value="debit">DEBIT</option>
+                    <option value="credit">CREDIT</option>
+                </select>
+                <select id="SolectCategory"></select>
+                <button id="addSolectBtn" class="primary">Add</button>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--  MANAGE CATEGORIES        -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Manage Categories</h2>
+
+            <div class="row" style="align-items:flex-end; gap:10px;">
+                <div style="flex: 1;">
+                    <label>New Category Name</label>
+                    <input type="text" id="newSolectCategoryName" placeholder="e.g. Rent, Income, AU_Income" />
+                </div>
+                <button id="addSolectCategoryBtn" class="primary">Add Category</button>
+            </div>
+
+            <div class="small" style="margin-top:0.5rem;">Shared with the Solect Budget page.</div>
+
+            <div id="solectCategoryChips" style="margin-top:0.75rem; display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
+        </section>
+
+        <!-- ========================= -->
+        <!--  SUMMARY                  -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Solect Summary</h2>
+
+            <section class="card">
+                <h2>Solect Summary</h2>
+
+                <div class="summary-row">
+
+                    <div>
+                        <div class="small">Money Earned in Solect (PHP):</div>
+                        <div id="Solect_income" class="badge">₱0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="small">Solect Net (PHP):</div>
+                        <div id="Solect_net" class="badge">₱0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="small">AU Net (Converted):</div>
+                        <div id="Solect_net_aud" class="badge">$0.00</div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- Exchange Rate -->
+            <div style="margin-top: 1rem;">
+                <label>PHP → AUD Rate</label>
+
+                <div class="row" style="align-items:center; gap:1rem;">
+                    <input id="SolectRateInput" type="number" step="0.0001" style="width:100px;">
+                    <span id="SolectRateDisplay"></span>
+                </div>
+
+                <div id="SolectRateNote" class="small"></div>
+            </div>
+
+        </section>
+
+        <!-- ========================= -->
+        <!--  CSV IMPORT / EXPORT      -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Import Solect Bank CSV (SOL)</h2>
+
+            <div class="row" style="margin-bottom:10px; gap:10px;">
+                <div>
+                    <label>Solect CSV file</label>
+                    <input type="file" id="SolectCsvFile" accept=".csv">
+                </div>
+
+                <button id="importSolectCsvBtn" class="primary">Import Solect CSV</button>
+                <button id="undoSolectImportBtn" class="secondary">Undo Last Import</button>
+                <button id="exportSolectCsvBtn" class="secondary">Output Solect CSV</button>
+                <button id="undoSolectDeleteBtn" class="secondary">Undo Delete</button>
+            </div>
+        </section>
+
+        <!-- ========================= -->
+        <!--  Solect TRANSACTIONS TABLE    -->
+        <!-- ========================= -->
+        <section class="card">
+            <h2>Solect Transactions</h2>
+
+            <div class="table-wrapper">
+                <table id="SolectTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th class="amount">Amount (SOL)</th>
+                            <th class="amount">Amount (AUD)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="SolectTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS -->
+    <script src="state.js"></script>
+    <script src="nav.js"></script>
+    <script src="solect-ledger.js"></script>
+
+</body>
+
+</html>

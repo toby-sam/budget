@@ -126,6 +126,91 @@ function loadCategoryDropdown() {
   });
 }
 
+// ---- Manage categories (add / remove) --------------------------------------
+
+function renderCategoryChips() {
+  const container = document.getElementById("categoryChips");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (!Array.isArray(state.categories) || state.categories.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "small";
+    empty.textContent = "No categories yet.";
+    container.appendChild(empty);
+    return;
+  }
+
+  const sorted = [...state.categories].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  sorted.forEach(cat => {
+    const chip = document.createElement("span");
+    chip.style.cssText =
+      "display:inline-flex; align-items:center; gap:0.35rem; padding:0.25rem 0.55rem; background:#eef; border:1px solid #ccd; border-radius:999px; font-size:0.9rem;";
+    chip.textContent = cat.name;
+
+    const del = document.createElement("button");
+    del.textContent = "✕";
+    del.title = `Remove "${cat.name}"`;
+    del.style.cssText =
+      "border:none; background:transparent; cursor:pointer; font-weight:bold; color:#a00; padding:0 0.15rem;";
+    del.onclick = () => {
+      const inUse = state.ledger.some(tx => tx.category === cat.name);
+      const msg = inUse
+        ? `"${cat.name}" is used by existing ledger entries. Remove it anyway? Those entries will become Unassigned.`
+        : `Remove category "${cat.name}"?`;
+      if (!confirm(msg)) return;
+
+      state.categories = state.categories.filter(c => c.name !== cat.name);
+      if (inUse) {
+        state.ledger.forEach(tx => {
+          if (tx.category === cat.name) tx.category = "";
+        });
+      }
+      State.save(state);
+      renderCategoryChips();
+      loadCategoryDropdown();
+      renderLedger();
+    };
+
+    chip.appendChild(del);
+    container.appendChild(chip);
+  });
+}
+
+function setupCategoryManager() {
+  const btn = document.getElementById("addCategoryBtnLedger");
+  const input = document.getElementById("newCategoryNameLedger");
+  if (!btn || !input) return;
+
+  const addCategory = () => {
+    const name = cleanSpaces(input.value);
+    if (!name) {
+      alert("Enter a category name.");
+      return;
+    }
+    if (state.categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+      alert("Category already exists.");
+      return;
+    }
+
+    state.categories.push({ name, budgetMonthly: 0 });
+    State.save(state);
+    input.value = "";
+    renderCategoryChips();
+    loadCategoryDropdown();
+    renderLedger();
+  };
+
+  btn.onclick = addCategory;
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") addCategory();
+  });
+}
+
 // ---- Render ledger table (with duplicate highlight) ------------------------
 
 function renderLedger() {
@@ -505,10 +590,22 @@ function setupImport() {
 
 function initLedger() {
   loadCategoryDropdown();
+  renderCategoryChips();
   renderLedger();
   setupImport();
   setupManualAdd();
+  setupCategoryManager();
   setupSearch();
+  
+  // Set today's date as default for manual entry
+  const dateInput = document.getElementById("manualDate");
+  if (dateInput) {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    dateInput.value = `${dd}/${mm}/${yyyy}`;
+  }
   
   // 🔥 Refresh categories when page becomes visible (e.g., navigating back from budget page)
   document.addEventListener("visibilitychange", () => {
@@ -517,6 +614,8 @@ function initLedger() {
       state = State.load();
       // Refresh the category dropdown
       loadCategoryDropdown();
+      // Refresh the manage-categories chip list
+      renderCategoryChips();
       // Also refresh the ledger table to update category dropdowns in existing rows
       renderLedger();
     }

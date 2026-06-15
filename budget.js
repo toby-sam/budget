@@ -15,6 +15,11 @@ if (!state.samLedger) state.samLedger = [];
 if (!state.samBudgetCategories) state.samBudgetCategories = [];
 if (!state.samalSavings) state.samalSavings = 0;
 if (!state.auSavings) state.auSavings = 0;
+if (!Array.isArray(state.solect)) state.solect = [];
+if (!Array.isArray(state.solectBudgetCategories)) state.solectBudgetCategories = [];
+if (!state.solAudRate) state.solAudRate = 0.0259;
+if (!Array.isArray(state.debts)) state.debts = [];
+if (!Array.isArray(state.debtPayments)) state.debtPayments = [];
 
 
 // ------------------------------
@@ -147,7 +152,14 @@ const els = {
     summaryPredictedTotal: document.getElementById("summaryPredictedTotal"),
     grandPredictedTotal: document.getElementById("grandPredictedTotal"),
     summaryLedger: document.getElementById("summaryLedger"),        // optional future use
-    summaryPhilippines: document.getElementById("summaryPhilippines") // optional future use
+    summaryPhilippines: document.getElementById("summaryPhilippines"), // optional future use
+
+    summaryAuProfit: document.getElementById("summaryAuProfit"),
+    summarySoftwareProfit: document.getElementById("summarySoftwareProfit"),
+    summaryPhProfit: document.getElementById("summaryPhProfit"),
+    summarySolectProfit: document.getElementById("summarySolectProfit"),
+    summaryDebtPaid: document.getElementById("summaryDebtPaid"),
+    summaryDebtBalance: document.getElementById("summaryDebtBalance")
 };
 
     const income = getMonthlyIncomeDirect();
@@ -166,8 +178,8 @@ const els = {
     const grandPredictedTotal = predictedTotal + phBudgetAud + samBudgetAud;
     const predictedResult = income - grandPredictedTotal;
 
-    // 🔥 WHATS LEFT = Income - Grand Predicted Total
-    const whatsLeft = income - grandPredictedTotal;
+    // 🔥 WHATS LEFT = Income - Grand Predicted Total - Savings
+    const whatsLeft = income - grandPredictedTotal - (state.auSavings || 0);
 
     // 🔥 CALCULATE TOTAL RUNNING TOTAL (AU + PH in AUD)
     // Exclude income and use Math.abs() to match ledger running total
@@ -202,6 +214,120 @@ const els = {
     if (els.summaryTotalRT) els.summaryTotalRT.textContent = formatAud(totalRT);
 
     document.getElementById("remainingAfterSavings").textContent = formatAud(whatsLeft);
+
+    // ---- AU Profit = Monthly Income − AU Predicted Total ----
+    const auProfit = income - predictedTotal;
+    if (els.summaryAuProfit) els.summaryAuProfit.textContent = formatAud(auProfit);
+
+    // ---- Software Profit (Sam P/L in AUD) = sam income − sam actual expenses ----
+    let samIncomeAud = 0;
+    (state.samLedger || []).forEach(tx => {
+        if (tx.category === "Income") samIncomeAud += (tx.amountAud || 0);
+    });
+    const softwareProfit = samIncomeAud - samCostAud;
+    if (els.summarySoftwareProfit) els.summarySoftwareProfit.textContent = formatAud(softwareProfit);
+
+    // ---- PH Profit = (ph income − ph budget) × PHP→AUD rate ----
+    let phIncomePhp = 0;
+    (state.philippines || []).forEach(tx => {
+        if (tx.category === "AU_Income" || tx.category === "Income") {
+            phIncomePhp += (tx.amountPhp || 0);
+        }
+    });
+    const phFilteredBudget = state.phBudgetCategories
+        .filter(c => c.name !== "AU_Income" && c.name !== "Income")
+        .reduce((s, c) => s + (c.budgetMonthly || 0), 0);
+    const phProfitAud = (phIncomePhp - phFilteredBudget) * state.phpAudRate;
+    if (els.summaryPhProfit) els.summaryPhProfit.textContent = formatAud(phProfitAud);
+
+    // ---- Solect Profit = (solect income − solect budget) × PHP→AUD rate ----
+    let solectIncomePhp = 0;
+    (state.solect || []).forEach(tx => {
+        if (tx.category === "AU_Income" || tx.category === "Income") {
+            solectIncomePhp += (tx.amountSOL || 0);
+        }
+    });
+    const solectFilteredBudget = state.solectBudgetCategories
+        .filter(c => c.name !== "AU_Income" && c.name !== "Income")
+        .reduce((s, c) => s + (c.budgetMonthly || 0), 0);
+    const solectProfitAud = (solectIncomePhp - solectFilteredBudget) * state.phpAudRate;
+    if (els.summarySolectProfit) els.summarySolectProfit.textContent = formatAud(solectProfitAud);
+
+    // ---- Debt Paid (sum of actuals for debt-related ledger categories) ----
+    const parseDebtMoney = v => {
+        if (typeof v === "number") return v;
+        if (!v) return 0;
+        const n = parseFloat(String(v).replace(/[^0-9.-]/g, ""));
+        return isNaN(n) ? 0 : n;
+    };
+    const debtCategoryNames = ["Afterpay", "CAR", "Cole CC", "Fines", "Latitude - Judz", "Latitude - Toby", "zip"];
+    const actualsForDebt = computeActualsByCategory();
+    const actualsLower = {};
+    Object.keys(actualsForDebt).forEach(k => { actualsLower[k.toLowerCase()] = actualsForDebt[k]; });
+    const totalDebtPaid = debtCategoryNames.reduce(
+        (s, name) => s + Math.abs(actualsLower[name.toLowerCase()] || 0),
+        0
+    );
+    const totalDebt = state.debts.reduce((s, d) => s + parseDebtMoney(d.total), 0);
+    const debtBalance = totalDebt - totalDebtPaid;
+    if (els.summaryDebtPaid) els.summaryDebtPaid.textContent = formatAud(totalDebtPaid);
+    if (els.summaryDebtBalance) els.summaryDebtBalance.textContent = formatAud(debtBalance);
+
+    // ---- Overall Budget Status (total spend vs total budget) ----
+    const budgetDiff = totalSpendAud - combinedBudgetAud;
+    const statusEl = document.getElementById("summaryBudgetStatus");
+    if (statusEl) {
+        if (budgetDiff > 0) {
+            statusEl.textContent = `Over by ${formatAud(budgetDiff)}`;
+            statusEl.style.background = "#dc3545";
+            statusEl.style.color = "white";
+        } else if (budgetDiff < 0) {
+            statusEl.textContent = `Under by ${formatAud(Math.abs(budgetDiff))}`;
+            statusEl.style.background = "#28a745";
+            statusEl.style.color = "white";
+        } else {
+            statusEl.textContent = "On Budget";
+            statusEl.style.background = "#007bff";
+            statusEl.style.color = "white";
+        }
+        statusEl.style.fontWeight = "bold";
+    }
+
+    // ---- Over Budget tally (count + total overspend across categories) ----
+    const overBudgetActuals = computeActualsByCategory();
+    let overCount = 0, overTotal = 0;
+    const overItems = [];
+    state.categories.forEach(cat => {
+        const catNameLower = cat.name?.toLowerCase() || "";
+        if (catNameLower === "income" || catNameLower === "bad income") return;
+        const budget = cat.budgetMonthly || 0;
+        const actual = Math.abs(overBudgetActuals[cat.name] || 0);
+        if (actual > budget) {
+            overCount++;
+            overTotal += (actual - budget);
+            overItems.push({ name: cat.name, over: actual - budget });
+        }
+    });
+    const overEl = document.getElementById("summaryOverBudget");
+    if (overEl) {
+        if (overCount > 0) {
+            overEl.textContent = `${overCount} over by ${formatAud(overTotal)}`;
+            overEl.style.background = "#dc3545";
+            overEl.style.color = "white";
+            overEl.title = overItems
+                .sort((a, b) => b.over - a.over)
+                .map(i => `${i.name}: ${formatAud(i.over)} over`)
+                .join("\n");
+            overEl.style.cursor = "help";
+        } else {
+            overEl.textContent = "None";
+            overEl.style.background = "";
+            overEl.style.color = "";
+            overEl.title = "";
+            overEl.style.cursor = "";
+        }
+        overEl.style.fontWeight = "bold";
+    }
 
     // push input values back
     document.getElementById("auSavingInput").value   = state.auSavings;
@@ -241,8 +367,11 @@ function renderCategories(){
         const actual = Math.abs(actuals[cat.name] || 0);
         const difference = isIncome ? (actual - budget) : (budget - actual);
         
-        const isGood = difference >= 0;
-        const statusText = isGood ? (isIncome ? "Over Budget" : "Under Budget") : (isIncome ? "Under Budget" : "Over Budget");
+        const isOnBudget = difference === 0;
+        const isGood = difference > 0;
+        const statusText = isOnBudget ? "On Budget" : (isGood ? (isIncome ? "Over Budget" : "Under Budget") : (isIncome ? "Under Budget" : "Over Budget"));
+        const statusClass = isOnBudget ? "" : (isGood ? "status-good" : "status-bad");
+        const statusStyle = isOnBudget ? ' style="color:#007bff;font-weight:bold;"' : '';
 
         const tr=document.createElement("tr");
         tr.innerHTML=`
@@ -252,7 +381,7 @@ function renderCategories(){
                 onblur="State.save(state);renderCategories();computeSummary();"></td>
             <td class="amount">${formatAud(actual)}</td>
             <td class="amount">${formatAud(difference)}</td>
-            <td class="${isGood ? "status-good" : "status-bad"}">
+            <td class="${statusClass}"${statusStyle}>
                 ${statusText}
             </td>
             <td><button onclick="state.categories.splice(${idx},1);State.save(state);renderCategories();computeSummary();">✕</button></td>`;
@@ -309,60 +438,6 @@ function init(){
         renderCategories();
         computeSummary();
     };
-
-// 🔥 SAVE BACKUP
-// 🔥 SAVE BACKUP WITH CUSTOM FILENAME
-document.getElementById("saveBackupBtn").onclick = () => {
-    // Ask user for name
-    let name = prompt("Enter a name for your backup:", "");
-
-    // If user enters nothing → auto create a beautiful timestamped filename
-    if (!name || !name.trim()) {
-        const now = new Date();
-        const stamp = now.toISOString().split("T")[0]; // YYYY-MM-DD
-        name = `BudgetBackup_${stamp}`;
-    }
-
-    // Ensure .json extension
-    if (!name.toLowerCase().endsWith(".json")) {
-        name = name + ".json";
-    }
-
-    // Convert + download
-    const data = JSON.stringify(state, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    a.click();
-};
-
-// 🔥 LOAD BACKUP
-document.getElementById("loadBackupBtn").onclick = () =>
-    document.getElementById("loadBackupInput").click();
-
-document.getElementById("loadBackupInput").onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = I => {
-        const data = JSON.parse(I.target.result);
-        Object.assign(state, data);   // merge imported values
-        State.save(state);
-        computeSummary();
-        renderCategories();
-        alert("Backup restored!");
-    };
-    reader.readAsText(file);
-};
-
-// 🔄 REFRESH
-document.getElementById("refreshBtn").onclick = () => {
-    computeSummary();
-    renderCategories();
-};
 
 }
 

@@ -4,14 +4,16 @@
  */
 
 const navItems = [
-    { name: "Ledger", link: "ledger.html" },
-    { name: "Budget", link: "budget.html" },
+    { name: "AU Ledger", link: "ledger.html" },
+    { name: "AU Budget", link: "budget.html" },
     { name: "Income", link: "income.html" },
     { name: "Bonus Income", link: "bonus-income.html" },
-    { name: "Philippines", link: "philippines.html" },
-    { name: "PHBudget", link: "ph-budget.html" },
-    { name: "SamLedg", link: "sam-ledger.html" },
-    { name: "SamBudget", link: "sam-budget.html" },
+    { name: "PH Ledger", link: "philippines.html" },
+    { name: "PH Budget", link: "ph-budget.html" },
+    { name: "Software Ledger", link: "sam-ledger.html" },
+    { name: "Software Budget", link: "sam-budget.html" },
+    { name: "Solect Ledger", link: "solect-ledger.html" },
+    { name: "Solect Budget", link: "solect-budget.html" },
     { name: "Debts", link: "debts.html" },
     { name: "Investments", link: "investments.html" },
     { name: "Graphs", link: "budget-graphs.html" },

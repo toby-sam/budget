@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>git
+<script>
   if (sessionStorage.getItem("budgetAuth") !== "yes") {
     window.location.href = "login.html";
   }
@@ -102,6 +102,24 @@
 
         <button id="addManualBtn" class="primary">Add</button>
       </div>
+    </section>
+
+    <!-- Manage Categories -->
+    <section class="card">
+      <h2>Manage Categories</h2>
+
+      <div class="row" style="align-items:flex-end;">
+        <div style="flex: 1;">
+          <label>New Category Name</label>
+          <input type="text" id="newCategoryNameLedger" placeholder="e.g. Rent, Gym, Developers" />
+        </div>
+
+        <button id="addCategoryBtnLedger" class="primary">Add Category</button>
+      </div>
+
+      <div class="small" style="margin-top:0.5rem;">Shared with the Budget page.</div>
+
+      <div id="categoryChips" style="margin-top:0.75rem; display:flex; flex-wrap:wrap; gap:0.4rem;"></div>
     </section>
 
     <!-- Search -->

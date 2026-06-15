@@ -35,7 +35,6 @@
 
       <div class="row summary-row">
 
-        <!-- Row 1: 6 items -->
         <div>
           <div class="small">Monthly Income</div>
           <div id="summaryIncome" class="badge">$0.00</div>
@@ -47,76 +46,57 @@
         </div>
 
         <div>
-          <div class="small">Total Spend</div>
-          <div id="summaryTotalSpend" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">AU Ledger Total</div>
-          <div id="summaryAuLedgerTotal" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">PH Costs AUD</div>
-          <div id="summaryPhCost" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">SamLedg Total</div>
-          <div id="summarySamCost" class="badge">$0.00</div>
-        </div>
-
-        <!-- Row 2: 6 items -->
-        <div>
-          <div class="small">Total AU Budget</div>
-          <div id="summaryTotalBudget" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">Income - Combined Pred Total</div>
-          <div id="predictedProf" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">Total PH Budget</div>
-          <div id="summaryTotalPhBudget" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">Total SAM Budget</div>
-          <div id="summaryTotalSamBudget" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">AU Predicted Total</div>
-          <div id="summaryPredictedTotal" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">Combined Pred Total</div>
-          <div id="grandPredictedTotal" class="badge">$0.00</div>
-        </div>
-
-        <div>
-          <div class="small">AU Savings (per month)</div>
-          <input type="number" id="auSavingInput" class="badge input-badge" step="0.01">
-        </div>
-
-        <div>
           <div class="small"><b>Whats Left</b></div>
           <div id="remainingAfterSavings" class="badge" style="background:#28a745;color:white;font-weight:bold;"></div>
         </div>
 
+        <div>
+          <div class="small">Savings (per month)</div>
+          <input type="number" id="auSavingInput" class="badge input-badge" step="0.01">
+        </div>
+
+        <div>
+          <div class="small">AU Profit</div>
+          <div id="summaryAuProfit" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Software Profit</div>
+          <div id="summarySoftwareProfit" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">PH Profit</div>
+          <div id="summaryPhProfit" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Solect Profit</div>
+          <div id="summarySolectProfit" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Debt Paid</div>
+          <div id="summaryDebtPaid" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Debt Balance</div>
+          <div id="summaryDebtBalance" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Budget Status</div>
+          <div id="summaryBudgetStatus" class="badge">$0.00</div>
+        </div>
+
+        <div>
+          <div class="small">Over Budget</div>
+          <div id="summaryOverBudget" class="badge">None</div>
+        </div>
+
       </div>
     </section>
-
-    <!-- =====================  BACKUP BAR  ===================== -->
-    <div class="backup-controls">
-      <button id="saveBackupBtn" class="secondary">Save Backup</button>
-      <input type="file" id="loadBackupInput" style="display:none" />
-      <button id="loadBackupBtn" class="secondary">Load Backup</button>
-      <button id="refreshBtn" class="secondary">Refresh</button>
-    </div>
 
     <!-- =====================  CATEGORIES  ===================== -->
     <section class="card">
