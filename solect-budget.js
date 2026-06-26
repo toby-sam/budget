@@ -41,8 +41,10 @@ const elsSolect = {
   summarySamal: document.getElementById('summarySamal'),
   summaryTotalSpend: document.getElementById('summaryTotalSpend'),
   summaryProfitLoss: document.getElementById('summaryProfitLoss'),
+  summaryProfitLossAud: document.getElementById('summaryProfitLossAud'),
 
   summaryTotalBudget: document.getElementById('summaryTotalBudget'),
+  summaryTotalBudgetAud: document.getElementById('summaryTotalBudgetAud'),
   summaryLedger: document.getElementById('summaryLedger'),
   summarysolect: document.getElementById('summarysolect'),
 
@@ -60,7 +62,12 @@ const elsSolect = {
 // ---------------------------------------------------
 function formatSOL(n) {
   if (isNaN(n)) n = 0;
-  return n.toLocaleString('en-Solect', { style: 'currency', currency: 'SOL' });
+  return n.toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+}
+
+function formatAUD(n) {
+  if (isNaN(n)) n = 0;
+  return n.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' });
 }
 
 // Totals grouped by category (using Solect Ledger data only)
@@ -108,21 +115,21 @@ function computeTotals() {
         elsSolect.manualMonthlyBudget.value = manualBudget;
     }
 
-    elsSolect.summaryTotalBudget.textContent = filteredBudget.toLocaleString("en-Solect", {
-        style: "currency",
-        currency: "SOL"
-    });
+    const rate = stateB.solAudRate || 0.0259;
+    const profitLoss = manualBudget - spendSOL;
 
-    elsSolect.summaryTotalSpend.textContent = spendSOL.toLocaleString("en-Solect", {
-        style: "currency",
-        currency: "SOL"
-    });
+    elsSolect.summaryTotalBudget.textContent = formatSOL(filteredBudget);
+
+    elsSolect.summaryTotalSpend.textContent = formatSOL(spendSOL);
 
     // Profit/Loss = manual budget left after spend
-    elsSolect.summaryProfitLoss.textContent = (manualBudget - spendSOL).toLocaleString("en-Solect", {
-        style: "currency",
-        currency: "SOL"
-    });
+    elsSolect.summaryProfitLoss.textContent = formatSOL(profitLoss);
+
+    // AUD equivalents (converted at the Solect PHP→AUD rate)
+    if (elsSolect.summaryProfitLossAud)
+        elsSolect.summaryProfitLossAud.textContent = formatAUD(profitLoss * rate);
+    if (elsSolect.summaryTotalBudgetAud)
+        elsSolect.summaryTotalBudgetAud.textContent = formatAUD(filteredBudget * rate);
 
 }
 

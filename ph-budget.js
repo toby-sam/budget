@@ -36,8 +36,10 @@ const elsPH = {
   summarySamal: document.getElementById('summarySamal'),
   summaryTotalSpend: document.getElementById('summaryTotalSpend'),
   summaryProfitLoss: document.getElementById('summaryProfitLoss'),
+  summaryProfitLossAud: document.getElementById('summaryProfitLossAud'),
 
   summaryTotalBudget: document.getElementById('summaryTotalBudget'),
+  summaryTotalBudgetAud: document.getElementById('summaryTotalBudgetAud'),
   summaryLedger: document.getElementById('summaryLedger'),
   summaryPhilippines: document.getElementById('summaryPhilippines'),
 
@@ -122,10 +124,24 @@ elsPH.summaryTotalSpend.textContent = spendPHP.toLocaleString("en-PH", {
     currency: "PHP"
 });
 
-elsPH.summaryProfitLoss.textContent = (totalIncomePHP - filteredBudget).toLocaleString("en-PH", {
+const profitLossPHP = totalIncomePHP - filteredBudget;
+elsPH.summaryProfitLoss.textContent = profitLossPHP.toLocaleString("en-PH", {
     style: "currency",
     currency: "PHP"
 });
+
+// AUD equivalents (converted at the PHP→AUD rate)
+if (elsPH.summaryProfitLossAud)
+    elsPH.summaryProfitLossAud.textContent = (profitLossPHP * phpToAud).toLocaleString("en-AU", {
+        style: "currency",
+        currency: "AUD"
+    });
+
+if (elsPH.summaryTotalBudgetAud)
+    elsPH.summaryTotalBudgetAud.textContent = (filteredBudget * phpToAud).toLocaleString("en-AU", {
+        style: "currency",
+        currency: "AUD"
+    });
 
 }
 

@@ -31,7 +31,7 @@
             <div class="row summary-row">
                 <div class="row summary-row" class="badge">
                     <div>
-                        <div class="small">Manual Monthly Budget (SOL)</div>
+                        <div class="small">Manual Monthly Budget (PHP)</div>
                         <input id="manualMonthlyBudget" type="number" step="0.01" style="width:140px;" />
                     </div>
 
@@ -41,13 +41,23 @@
                     </div>
 
                     <div>
-                        <div class="small">Profit / Loss (SOL)</div>
+                        <div class="small">Profit / Loss (PHP)</div>
                         <div id="summaryProfitLoss" class="badge"></div>
+                    </div>
+
+                    <div>
+                        <div class="small">Profit / Loss (AUD)</div>
+                        <div id="summaryProfitLossAud" class="badge">$0.00</div>
                     </div>
 
                     <div>
                         <div class="small">Total Solect Budget</div>
                         <div id="summaryTotalBudget" class="badge">$0.00</div>
+                    </div>
+
+                    <div>
+                        <div class="small">Total Solect Budget (AUD)</div>
+                        <div id="summaryTotalBudgetAud" class="badge">$0.00</div>
                     </div>
                 </div>
 
@@ -70,7 +80,7 @@
                 </div>
 
                 <div>
-                    <label for="newCategoryMonthly">Monthly Budget (SOL)</label>
+                    <label for="newCategoryMonthly">Monthly Budget (PHP)</label>
                     <input type="number" id="newCategoryMonthly" step="0.01">
                 </div>
 
@@ -86,8 +96,8 @@
                     <thead>
                         <tr>
                             <th>Category</th>
-                            <th class="amount">Budget (SOL)</th>
-                            <th class="amount">Actual (SOL)</th>
+                            <th class="amount">Budget (PHP)</th>
+                            <th class="amount">Actual (PHP)</th>
                             <th class="amount">Difference</th>
                             <th>Status</th>
                             <th></th>
